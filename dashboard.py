@@ -18,9 +18,11 @@ from config import (
     DHAN_ACCESS_TOKEN,
     PORTAL_PIN,
     verify_portal_pin,
-    update_access_token
+    update_access_token,
+    generate_dhan_access_token
 )
 from instruments import get_all_stocks, get_stock_by_symbol, get_sector_distribution
+
 from dhan_client import DhanClient
 from analyzer import StockAnalyzer
 from mtf_risk_engine import MTFRiskEngine
@@ -288,6 +290,25 @@ class DashboardRequestHandler(BaseHTTPRequestHandler):
                 self._send_json({"success": True, "message": "Token updated successfully"})
             else:
                 self._send_json({"success": False, "message": "Failed to update token"}, status=500)
+
+        elif url_path == "/api/generate-token":
+            client_id = payload.get("client_id", DHAN_CLIENT_ID)
+            pin = payload.get("pin", "")
+            totp = payload.get("totp", "")
+            totp_secret = payload.get("totp_secret", "")
+
+            result = generate_dhan_access_token(
+                client_id=client_id,
+                pin=pin,
+                totp=totp,
+                totp_secret=totp_secret
+            )
+            if result.get("success"):
+                _dhan_client = DhanClient()
+                _cached_stock_data.clear()
+                self._send_json(result)
+            else:
+                self._send_json(result, status=400)
 
         elif url_path == "/api/auth/pin-verify":
             pin = payload.get("pin", "")
