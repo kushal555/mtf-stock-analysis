@@ -2,8 +2,20 @@
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top 100 Stocks MTF Trading & Comparison Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>MTF Swing Trader & Watchlist Platform</title>
+
+    <!-- PWA & Mobile Web App Meta -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MTF Trader">
+    <meta name="application-name" content="MTF Trader">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0b0f19">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,31 +39,36 @@
         ::-webkit-scrollbar-track { background: #111827; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        /* Prevent iOS font zoom on input focus */
+        input, select, textarea { font-size: 14px; }
+        @media (max-width: 640px) {
+            input, select, textarea { font-size: 16px; }
+        }
     </style>
 </head>
 <body class="bg-navy-950 text-gray-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white pb-24">
 
     <!-- Navbar -->
     <header class="border-b border-gray-800 bg-navy-900/90 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-emerald-500 flex items-center justify-center font-black text-xl shadow-lg shadow-brand-500/20">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5 sm:space-x-3">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-emerald-500 flex items-center justify-center font-black text-lg sm:text-xl shadow-lg shadow-brand-500/20 flex-shrink-0">
                     📊
                 </div>
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <h1 class="font-bold text-base sm:text-lg text-white">MTF Swing Scanner & Risk Platform</h1>
-                        <span id="universeBadge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">MTF-Watchlist (22)</span>
+                    <div class="flex items-center space-x-1.5 sm:space-x-2">
+                        <h1 class="font-bold text-sm sm:text-lg text-white truncate max-w-[170px] sm:max-w-none">MTF Swing Scanner</h1>
+                        <span id="universeBadge" class="px-2 py-0.5 text-[10px] sm:text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 whitespace-nowrap">MTF-Watchlist (22)</span>
                     </div>
-                    <p class="text-[11px] text-gray-400">10% Profit Target • 1–2 Month Interest Advantage • Auto-Liquidation Protection</p>
+                    <p class="text-[10px] sm:text-[11px] text-gray-400 hidden xs:block truncate">10% Profit Target • 1–2 Month Interest Advantage</p>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 sm:space-x-3">
                 <!-- Watchlist Selector -->
-                <div class="flex items-center space-x-2">
-                    <label for="watchlistSelect" class="hidden sm:inline text-xs text-gray-400 font-medium">Watchlist:</label>
-                    <select id="watchlistSelect" onchange="switchWatchlist(this.value)" class="bg-gray-900 border border-emerald-500/50 hover:border-emerald-400 rounded-lg px-3 py-1.5 text-xs font-semibold text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-sm">
+                <div class="flex items-center space-x-1 sm:space-x-2">
+                    <label for="watchlistSelect" class="hidden md:inline text-xs text-gray-400 font-medium">Watchlist:</label>
+                    <select id="watchlistSelect" onchange="switchWatchlist(this.value)" class="bg-gray-900 border border-emerald-500/50 hover:border-emerald-400 rounded-lg px-2 sm:px-3 py-1.5 text-xs font-semibold text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-sm max-w-[130px] sm:max-w-none">
                         <option value="my_watchlist" selected>MTF-Watchlist (22)</option>
                         <option value="top_100">Top 100 Companies (100)</option>
                         <option value="top_50">NIFTY 50 (50)</option>
@@ -59,14 +76,21 @@
                     </select>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-2 bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-700/60 text-xs">
+                <!-- PWA Install Button -->
+                <button id="pwaInstallBtn" onclick="installPWA()" class="flex items-center space-x-1 text-xs bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-2.5 py-1.5 rounded-lg shadow-md transition" title="Add app shortcut to phone home screen">
+                    <span>📲</span>
+                    <span class="hidden sm:inline">Install App</span>
+                </button>
+
+                <div class="hidden lg:flex items-center space-x-2 bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-700/60 text-xs">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span class="text-gray-400">Client:</span>
                     <span class="font-mono text-emerald-400 font-semibold" id="clientIdDisplay">1103250505</span>
                 </div>
 
-                <button onclick="openTokenModal()" class="flex items-center space-x-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-2 rounded-lg border border-gray-700 transition">
-                    <span>🔑 Update Token</span>
+                <button onclick="openTokenModal()" class="flex items-center space-x-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-2 sm:px-3 py-1.5 rounded-lg border border-gray-700 transition">
+                    <span>🔑</span>
+                    <span class="hidden sm:inline">Token</span>
                 </button>
             </div>
         </div>
@@ -74,6 +98,27 @@
 
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
+
+        <!-- Mobile PWA Installation Banner -->
+        <div id="pwaMobileBanner" class="hidden bg-gradient-to-r from-emerald-900/60 via-navy-900 to-teal-900/50 border border-emerald-500/40 rounded-xl p-3.5 shadow-lg flex items-center justify-between gap-3 text-xs">
+            <div class="flex items-center space-x-3 min-w-0">
+                <div class="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-lg flex-shrink-0">
+                    📱
+                </div>
+                <div class="min-w-0">
+                    <div class="font-bold text-white truncate">Install MTF Analyzer App</div>
+                    <div class="text-[11px] text-gray-300">Add to Home Screen for fast, fullscreen mobile trading & analysis!</div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 flex-shrink-0">
+                <button onclick="installPWA()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs shadow transition">
+                    Install
+                </button>
+                <button onclick="dismissPwaBanner()" class="text-gray-400 hover:text-white p-1 text-sm">
+                    ✕
+                </button>
+            </div>
+        </div>
 
         <!-- Top Overview Stats -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -312,14 +357,29 @@
                     <span class="absolute left-2.5 top-2 text-gray-500 text-xs">🔍</span>
                 </div>
 
+                <!-- View Mode Toggle (Cards for Mobile / Table for Desktop) -->
+                <div class="inline-flex bg-gray-900 border border-gray-700 rounded-lg p-0.5">
+                    <button id="btnViewCards" onclick="setViewMode('cards')" class="px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white" title="Card View (Mobile Optimized)">
+                        📱 Cards
+                    </button>
+                    <button id="btnViewTable" onclick="setViewMode('table')" class="px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white" title="Table View (Full Columns)">
+                        🖥️ Table
+                    </button>
+                </div>
+
                 <button onclick="loadStocks(true)" id="refreshBtn" class="flex items-center space-x-1 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-medium border border-gray-700 transition">
                     <span id="refreshIcon">🔄</span>
                 </button>
             </div>
         </div>
 
-        <!-- Stocks Table -->
-        <div class="bg-navy-900 rounded-xl border border-gray-800/80 overflow-hidden shadow-xl">
+        <!-- Mobile Stock Cards Container (visible in Cards mode) -->
+        <div id="stocksCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 hidden">
+            <!-- Dynamically rendered mobile cards -->
+        </div>
+
+        <!-- Stocks Table Wrapper (visible in Table mode) -->
+        <div id="stocksTableWrapper" class="bg-navy-900 rounded-xl border border-gray-800/80 overflow-hidden shadow-xl">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs border-collapse">
                     <thead>
@@ -605,6 +665,39 @@
         </div>
     </div>
 
+    <!-- iOS Add to Home Screen Instructions Modal -->
+    <div id="iosInstallModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 hidden">
+        <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-md w-full p-5 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeIOSModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white text-xl">✕</button>
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-500 flex items-center justify-center text-xl shadow">
+                    📱
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm text-white">Install on iPhone / iPad</h3>
+                    <p class="text-[11px] text-gray-400">Add MTF Analyzer to your home screen via Safari</p>
+                </div>
+            </div>
+            <div class="space-y-3 text-xs text-gray-300 bg-gray-950/70 p-3.5 rounded-xl border border-gray-800/80 my-3">
+                <div class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                    <div>Tap the <strong class="text-white">Share</strong> button <span class="text-base">⎋</span> at the bottom of your Safari browser bar.</div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                    <div>Scroll down the options and tap <strong class="text-white">"Add to Home Screen" ➕</strong>.</div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                    <div>Tap <strong class="text-emerald-400">"Add"</strong> in the top right. Launch the app anytime from your phone home screen!</div>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button onclick="closeIOSModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-semibold shadow">Got it!</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Frontend Script -->
     <script>
         let allStocks = [];
@@ -613,8 +706,12 @@
         let selectedStock = null;
         let selectedForCompare = new Set();
         let comparisonCapital = 50000;
+        let currentViewMode = window.innerWidth < 768 ? 'cards' : 'table';
+        let deferredPrompt = null;
 
         window.addEventListener('DOMContentLoaded', () => {
+            initViewMode();
+            initPWA();
             loadStocks();
             recalcAdvantage();
         });
@@ -776,6 +873,8 @@
 
             if (filtered.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="11" class="text-center py-10 text-gray-400">No stocks match your filter criteria.</td></tr>`;
+                const cardsContainer = document.getElementById('stocksCardsContainer');
+                if (cardsContainer) cardsContainer.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400 bg-navy-900 rounded-xl border border-gray-800">No stocks match your filter criteria.</div>`;
                 return;
             }
 
@@ -866,6 +965,161 @@
                         </button>
                     </td>
                 </tr>
+                `;
+            }).join('');
+
+            renderCards(filtered);
+        }
+
+        // --- Mobile Cards Rendering & View Modes ---
+        function initViewMode() {
+            const saved = localStorage.getItem('mtf_view_mode');
+            if (saved === 'cards' || saved === 'table') {
+                currentViewMode = saved;
+            } else {
+                currentViewMode = window.innerWidth < 768 ? 'cards' : 'table';
+            }
+            updateViewModeUI();
+        }
+
+        function setViewMode(mode) {
+            currentViewMode = mode;
+            localStorage.setItem('mtf_view_mode', mode);
+            updateViewModeUI();
+        }
+
+        function updateViewModeUI() {
+            const btnCards = document.getElementById('btnViewCards');
+            const btnTable = document.getElementById('btnViewTable');
+            const cardsContainer = document.getElementById('stocksCardsContainer');
+            const tableWrapper = document.getElementById('stocksTableWrapper');
+
+            if (currentViewMode === 'cards') {
+                if (btnCards) {
+                    btnCards.className = 'px-2.5 py-1 text-xs rounded-md transition font-bold bg-brand-600 text-white shadow-sm';
+                }
+                if (btnTable) {
+                    btnTable.className = 'px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white';
+                }
+                if (cardsContainer) cardsContainer.classList.remove('hidden');
+                if (tableWrapper) tableWrapper.classList.add('hidden');
+            } else {
+                if (btnCards) {
+                    btnCards.className = 'px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white';
+                }
+                if (btnTable) {
+                    btnTable.className = 'px-2.5 py-1 text-xs rounded-md transition font-bold bg-brand-600 text-white shadow-sm';
+                }
+                if (cardsContainer) cardsContainer.classList.add('hidden');
+                if (tableWrapper) tableWrapper.classList.remove('hidden');
+            }
+        }
+
+        function renderCards(stocks) {
+            const container = document.getElementById('stocksCardsContainer');
+            if (!container) return;
+
+            if (stocks.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400 bg-navy-900 rounded-xl border border-gray-800">No stocks match your filter criteria.</div>`;
+                return;
+            }
+
+            container.innerHTML = stocks.map(s => {
+                let badgeClass = 'bg-gray-800 text-gray-400 border-gray-700';
+                let badgeIcon = '○';
+                let statusLabel = s.status;
+
+                if (s.status === 'BUY_ZONE_ACTIVE') {
+                    badgeClass = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+                    badgeIcon = '●';
+                    statusLabel = 'IN BUY ZONE';
+                } else if (s.status === 'NEAR_BUY_ZONE') {
+                    badgeClass = 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+                    badgeIcon = '▲';
+                    statusLabel = `NEAR (+${s.dist_to_buy_pct}%)`;
+                } else if (s.status === 'TARGET_ACHIEVED') {
+                    badgeClass = 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                    badgeIcon = '★';
+                    statusLabel = '10% TARGET HIT';
+                } else if (s.status === 'STOP_LOSS_HIT') {
+                    badgeClass = 'bg-rose-500/20 text-rose-400 border-rose-500/30';
+                    badgeIcon = '✖';
+                    statusLabel = 'STOP LOSS HIT';
+                } else {
+                    badgeClass = 'bg-gray-800/40 text-gray-400 border-gray-700';
+                    badgeIcon = '○';
+                    statusLabel = 'WAIT PULLBACK';
+                }
+
+                const isChecked = selectedForCompare.has(s.symbol);
+
+                return `
+                <div class="bg-navy-900 border ${isChecked ? 'border-brand-500 shadow-brand-500/10' : 'border-gray-800/80'} rounded-2xl p-4 shadow-lg hover:border-gray-700 transition flex flex-col justify-between space-y-3">
+                    <!-- Card Top: Select Checkbox + Symbol info + Price -->
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-start space-x-2.5 min-w-0">
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleStockSelect('${s.symbol}', this.checked)" class="accent-brand-600 rounded cursor-pointer mt-1 flex-shrink-0">
+                            <div class="min-w-0">
+                                <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer"
+                                   class="group inline-flex items-center space-x-1 hover:text-brand-400 transition" title="Open TradingView chart in new tab">
+                                    <span class="font-bold text-base text-white group-hover:text-brand-400">${s.symbol}</span>
+                                    <span class="text-xs text-gray-500 group-hover:text-brand-400">↗</span>
+                                </a>
+                                <div class="text-xs text-gray-400 truncate max-w-[170px]">${s.name}</div>
+                                <span class="text-[9px] font-medium text-indigo-400 uppercase tracking-wider">${s.sector}</span>
+                            </div>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <div class="font-mono text-base font-bold text-white">₹${s.ltp.toFixed(2)}</div>
+                            <span class="inline-flex items-center space-x-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${badgeClass}">
+                                <span>${badgeIcon}</span>
+                                <span>${statusLabel}</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 2x2 Strategy Levels Grid -->
+                    <div class="grid grid-cols-2 gap-2 bg-gray-950/60 p-2.5 rounded-xl border border-gray-800/70 text-xs">
+                        <div>
+                            <div class="text-[10px] text-gray-400">🎯 Buy Zone</div>
+                            <div class="font-mono text-emerald-400 font-semibold text-xs">₹${s.buy_zone_min} - ₹${s.buy_zone_max}</div>
+                            <div class="text-[10px] text-gray-500">Rec: ₹${s.rec_entry}</div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-gray-400">🚀 10% Target (Sell)</div>
+                            <div class="font-mono text-blue-400 font-bold text-xs">₹${s.target_10_pct}</div>
+                            <div class="text-[10px] text-emerald-400/90 font-medium">+10.0% Profit</div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-gray-400">🛡️ Stop Loss</div>
+                            <div class="font-mono text-amber-300 font-semibold text-xs">₹${s.stop_loss}</div>
+                            <div class="text-[10px] text-gray-500">R:R 1 : ${s.risk_reward_ratio}</div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-gray-400">⚡ RMS Liquidation</div>
+                            <div class="font-mono text-rose-400 font-semibold text-xs">₹${s.mtf_liquidation_price || '--'}</div>
+                            <div class="text-[10px] text-gray-500">Buffer: ${s.safety_buffer || '--'}%</div>
+                        </div>
+                    </div>
+
+                    <!-- 15d ROI Performance Highlight -->
+                    <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
+                        <span class="text-emerald-300 text-[11px] font-medium">⚡ 15-Day Net ROI (MTF)</span>
+                        <span class="font-mono font-bold text-emerald-400 text-xs">+${s.net_roi_15d || 0}%</span>
+                    </div>
+
+                    <!-- Mobile Touch Actions -->
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer"
+                           class="flex items-center justify-center space-x-1 py-2 px-3 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-xl text-xs font-semibold border border-gray-700/80 transition"
+                           title="Open TradingView Chart">
+                            <span>📈 Chart ↗</span>
+                        </a>
+                        <button onclick="openMtfSimulator('${s.symbol}')" class="py-2 px-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold shadow transition">
+                            🧮 Simulate MTF
+                        </button>
+                    </div>
+                </div>
                 `;
             }).join('');
         }
@@ -1197,6 +1451,86 @@
                 btn.disabled = false;
                 btn.textContent = 'Save & Apply';
             }
+        }
+
+        // --- PWA & Mobile Installation Handlers ---
+        function initPWA() {
+            const dismissed = localStorage.getItem('pwa_banner_dismissed');
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+            if (isStandalone) {
+                const installBtn = document.getElementById('pwaInstallBtn');
+                if (installBtn) installBtn.classList.add('hidden');
+                const banner = document.getElementById('pwaMobileBanner');
+                if (banner) banner.classList.add('hidden');
+                return;
+            }
+
+            if (isIOS && !dismissed) {
+                const banner = document.getElementById('pwaMobileBanner');
+                if (banner) banner.classList.remove('hidden');
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                const installBtn = document.getElementById('pwaInstallBtn');
+                if (installBtn) installBtn.classList.remove('hidden');
+                if (!dismissed) {
+                    const banner = document.getElementById('pwaMobileBanner');
+                    if (banner) banner.classList.remove('hidden');
+                }
+            });
+
+            window.addEventListener('appinstalled', () => {
+                deferredPrompt = null;
+                const banner = document.getElementById('pwaMobileBanner');
+                if (banner) banner.classList.add('hidden');
+                const installBtn = document.getElementById('pwaInstallBtn');
+                if (installBtn) installBtn.classList.add('hidden');
+                console.log('MTF Analyzer app installed successfully');
+            });
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered:', reg.scope))
+                    .catch(err => console.log('Service Worker registration note:', err));
+            }
+        }
+
+        async function installPWA() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted the PWA install prompt');
+                }
+                deferredPrompt = null;
+                const banner = document.getElementById('pwaMobileBanner');
+                if (banner) banner.classList.add('hidden');
+            } else if (isIOS) {
+                openIOSModal();
+            } else {
+                alert("To install MTF Analyzer on your phone or desktop:\n\n• Android Chrome: Tap the three dots (⋮) in the top-right and select 'Install app' or 'Add to Home screen'.\n• Safari on iOS: Tap the Share button ⎋ and select 'Add to Home Screen'.\n• Desktop Chrome/Edge: Click the install icon (⊕) in the browser address bar.");
+            }
+        }
+
+        function dismissPwaBanner() {
+            const banner = document.getElementById('pwaMobileBanner');
+            if (banner) banner.classList.add('hidden');
+            localStorage.setItem('pwa_banner_dismissed', '1');
+        }
+
+        function openIOSModal() {
+            const modal = document.getElementById('iosInstallModal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeIOSModal() {
+            const modal = document.getElementById('iosInstallModal');
+            if (modal) modal.classList.add('hidden');
         }
     </script>
 </body>

@@ -25,6 +25,7 @@ from mtf_risk_engine import MTFRiskEngine
 
 BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = BASE_DIR / "templates"
+STATIC_DIR = BASE_DIR / "static"
 
 # Global cached client & data
 _dhan_client = DhanClient()
@@ -138,12 +139,45 @@ class DashboardRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(content)
 
+    def _send_file(self, file_path: Path, content_type: str, status: int = 200):
+        if not file_path.exists():
+            self.send_error(404, "File Not Found")
+            return
+        with open(file_path, "rb") as f:
+            content = f.read()
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(content)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Cache-Control", "public, max-age=86400")
+        self.end_headers()
+        self.wfile.write(content)
+
     def do_GET(self):
         url_path = self.path.split("?")[0]
         query_str = self.path.split("?")[1] if "?" in self.path else ""
 
         if url_path in ("/", "/index.html"):
             self._send_html(TEMPLATES_DIR / "index.html")
+        elif url_path == "/manifest.json":
+            self._send_file(STATIC_DIR / "manifest.json", "application/manifest+json")
+        elif url_path == "/sw.js":
+            self._send_file(STATIC_DIR / "sw.js", "application/javascript")
+        elif url_path == "/favicon.ico":
+            self._send_file(STATIC_DIR / "icon-192.png", "image/png")
+        elif url_path.startswith("/static/"):
+            rel_path = url_path[len("/static/"):]
+            file_path = STATIC_DIR / rel_path
+            content_type = "application/octet-stream"
+            if rel_path.endswith(".png"):
+                content_type = "image/png"
+            elif rel_path.endswith(".svg"):
+                content_type = "image/svg+xml"
+            elif rel_path.endswith(".json"):
+                content_type = "application/json"
+            elif rel_path.endswith(".js"):
+                content_type = "application/javascript"
+            self._send_file(file_path, content_type)
         elif url_path == "/api/stocks":
             from urllib.parse import parse_qs
             params = parse_qs(query_str)
@@ -156,7 +190,7 @@ class DashboardRequestHandler(BaseHTTPRequestHandler):
                 watchlist = "top_50"
             elif watchlist in ("next_50", "next50", "NEXT_50"):
                 watchlist = "next_50"
-            elif watchlist in ("my", "stfi", "my_watchlist", "watchlist"):
+            elif watchlist in ("my", "stfi", "my_watchlist", "mtf_watchlist", "watchlist"):
                 watchlist = "my_watchlist"
 
             data = get_analyzed_stocks(universe=watchlist, force_refresh=force)

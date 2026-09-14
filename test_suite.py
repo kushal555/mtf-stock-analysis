@@ -243,5 +243,54 @@ class TestDashboardAPI(unittest.TestCase):
             self.assertIsNotNone(stock, f"Stock {sym} should exist for comparison")
 
 
+class TestPWAAndMobile(unittest.TestCase):
+    def test_pwa_static_assets_exist(self):
+        from pathlib import Path
+        static_dir = Path(__file__).parent / "static"
+        self.assertTrue((static_dir / "manifest.json").is_file(), "manifest.json missing")
+        self.assertTrue((static_dir / "sw.js").is_file(), "sw.js missing")
+        self.assertTrue((static_dir / "icon.svg").is_file(), "icon.svg missing")
+        self.assertTrue((static_dir / "icon-192.png").is_file(), "icon-192.png missing")
+        self.assertTrue((static_dir / "icon-512.png").is_file(), "icon-512.png missing")
+
+    def test_pwa_manifest_structure(self):
+        from pathlib import Path
+        manifest_path = Path(__file__).parent / "static" / "manifest.json"
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+        self.assertEqual(manifest.get("display"), "standalone")
+        self.assertIn("icons", manifest)
+        self.assertTrue(len(manifest["icons"]) >= 2)
+        sizes = [icon.get("sizes") for icon in manifest["icons"]]
+        self.assertIn("192x192", sizes)
+        self.assertIn("512x512", sizes)
+
+    def test_mobile_view_and_pwa_elements_in_template(self):
+        from pathlib import Path
+        template_path = Path(__file__).parent / "templates" / "index.html"
+        with open(template_path, "r", encoding="utf-8") as f:
+            html = f.read()
+
+        # Check PWA tags
+        self.assertIn('rel="manifest"', html)
+        self.assertIn('href="/manifest.json"', html)
+        self.assertIn('viewport-fit=cover', html)
+        self.assertIn('apple-mobile-web-app-capable', html)
+
+        # Check mobile card and toggle elements
+        self.assertIn('id="btnViewCards"', html)
+        self.assertIn('id="btnViewTable"', html)
+        self.assertIn('id="stocksCardsContainer"', html)
+        self.assertIn('id="stocksTableWrapper"', html)
+
+        # Check PWA install elements
+        self.assertIn('id="pwaInstallBtn"', html)
+        self.assertIn('id="pwaMobileBanner"', html)
+        self.assertIn('id="iosInstallModal"', html)
+        self.assertIn('renderCards', html)
+        self.assertIn('installPWA', html)
+
+
 if __name__ == "__main__":
     unittest.main()
+
