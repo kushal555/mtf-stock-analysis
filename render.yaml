@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: mtf-stock-analysis
+    env: python
+    buildCommand: echo "Build complete"
+    startCommand: python3 dashboard.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DASHBOARD_HOST
+        value: 0.0.0.0

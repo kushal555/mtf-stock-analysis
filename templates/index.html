@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 100 Stocks MTF Trading & Comparison Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 950: '#070b13', 900: '#0b0f19', 800: '#111827', 700: '#1f2937' },
+                        brand: { 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        emerald: { 500: '#10b981', 600: '#059669' },
+                        rose: { 500: '#f43f5e', 600: '#e11d48' },
+                        amber: { 500: '#f59e0b', 600: '#d97706' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+    </style>
+</head>
+<body class="bg-navy-950 text-gray-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white pb-24">
+
+    <!-- Navbar -->
+    <header class="border-b border-gray-800 bg-navy-900/90 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-emerald-500 flex items-center justify-center font-black text-xl shadow-lg shadow-brand-500/20">
+                    📊
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="font-bold text-base sm:text-lg text-white">MTF Swing Scanner & Risk Platform</h1>
+                        <span id="universeBadge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">MTF-Watchlist (22)</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400">10% Profit Target • 1–2 Month Interest Advantage • Auto-Liquidation Protection</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Watchlist Selector -->
+                <div class="flex items-center space-x-2">
+                    <label for="watchlistSelect" class="hidden sm:inline text-xs text-gray-400 font-medium">Watchlist:</label>
+                    <select id="watchlistSelect" onchange="switchWatchlist(this.value)" class="bg-gray-900 border border-emerald-500/50 hover:border-emerald-400 rounded-lg px-3 py-1.5 text-xs font-semibold text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-sm">
+                        <option value="my_watchlist" selected>MTF-Watchlist (22)</option>
+                        <option value="top_100">Top 100 Companies (100)</option>
+                        <option value="top_50">NIFTY 50 (50)</option>
+                        <option value="next_50">NIFTY Next 50 (50)</option>
+                    </select>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-2 bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-700/60 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-gray-400">Client:</span>
+                    <span class="font-mono text-emerald-400 font-semibold" id="clientIdDisplay">1103250505</span>
+                </div>
+
+                <button onclick="openTokenModal()" class="flex items-center space-x-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-2 rounded-lg border border-gray-700 transition">
+                    <span>🔑 Update Token</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
+
+        <!-- Top Overview Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">In Buy Zone</span>
+                    <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-xs font-semibold">🟢 Actionable</span>
+                </div>
+                <div class="mt-3 flex items-baseline justify-between">
+                    <div class="text-3xl font-bold text-emerald-400" id="statInBuyZone">--</div>
+                    <span class="text-xs text-gray-400" id="statInBuySub">Optimal entry now</span>
+                </div>
+                <div class="w-full bg-gray-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                    <div id="barInBuyZone" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Approaching Zone</span>
+                    <span class="text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded text-xs font-semibold">🟡 Watchlist</span>
+                </div>
+                <div class="mt-3 flex items-baseline justify-between">
+                    <div class="text-3xl font-bold text-amber-400" id="statNearBuyZone">--</div>
+                    <span class="text-xs text-gray-400">&lt; 1.5% from support</span>
+                </div>
+                <div class="w-full bg-gray-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                    <div id="barNearBuyZone" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">MTF Leverage</span>
+                    <span class="text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded text-xs font-semibold">⚡ 4x - 5x Leverage</span>
+                </div>
+                <div class="mt-3 flex items-baseline justify-between">
+                    <div class="text-2xl font-bold text-blue-400">20% - 25%</div>
+                    <span class="text-xs text-gray-400">Margin Needed</span>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-2">MTF interest: ~0.0274%/day (~10% p.a.)</p>
+            </div>
+
+            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Liquidation Protection</span>
+                    <span class="text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded text-xs font-semibold">🛡️ Zero RMS Risk</span>
+                </div>
+                <div class="mt-3 flex items-baseline justify-between">
+                    <div class="text-2xl font-bold text-rose-400">Stop-Loss Shield</div>
+                    <span class="text-xs text-gray-400">Strict 3.5% SL</span>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-2">Guaranteed exit before broker auto-sell trigger</p>
+            </div>
+        </div>
+
+        <!-- 1-2 Month MTF Interest & Profit Advantage Card -->
+        <div class="bg-gradient-to-br from-navy-900 via-navy-900 to-indigo-950/40 border border-brand-500/30 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-gray-800/80 pb-4 mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-brand-500 to-emerald-500 flex items-center justify-center text-xl shadow-lg shadow-amber-500/20">
+                        💰
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h3 class="text-sm sm:text-base font-bold text-white">1–2 Month MTF Profit & Interest Advantage Calculator</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">10% p.a. Model</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            Target <strong class="text-emerald-400">10% profit</strong> on MTF capital. Exiting in 1 to 2 months minimizes interest decay and saves up to <strong>91.7% of annual charges</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Parameters -->
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <div class="flex items-center space-x-1.5 bg-navy-950 px-3 py-1.5 rounded-lg border border-gray-800">
+                        <span class="text-xs text-gray-400">Capital:</span>
+                        <span class="text-xs text-gray-400">₹</span>
+                        <input type="number" id="calcCapitalInput" value="50000" step="5000" min="5000" oninput="recalcAdvantage()" 
+                               class="w-20 bg-transparent font-mono text-xs font-bold text-emerald-400 focus:outline-none">
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-navy-950 px-3 py-1.5 rounded-lg border border-gray-800">
+                        <span class="text-xs text-gray-400">Target:</span>
+                        <input type="number" id="calcTargetInput" value="10" step="1" min="1" max="50" oninput="recalcAdvantage()" 
+                               class="w-10 bg-transparent font-mono text-xs font-bold text-blue-400 focus:outline-none">
+                        <span class="text-xs text-gray-400">%</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-navy-950 px-3 py-1.5 rounded-lg border border-gray-800">
+                        <span class="text-xs text-gray-400">MTF Rate:</span>
+                        <input type="number" id="calcRateInput" value="10" step="0.5" min="5" max="25" oninput="recalcAdvantage()" 
+                               class="w-10 bg-transparent font-mono text-xs font-bold text-amber-400 focus:outline-none">
+                        <span class="text-xs text-gray-400">% p.a.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- 1 Month Exit Card -->
+                <div class="bg-navy-950/80 rounded-xl p-4 border border-emerald-500/40 relative group hover:border-emerald-500 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">⚡ 1 Month Exit (30 Days)</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">Optimal Exit</span>
+                    </div>
+                    <div class="text-2xl font-black text-emerald-400 font-mono" id="advNet1m">₹4,583</div>
+                    <div class="text-[11px] text-emerald-300/90 font-medium mt-0.5" id="advRoi1m">Net Profit (+9.2% on capital)</div>
+                    
+                    <div class="mt-3 pt-3 border-t border-gray-800/80 space-y-1.5 text-xs">
+                        <div class="flex justify-between text-gray-400">
+                            <span>Interest Paid (30d):</span>
+                            <span class="font-mono text-amber-400" id="advInt1m">₹417</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Interest Saved vs Year:</span>
+                            <span class="font-mono text-emerald-400 font-bold" id="advSaved1m">₹4,583 saved</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Profit Retained:</span>
+                            <span class="font-mono text-white font-semibold" id="advEff1m">91.7% of target</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2 Months Exit Card -->
+                <div class="bg-navy-950/80 rounded-xl p-4 border border-amber-500/40 relative group hover:border-amber-500 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400">⏳ 2 Months Exit (60 Days)</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">High Efficiency</span>
+                    </div>
+                    <div class="text-2xl font-black text-amber-300 font-mono" id="advNet2m">₹4,167</div>
+                    <div class="text-[11px] text-amber-300/90 font-medium mt-0.5" id="advRoi2m">Net Profit (+8.3% on capital)</div>
+                    
+                    <div class="mt-3 pt-3 border-t border-gray-800/80 space-y-1.5 text-xs">
+                        <div class="flex justify-between text-gray-400">
+                            <span>Interest Paid (60d):</span>
+                            <span class="font-mono text-amber-400" id="advInt2m">₹833</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Interest Saved vs Year:</span>
+                            <span class="font-mono text-emerald-400 font-bold" id="advSaved2m">₹4,167 saved</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Profit Retained:</span>
+                            <span class="font-mono text-white font-semibold" id="advEff2m">83.3% of target</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full Year Hold Card (Warning) -->
+                <div class="bg-navy-950/80 rounded-xl p-4 border border-rose-500/40 relative group hover:border-rose-500 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-rose-400">⚠️ 1 Year Hold (365 Days)</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300">Total Decay</span>
+                    </div>
+                    <div class="text-2xl font-black text-rose-400 font-mono" id="advNet1y">₹0</div>
+                    <div class="text-[11px] text-rose-300/90 font-medium mt-0.5" id="advRoi1y">Net Profit (100% wiped out!)</div>
+                    
+                    <div class="mt-3 pt-3 border-t border-gray-800/80 space-y-1.5 text-xs">
+                        <div class="flex justify-between text-gray-400">
+                            <span>Annual Interest:</span>
+                            <span class="font-mono text-rose-400 font-bold" id="advInt1y">₹5,000 (10% p.a.)</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Interest Saved:</span>
+                            <span class="font-mono text-gray-500" id="advSaved1y">₹0 (None)</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Outcome:</span>
+                            <span class="font-mono text-rose-300 font-semibold">Entire profit eaten by interest</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 text-[11px] text-gray-400 flex items-center space-x-1.5">
+                <span class="text-emerald-400 font-bold">💡 MTF Swing Rule:</span>
+                <span>Aim to capture your 10% target within <strong>30 to 60 days</strong>. Exiting within 2 months saves over <strong>₹4,100+</strong> in financing fees, keeping 83% to 92% of your profits in your pocket!</span>
+            </div>
+        </div>
+
+        <!-- Strategy & Comparison Guide Banner -->
+        <div class="bg-gradient-to-r from-blue-950/40 via-navy-900 to-indigo-950/40 border border-blue-800/40 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-start space-x-3">
+                <span class="text-2xl">💡</span>
+                <div>
+                    <h3 class="text-sm font-semibold text-white">How to Choose the Best Stock for Your MTF Balance</h3>
+                    <p class="text-xs text-gray-300 mt-0.5">
+                        With 100 stocks, select <strong class="text-emerald-400">2 to 4 candidates</strong> using the checkboxes below and click <strong class="text-brand-400">"Compare Side-by-Side"</strong>. 
+                        Evaluate which stock has the highest <span class="text-amber-400">Risk-to-Reward (R:R)</span>, the safest <span class="text-rose-400">Liquidation Buffer</span>, and the maximum <span class="text-emerald-400">15-Day Net ROI %</span> before allocating margin.
+                    </p>
+                </div>
+            </div>
+            <button onclick="triggerQuickComparison()" class="whitespace-nowrap px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-semibold shadow transition">
+                ⚡ Compare Top Picks
+            </button>
+        </div>
+
+        <!-- Filter, Sector, Sorting & Search Bar -->
+        <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+            <!-- Filter Tabs -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-1 lg:pb-0">
+                <button onclick="setFilter('ALL')" id="tabALL" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white transition">
+                    All Stocks (<span id="countTotal">100</span>)
+                </button>
+                <button onclick="setFilter('BUY_ZONE')" id="tabBUY_ZONE" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+                    🟢 In Buy Zone (<span id="countBuyZone">0</span>)
+                </button>
+                <button onclick="setFilter('NEAR_ZONE')" id="tabNEAR_ZONE" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+                    🟡 Near Buy Zone (<span id="countNearZone">0</span>)
+                </button>
+                <button onclick="setFilter('TARGET')" id="tabTARGET" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+                    ★ 10% Reached
+                </button>
+            </div>
+
+            <!-- Sector, Sort & Search -->
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                <!-- Sector Dropdown -->
+                <select id="sectorSelect" onchange="renderTable()" class="bg-gray-900 border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-brand-500">
+                    <option value="">All Sectors</option>
+                </select>
+
+                <!-- Sort Dropdown -->
+                <select id="sortSelect" onchange="renderTable()" class="bg-gray-900 border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-brand-500">
+                    <option value="dist">Sort: Closest to Buy Zone</option>
+                    <option value="rr">Sort: Best Risk/Reward Ratio</option>
+                    <option value="roi">Sort: Highest 15d Net ROI</option>
+                    <option value="buffer">Sort: Safest Liquidation Cushion</option>
+                </select>
+
+                <!-- Search Input -->
+                <div class="relative flex-1 sm:w-56">
+                    <input type="text" id="searchInput" oninput="renderTable()" placeholder="Search symbol or name..." 
+                           class="w-full bg-gray-900 border border-gray-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand-500">
+                    <span class="absolute left-2.5 top-2 text-gray-500 text-xs">🔍</span>
+                </div>
+
+                <button onclick="loadStocks(true)" id="refreshBtn" class="flex items-center space-x-1 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-medium border border-gray-700 transition">
+                    <span id="refreshIcon">🔄</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stocks Table -->
+        <div class="bg-navy-900 rounded-xl border border-gray-800/80 overflow-hidden shadow-xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-800 bg-gray-900/70 text-gray-400 font-semibold uppercase tracking-wider">
+                            <th class="py-3.5 px-3 w-10 text-center">
+                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" class="accent-brand-600 rounded">
+                            </th>
+                            <th class="py-3.5 px-3">Symbol / Company</th>
+                            <th class="py-3.5 px-3">LTP (₹)</th>
+                            <th class="py-3.5 px-3">Suggested Buy Zone</th>
+                            <th class="py-3.5 px-3">10% Target (Sell Zone)</th>
+                            <th class="py-3.5 px-3">Safe Stop Loss</th>
+                            <th class="py-3.5 px-3">R:R Ratio</th>
+                            <th class="py-3.5 px-3">15d Net ROI</th>
+                            <th class="py-3.5 px-3 text-rose-400">Broker Liquidation</th>
+                            <th class="py-3.5 px-3">Status</th>
+                            <th class="py-3.5 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stocksTableBody" class="divide-y divide-gray-800/60">
+                        <tr>
+                            <td colspan="11" class="text-center py-16 text-gray-400">
+                                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mb-2"></div>
+                                <div>Analyzing Top 100 Stocks & Technical Zones...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Floating Comparison Dock -->
+    <div id="compareDock" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-navy-900/95 border border-brand-500/50 shadow-2xl rounded-2xl px-6 py-3.5 z-40 flex items-center space-x-4 backdrop-blur transition-all duration-300 hidden">
+        <div class="flex items-center space-x-2">
+            <span class="text-lg">⚖️</span>
+            <div>
+                <div class="text-xs font-bold text-white"><span id="selectedCount">0</span> Stocks Selected for Comparison</div>
+                <div class="text-[10px] text-gray-400" id="selectedSymbolsList">Select up to 4 stocks</div>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button onclick="clearSelectedStocks()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-medium transition">
+                Clear
+            </button>
+            <button onclick="openComparisonModal()" class="px-4 py-1.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white rounded-lg text-xs font-bold shadow-lg transition">
+                Compare Side-by-Side ➜
+            </button>
+        </div>
+    </div>
+
+    <!-- Side-by-Side Comparison Modal -->
+    <div id="comparisonModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-5xl w-full max-h-[92vh] overflow-y-auto shadow-2xl p-6 relative">
+            <button onclick="closeComparisonModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white text-xl">✕</button>
+
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-500 flex items-center justify-center text-2xl font-bold shadow-lg">
+                    ⚖️
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">Side-by-Side Stock & MTF Comparison</h2>
+                    <p class="text-xs text-gray-400">Comparing technical entry levels, 10% targets, interest decay, and broker liquidation buffers.</p>
+                </div>
+            </div>
+
+            <!-- Capital Selector for Comparison -->
+            <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center space-x-2 text-xs text-gray-300">
+                    <span>Simulate Invested Margin:</span>
+                    <span class="font-bold text-emerald-400 font-mono" id="compCapitalDisplay">₹50,000</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="setComparisonCapital(25000)" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹25k</button>
+                    <button onclick="setComparisonCapital(50000)" class="px-2.5 py-1 bg-brand-600 text-white rounded text-[11px] font-bold">₹50k</button>
+                    <button onclick="setComparisonCapital(100000)" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹1 Lakh</button>
+                    <button onclick="setComparisonCapital(200000)" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹2 Lakhs</button>
+                </div>
+            </div>
+
+            <!-- Comparison Table Container -->
+            <div id="comparisonContent" class="overflow-x-auto border border-gray-800 rounded-xl mb-6">
+                <!-- Dynamically Rendered -->
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="closeComparisonModal()" class="px-5 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-semibold transition">
+                    Close Comparison
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MTF Simulator Modal (Single Stock) -->
+    <div id="simulatorModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl p-6 relative">
+            <button onclick="closeSimulatorModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white text-xl">✕</button>
+            
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-500 flex items-center justify-center text-2xl font-bold shadow-lg">
+                    🧮
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                            <span id="simSymbol">RELIANCE</span>
+                            <span class="text-xs font-normal text-gray-400 px-2 py-0.5 rounded bg-gray-800" id="simSector">Energy & Oil</span>
+                        </h2>
+                        <a id="simTvLink" href="#" target="_blank" rel="noopener noreferrer" 
+                           class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-semibold border border-gray-700 flex items-center space-x-1.5 transition mr-8"
+                           title="Open live chart in TradingView">
+                            <span>📈 Open in TradingView</span>
+                            <span>↗</span>
+                        </a>
+                    </div>
+                    <p class="text-xs text-gray-400">MTF Leverage, Interest Accrual & Auto-Square Off Protection Simulator</p>
+                </div>
+            </div>
+
+            <!-- Simulator Interactive Sliders -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-900/60 p-4 rounded-xl border border-gray-800 mb-6">
+                <div>
+                    <div class="flex justify-between items-center mb-1 text-xs">
+                        <label class="text-gray-300 font-medium">Your Margin Capital (₹)</label>
+                        <span class="font-mono text-emerald-400 font-bold" id="simCapitalVal">₹50,000</span>
+                    </div>
+                    <input type="range" id="simCapitalSlider" min="10000" max="500000" step="5000" value="50000" oninput="updateSimulatorCalc()" class="w-full accent-emerald-500 cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-gray-500 mt-0.5">
+                        <span>₹10k</span>
+                        <span>₹2.5L</span>
+                        <span>₹5L</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1 text-xs">
+                        <label class="text-gray-300 font-medium">MTF Leverage</label>
+                        <span class="font-mono text-blue-400 font-bold" id="simLeverageVal">4.0x (25% Margin)</span>
+                    </div>
+                    <input type="range" id="simLeverageSlider" min="3.0" max="5.0" step="0.5" value="4.0" oninput="updateSimulatorCalc()" class="w-full accent-blue-500 cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-gray-500 mt-0.5">
+                        <span>3.0x (33%)</span>
+                        <span>4.0x (25%)</span>
+                        <span>5.0x (20%)</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1 text-xs">
+                        <label class="text-gray-300 font-medium">Expected Holding Days</label>
+                        <span class="font-mono text-amber-400 font-bold" id="simDaysVal">15 Days</span>
+                    </div>
+                    <input type="range" id="simDaysSlider" min="1" max="60" step="1" value="15" oninput="updateSimulatorCalc()" class="w-full accent-amber-500 cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-gray-500 mt-0.5">
+                        <span>1 Day</span>
+                        <span>30 Days</span>
+                        <span>60 Days</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Simulator Output Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                <div class="bg-navy-950 p-3 rounded-lg border border-gray-800">
+                    <span class="text-[11px] text-gray-400">Total Position Size</span>
+                    <div class="text-base font-bold text-white mt-1" id="simPosSize">₹2,00,000</div>
+                    <div class="text-[10px] text-gray-400" id="simQty">68 shares</div>
+                </div>
+
+                <div class="bg-navy-950 p-3 rounded-lg border border-gray-800">
+                    <span class="text-[11px] text-gray-400">Daily MTF Interest</span>
+                    <div class="text-base font-bold text-amber-400 mt-1" id="simDailyInterest">₹65.75 / day</div>
+                    <div class="text-[10px] text-gray-400">MTF ~10% p.a.</div>
+                </div>
+
+                <div class="bg-navy-950 p-3 rounded-lg border border-gray-800">
+                    <span class="text-[11px] text-gray-400">Gross 10% Profit</span>
+                    <div class="text-base font-bold text-emerald-400 mt-1" id="simGrossProfit">₹20,000</div>
+                    <div class="text-[10px] text-emerald-400 font-semibold" id="simGrossRoi">+40% on Margin</div>
+                </div>
+
+                <div class="bg-navy-950 p-3 rounded-lg border border-emerald-600/40 bg-emerald-950/20">
+                    <span class="text-[11px] text-emerald-300 font-semibold">Net In-Pocket Profit</span>
+                    <div class="text-base font-black text-emerald-400 mt-1" id="simNetProfit">₹18,500</div>
+                    <div class="text-[10px] text-emerald-300" id="simNetRoi">+37.0% Net ROI</div>
+                </div>
+            </div>
+
+            <!-- Broker Auto-Liquidation Danger vs Safe Stop-Loss Shield -->
+            <div class="bg-gray-900 p-4 rounded-xl border border-gray-700/80 mb-6">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-rose-400 text-lg">⚠️</span>
+                        <h4 class="text-xs font-bold text-gray-200 uppercase tracking-wide">Broker Auto-Square Off Liquidation Safeguard</h4>
+                    </div>
+                    <span id="simSafetyBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">
+                        🛡️ 100% Protected
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                    <div class="bg-navy-950 p-3 rounded-lg border border-gray-800">
+                        <span class="text-gray-400">Suggested Entry</span>
+                        <div class="font-bold text-white text-sm mt-0.5" id="simEntryPrice">₹2,918.60</div>
+                        <span class="text-[10px] text-gray-500">Buy Zone Ref</span>
+                    </div>
+
+                    <div class="bg-navy-950 p-3 rounded-lg border border-amber-600/40">
+                        <span class="text-amber-400 font-semibold">Your Disciplined Stop Loss</span>
+                        <div class="font-bold text-amber-300 text-sm mt-0.5" id="simStopLoss">₹2,829.50</div>
+                        <span class="text-[10px] text-gray-400" id="simSlPct">-3.05% max risk</span>
+                    </div>
+
+                    <div class="bg-navy-950 p-3 rounded-lg border border-rose-600/40">
+                        <span class="text-rose-400 font-semibold">Broker RMS Liquidation Trigger</span>
+                        <div class="font-bold text-rose-400 text-sm mt-0.5" id="simLiqPrice">₹2,746.90</div>
+                        <span class="text-[10px] text-rose-300" id="simLiqPct">-5.88% broker margin call</span>
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-gray-400 mt-3 flex items-center space-x-1.5" id="simSafetyNote">
+                    <span>✅</span>
+                    <span>Your stop loss will trigger <strong class="text-white">before</strong> the broker can auto-square off your position.</span>
+                </p>
+            </div>
+
+            <!-- Holding Duration Decay Schedule Table -->
+            <h4 class="text-xs font-bold text-gray-300 uppercase tracking-wide mb-3">Time Decay Schedule (Net Profit Over Holding Days)</h4>
+            <div class="overflow-x-auto border border-gray-800 rounded-lg">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-gray-900 text-gray-400">
+                        <tr>
+                            <th class="p-2.5">Days Held</th>
+                            <th class="p-2.5">Accrued Interest</th>
+                            <th class="p-2.5">Taxes & Charges</th>
+                            <th class="p-2.5 text-emerald-400">Net Profit (₹)</th>
+                            <th class="p-2.5 text-emerald-400">Net ROI (%)</th>
+                            <th class="p-2.5">Interest Drag</th>
+                            <th class="p-2.5">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="simScheduleBody" class="divide-y divide-gray-800 text-gray-300">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeSimulatorModal()" class="px-5 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-semibold transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Token Update Modal -->
+    <div id="tokenModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="closeTokenModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white text-xl">✕</button>
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="text-2xl">🔑</div>
+                <div>
+                    <h3 class="font-bold text-base text-white">Update Dhan Access Token</h3>
+                    <p class="text-xs text-gray-400">Dhan API tokens expire every 24 hours. Paste your fresh token below.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Dhan Client ID</label>
+                    <input type="text" id="modalClientId" value="1103250505" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Access Token (JWT)</label>
+                    <textarea id="modalAccessToken" rows="4" placeholder="Paste eyJ0eXAiOiJKV1QiLCJhbGci..." class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-xs font-mono text-gray-200 focus:outline-none focus:border-brand-500"></textarea>
+                </div>
+                <div id="tokenUpdateMsg" class="text-xs hidden p-2 rounded"></div>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button onclick="closeTokenModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-medium">Cancel</button>
+                    <button onclick="submitTokenUpdate()" id="saveTokenBtn" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-semibold shadow">Save & Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frontend Script -->
+    <script>
+        let allStocks = [];
+        let currentWatchlist = 'my_watchlist';
+        let currentFilter = 'ALL';
+        let selectedStock = null;
+        let selectedForCompare = new Set();
+        let comparisonCapital = 50000;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStocks();
+            recalcAdvantage();
+        });
+
+        async function loadStocks(isRefresh = false) {
+            const refreshIcon = document.getElementById('refreshIcon');
+            if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+            try {
+                const res = await fetch(`/api/stocks?watchlist=${encodeURIComponent(currentWatchlist)}${isRefresh ? '&refresh=true' : ''}`);
+                const data = await res.json();
+                allStocks = data.stocks || [];
+
+                populateSectorDropdown(data.sectors || {});
+                updateOverviewStats(data.summary || {});
+                updateWatchlistUI(data.summary || {}, data.available_watchlists || []);
+                renderTable();
+            } catch (err) {
+                console.error('Failed to load stocks', err);
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+            }
+        }
+
+        function switchWatchlist(watchlistId) {
+            currentWatchlist = watchlistId;
+            const sel = document.getElementById('watchlistSelect');
+            if (sel && sel.value !== watchlistId) sel.value = watchlistId;
+            selectedForCompare.clear();
+            updateCompareDock();
+            loadStocks();
+        }
+
+        function updateWatchlistUI(summary, available) {
+            const badge = document.getElementById('universeBadge');
+            if (badge) {
+                badge.textContent = summary.watchlist_title ? `${summary.watchlist_title} (${summary.total || 0})` : `Watchlist (${summary.total || 0})`;
+            }
+
+            const sel = document.getElementById('watchlistSelect');
+            if (sel && available && available.length > 0) {
+                const curVal = sel.value || currentWatchlist;
+                sel.innerHTML = available.map(w => `<option value="${w.id}" ${w.id === curVal ? 'selected' : ''}>${w.title} (${w.count})</option>`).join('');
+                sel.value = curVal;
+            }
+        }
+
+        function recalcAdvantage() {
+            const capital = parseFloat(document.getElementById('calcCapitalInput').value) || 50000;
+            const targetPct = parseFloat(document.getElementById('calcTargetInput').value) || 10;
+            const ratePct = parseFloat(document.getElementById('calcRateInput').value) || 10;
+
+            const grossProfit = capital * (targetPct / 100.0);
+            const annualInterest = capital * (ratePct / 100.0);
+            const dailyCost = annualInterest / 365.0;
+
+            const int1m = Math.round(dailyCost * 30);
+            const net1m = Math.round(grossProfit - int1m);
+            const save1m = Math.round(annualInterest - int1m);
+            const eff1m = grossProfit > 0 ? ((net1m / grossProfit) * 100).toFixed(1) : 0;
+            const roi1m = ((net1m / capital) * 100).toFixed(1);
+
+            const int2m = Math.round(dailyCost * 60);
+            const net2m = Math.round(grossProfit - int2m);
+            const save2m = Math.round(annualInterest - int2m);
+            const eff2m = grossProfit > 0 ? ((net2m / grossProfit) * 100).toFixed(1) : 0;
+            const roi2m = ((net2m / capital) * 100).toFixed(1);
+
+            const net1y = Math.max(0, Math.round(grossProfit - annualInterest));
+
+            const elNet1m = document.getElementById('advNet1m');
+            if (elNet1m) {
+                elNet1m.textContent = `₹${net1m.toLocaleString('en-IN')}`;
+                document.getElementById('advRoi1m').textContent = `Net Profit (+${roi1m}% on capital)`;
+                document.getElementById('advInt1m').textContent = `₹${int1m.toLocaleString('en-IN')}`;
+                document.getElementById('advSaved1m').textContent = `₹${save1m.toLocaleString('en-IN')} saved`;
+                document.getElementById('advEff1m').textContent = `${eff1m}% of target`;
+
+                document.getElementById('advNet2m').textContent = `₹${net2m.toLocaleString('en-IN')}`;
+                document.getElementById('advRoi2m').textContent = `Net Profit (+${roi2m}% on capital)`;
+                document.getElementById('advInt2m').textContent = `₹${int2m.toLocaleString('en-IN')}`;
+                document.getElementById('advSaved2m').textContent = `₹${save2m.toLocaleString('en-IN')} saved`;
+                document.getElementById('advEff2m').textContent = `${eff2m}% of target`;
+
+                document.getElementById('advNet1y').textContent = `₹${net1y.toLocaleString('en-IN')}`;
+                document.getElementById('advInt1y').textContent = `₹${Math.round(annualInterest).toLocaleString('en-IN')} (${ratePct}% p.a.)`;
+            }
+        }
+
+        function populateSectorDropdown(sectors) {
+            const select = document.getElementById('sectorSelect');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">All Sectors</option>';
+            for (const [sector, count] of Object.entries(sectors)) {
+                select.innerHTML += `<option value="${sector}">${sector} (${count})</option>`;
+            }
+            if (currentVal) select.value = currentVal;
+        }
+
+        function updateOverviewStats(summary) {
+            const inBuy = summary.in_buy_zone || 0;
+            const nearBuy = summary.near_buy_zone || 0;
+            const total = summary.total || allStocks.length;
+
+            document.getElementById('statInBuyZone').textContent = inBuy;
+            document.getElementById('statNearBuyZone').textContent = nearBuy;
+            document.getElementById('countTotal').textContent = total;
+            document.getElementById('countBuyZone').textContent = inBuy;
+            document.getElementById('countNearZone').textContent = nearBuy;
+
+            document.getElementById('barInBuyZone').style.width = `${(inBuy / total) * 100}%`;
+            document.getElementById('barNearBuyZone').style.width = `${(nearBuy / total) * 100}%`;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(b => {
+                b.classList.remove('bg-brand-600', 'text-white');
+                b.classList.add('bg-gray-800', 'text-gray-300');
+            });
+            const activeBtn = document.getElementById(`tab${filter}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-gray-800', 'text-gray-300');
+                activeBtn.classList.add('bg-brand-600', 'text-white');
+            }
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('stocksTableBody');
+            const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+            const sectorFilter = document.getElementById('sectorSelect').value;
+            const sortBy = document.getElementById('sortSelect').value;
+
+            let filtered = allStocks.filter(s => {
+                const matchesSearch = s.symbol.toLowerCase().includes(search) || 
+                                      s.name.toLowerCase().includes(search) || 
+                                      s.sector.toLowerCase().includes(search);
+                if (!matchesSearch) return false;
+
+                if (sectorFilter && s.sector !== sectorFilter) return false;
+
+                if (currentFilter === 'BUY_ZONE') return s.status === 'BUY_ZONE_ACTIVE';
+                if (currentFilter === 'NEAR_ZONE') return s.status === 'NEAR_BUY_ZONE';
+                if (currentFilter === 'TARGET') return s.status === 'TARGET_ACHIEVED';
+                return true;
+            });
+
+            // Sorting
+            if (sortBy === 'rr') {
+                filtered.sort((a, b) => b.risk_reward_ratio - a.risk_reward_ratio);
+            } else if (sortBy === 'dist') {
+                filtered.sort((a, b) => a.dist_to_buy_pct - b.dist_to_buy_pct);
+            } else if (sortBy === 'roi') {
+                filtered.sort((a, b) => (b.net_roi_15d || 0) - (a.net_roi_15d || 0));
+            } else if (sortBy === 'buffer') {
+                filtered.sort((a, b) => (b.safety_buffer || 0) - (a.safety_buffer || 0));
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" class="text-center py-10 text-gray-400">No stocks match your filter criteria.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(s => {
+                let badgeClass = 'bg-gray-800 text-gray-400 border-gray-700';
+                let badgeIcon = '○';
+                let statusLabel = s.status;
+
+                if (s.status === 'BUY_ZONE_ACTIVE') {
+                    badgeClass = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+                    badgeIcon = '●';
+                    statusLabel = 'IN BUY ZONE';
+                } else if (s.status === 'NEAR_BUY_ZONE') {
+                    badgeClass = 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+                    badgeIcon = '▲';
+                    statusLabel = `NEAR (+${s.dist_to_buy_pct}%)`;
+                } else if (s.status === 'TARGET_ACHIEVED') {
+                    badgeClass = 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                    badgeIcon = '★';
+                    statusLabel = '10% TARGET HIT';
+                } else if (s.status === 'STOP_LOSS_HIT') {
+                    badgeClass = 'bg-rose-500/20 text-rose-400 border-rose-500/30';
+                    badgeIcon = '✖';
+                    statusLabel = 'STOP LOSS HIT';
+                } else {
+                    badgeClass = 'bg-gray-800/40 text-gray-400 border-gray-700';
+                    badgeIcon = '○';
+                    statusLabel = 'WAIT PULLBACK';
+                }
+
+                const isChecked = selectedForCompare.has(s.symbol);
+
+                return `
+                <tr class="hover:bg-gray-800/40 transition ${isChecked ? 'bg-brand-950/30' : ''}">
+                    <td class="py-3 px-3 text-center">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleStockSelect('${s.symbol}', this.checked)" class="accent-brand-600 rounded cursor-pointer">
+                    </td>
+                    <td class="py-3 px-3">
+                        <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer" 
+                           class="group block hover:text-brand-400 transition" title="Open ${s.symbol} live chart on TradingView in a new tab">
+                            <div class="font-bold text-white text-sm group-hover:text-brand-400 flex items-center space-x-1.5">
+                                <span>${s.symbol}</span>
+                                <span class="text-[11px] text-gray-500 group-hover:text-brand-400 transition">↗</span>
+                            </div>
+                            <div class="text-[11px] text-gray-400 group-hover:text-gray-200 truncate max-w-[160px] underline-offset-2 group-hover:underline">${s.name}</div>
+                        </a>
+                        <span class="text-[9px] text-indigo-400 uppercase font-medium">${s.sector}</span>
+                    </td>
+                    <td class="py-3 px-3 font-mono text-sm font-semibold text-gray-100">
+                        ₹${s.ltp.toFixed(2)}
+                    </td>
+                    <td class="py-3 px-3">
+                        <div class="font-mono text-emerald-400 text-xs font-semibold">₹${s.buy_zone_min} - ₹${s.buy_zone_max}</div>
+                        <div class="text-[10px] text-gray-400">Entry: ₹${s.rec_entry}</div>
+                    </td>
+                    <td class="py-3 px-3">
+                        <div class="font-mono text-blue-400 text-xs font-bold">₹${s.target_10_pct}</div>
+                        <div class="text-[10px] text-gray-400">+10% Sell Zone</div>
+                    </td>
+                    <td class="py-3 px-3">
+                        <div class="font-mono text-amber-300 text-xs">₹${s.stop_loss}</div>
+                        <div class="text-[10px] text-gray-400">-3.5% Max Risk</div>
+                    </td>
+                    <td class="py-3 px-3 font-mono font-bold text-xs text-gray-200">
+                        1 : ${s.risk_reward_ratio}
+                    </td>
+                    <td class="py-3 px-3 font-mono font-bold text-xs text-emerald-400">
+                        +${s.net_roi_15d || 0}%
+                    </td>
+                    <td class="py-3 px-3">
+                        <div class="font-mono text-rose-400 text-xs font-bold">₹${s.mtf_liquidation_price || '--'}</div>
+                        <div class="text-[10px] text-rose-300/80">RMS Trigger</div>
+                    </td>
+                    <td class="py-3 px-3">
+                        <span class="inline-flex items-center space-x-1 text-[11px] font-semibold px-2.5 py-1 rounded-full border ${badgeClass}">
+                            <span>${badgeIcon}</span>
+                            <span>${statusLabel}</span>
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center space-x-1 px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-medium border border-gray-700 transition mr-1.5"
+                           title="Open TradingView Chart in new tab">
+                            <span>📈 Chart ↗</span>
+                        </a>
+                        <button onclick="openMtfSimulator('${s.symbol}')" class="px-2.5 py-1.5 bg-brand-600/80 hover:bg-brand-600 text-white rounded-lg text-xs font-medium shadow transition">
+                            Simulate MTF
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // --- Multi-Stock Selection & Comparison Dock ---
+        function toggleStockSelect(symbol, isChecked) {
+            if (isChecked) {
+                if (selectedForCompare.size >= 4) {
+                    alert('You can compare up to 4 stocks simultaneously.');
+                    renderTable();
+                    return;
+                }
+                selectedForCompare.add(symbol);
+            } else {
+                selectedForCompare.delete(symbol);
+            }
+            updateCompareDock();
+            renderTable();
+        }
+
+        function toggleSelectAll(masterCheckbox) {
+            if (masterCheckbox.checked) {
+                const candidates = allStocks.slice(0, 4);
+                candidates.forEach(s => selectedForCompare.add(s.symbol));
+            } else {
+                selectedForCompare.clear();
+            }
+            updateCompareDock();
+            renderTable();
+        }
+
+        function clearSelectedStocks() {
+            selectedForCompare.clear();
+            updateCompareDock();
+            renderTable();
+        }
+
+        function updateCompareDock() {
+            const dock = document.getElementById('compareDock');
+            const countSpan = document.getElementById('selectedCount');
+            const listSpan = document.getElementById('selectedSymbolsList');
+
+            if (selectedForCompare.size > 0) {
+                dock.classList.remove('hidden');
+                countSpan.textContent = selectedForCompare.size;
+                listSpan.textContent = Array.from(selectedForCompare).join(', ');
+            } else {
+                dock.classList.add('hidden');
+            }
+        }
+
+        function triggerQuickComparison() {
+            // Pick top 3 actionable stocks
+            const buyStocks = allStocks.filter(s => s.status === 'BUY_ZONE_ACTIVE' || s.status === 'NEAR_BUY_ZONE');
+            const top3 = (buyStocks.length >= 3 ? buyStocks : allStocks).slice(0, 3);
+            selectedForCompare.clear();
+            top3.forEach(s => selectedForCompare.add(s.symbol));
+            updateCompareDock();
+            openComparisonModal();
+        }
+
+        async function setComparisonCapital(amt) {
+            comparisonCapital = amt;
+            document.getElementById('compCapitalDisplay').textContent = `₹${amt.toLocaleString('en-IN')}`;
+            openComparisonModal();
+        }
+
+        async function openComparisonModal() {
+            const symbols = Array.from(selectedForCompare);
+            if (symbols.length === 0) {
+                alert('Please select at least 1 stock to compare.');
+                return;
+            }
+
+            const modal = document.getElementById('comparisonModal');
+            const container = document.getElementById('comparisonContent');
+            container.innerHTML = `<div class="p-8 text-center text-gray-400"><div class="animate-spin inline-block h-6 w-6 border-b-2 border-brand-500 mb-2"></div><div>Running Comparative MTF Analysis...</div></div>`;
+            modal.classList.remove('hidden');
+
+            try {
+                const res = await fetch('/api/compare', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symbols: symbols, capital: comparisonCapital })
+                });
+                const data = await res.json();
+                renderComparisonTable(data.compared || []);
+            } catch (err) {
+                container.innerHTML = `<div class="p-8 text-center text-rose-400">Failed to load comparison data.</div>`;
+            }
+        }
+
+        function closeComparisonModal() {
+            document.getElementById('comparisonModal').classList.add('hidden');
+        }
+
+        function renderComparisonTable(compared) {
+            const container = document.getElementById('comparisonContent');
+            if (compared.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-gray-400">No data available.</div>`;
+                return;
+            }
+
+            // Determine best pick
+            let bestPick = compared[0];
+            for (const c of compared) {
+                if ((c.analysis.status === 'BUY_ZONE_ACTIVE' && bestPick.analysis.status !== 'BUY_ZONE_ACTIVE') ||
+                    (c.analysis.risk_reward_ratio > bestPick.analysis.risk_reward_ratio)) {
+                    bestPick = c;
+                }
+            }
+
+            const headersHtml = compared.map(c => {
+                const isBest = c.stock.symbol === bestPick.stock.symbol;
+                return `
+                <th class="p-4 border-l border-gray-800 text-center ${isBest ? 'bg-brand-950/40 border-t-2 border-t-emerald-500' : ''}">
+                    ${isBest ? '<div class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider mb-1">👑 Top MTF Pick</div>' : ''}
+                    <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(c.stock.symbol)}" target="_blank" rel="noopener noreferrer" 
+                       class="group block hover:text-brand-400 transition" title="Open ${c.stock.symbol} live chart on TradingView in a new tab">
+                        <div class="text-base font-bold text-white group-hover:text-brand-400 flex items-center justify-center space-x-1">
+                            <span>${c.stock.symbol}</span>
+                            <span class="text-xs text-gray-500 group-hover:text-brand-400 transition">↗</span>
+                        </div>
+                        <div class="text-[11px] text-gray-400 group-hover:text-gray-200 truncate max-w-[140px] mx-auto underline-offset-2 group-hover:underline">${c.stock.name}</div>
+                    </a>
+                    <span class="text-[9px] text-indigo-400 font-medium">${c.stock.sector}</span>
+                </th>
+                `;
+            }).join('');
+
+            const metrics = [
+                { label: 'Current Price (LTP)', fn: c => `<span class="font-bold text-white">₹${c.analysis.ltp.toFixed(2)}</span>` },
+                { label: 'Action Status', fn: c => `<span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.analysis.status === 'BUY_ZONE_ACTIVE' ? 'bg-emerald-500/20 text-emerald-400' : (c.analysis.status === 'NEAR_BUY_ZONE' ? 'bg-amber-500/20 text-amber-400' : 'bg-gray-800 text-gray-400')}">${c.analysis.status}</span>` },
+                { label: 'Suggested Buy Zone', fn: c => `<span class="font-bold text-emerald-400">₹${c.analysis.buy_zone_min} - ₹${c.analysis.buy_zone_max}</span>` },
+                { label: '10% Target (Sell Zone)', fn: c => `<span class="font-bold text-blue-400">₹${c.analysis.target_10_pct}</span>` },
+                { label: 'Safe Stop-Loss', fn: c => `<span class="text-amber-300">₹${c.analysis.stop_loss}</span>` },
+                { label: 'Risk-to-Reward Ratio', fn: c => `<span class="font-bold text-white">1 : ${c.analysis.risk_reward_ratio}</span>` },
+                { label: 'MTF Leverage', fn: c => `<span class="font-semibold text-blue-400">${c.mtf.leverage}x (${Math.round(c.stock.mtf_margin_pct * 100)}% Margin)</span>` },
+                { label: 'Total Position Value', fn: c => `₹${c.mtf.position_value.toLocaleString('en-IN')} (${c.mtf.quantity} shares)` },
+                { label: 'Broker Borrowed Debt', fn: c => `₹${c.mtf.borrowed_amount.toLocaleString('en-IN')}` },
+                { label: 'Daily MTF Interest', fn: c => `<span class="text-amber-400 font-semibold">₹${c.mtf.daily_interest_cost.toFixed(2)} / day</span>` },
+                { label: 'Gross 10% Profit', fn: c => `<span class="font-bold text-emerald-400">₹${c.mtf.gross_profit.toLocaleString('en-IN')} (+${c.mtf.gross_roi_pct}%)</span>` },
+                { label: '15-Day Net Take-Home', fn: c => `<span class="font-black text-emerald-400">₹${Math.round(c.sched_15.net_profit || 0).toLocaleString('en-IN')}</span>` },
+                { label: '15-Day Net ROI %', fn: c => `<span class="font-black text-emerald-300 text-sm">+${c.sched_15.net_roi_pct || 0}%</span>` },
+                { label: 'Broker RMS Liquidation', fn: c => `<span class="text-rose-400 font-bold">₹${c.mtf.liquidation_price} (-${c.mtf.liquidation_drop_pct}%)</span>` },
+                { label: 'Liquidation Safety Cushion', fn: c => `<span class="font-semibold ${c.mtf.safety_cushion_pct > 0 ? 'text-emerald-400' : 'text-rose-400'}">${c.mtf.safety_cushion_pct}% Above RMS</span>` }
+            ];
+
+            const rowsHtml = metrics.map(m => {
+                const cols = compared.map(c => `<td class="p-3 text-center border-l border-gray-800 font-mono text-xs">${m.fn(c)}</td>`).join('');
+                return `<tr class="hover:bg-gray-800/20"><td class="p-3 font-semibold text-gray-300 bg-gray-900/60">${m.label}</td>${cols}</tr>`;
+            }).join('');
+
+            container.innerHTML = `
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="bg-gray-900 text-gray-300">
+                        <th class="p-4 w-52">Comparison Metric</th>
+                        ${headersHtml}
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800 text-gray-200">
+                    ${rowsHtml}
+                </tbody>
+            </table>
+            `;
+        }
+
+        // --- Simulator Logic ---
+        async function openMtfSimulator(symbol) {
+            selectedStock = symbol;
+            const stock = allStocks.find(s => s.symbol === symbol) || allStocks[0];
+            if (!stock) return;
+
+            document.getElementById('simSymbol').textContent = stock.symbol;
+            document.getElementById('simSector').textContent = stock.sector;
+
+            const tvLink = document.getElementById('simTvLink');
+            if (tvLink) {
+                tvLink.href = `https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(stock.symbol)}`;
+            }
+
+            document.getElementById('simulatorModal').classList.remove('hidden');
+            updateSimulatorCalc();
+        }
+
+        function closeSimulatorModal() {
+            document.getElementById('simulatorModal').classList.add('hidden');
+        }
+
+        async function updateSimulatorCalc() {
+            const stock = allStocks.find(s => s.symbol === selectedStock) || allStocks[0];
+            if (!stock) return;
+
+            const capital = parseFloat(document.getElementById('simCapitalSlider').value);
+            const leverage = parseFloat(document.getElementById('simLeverageSlider').value);
+            const days = parseInt(document.getElementById('simDaysSlider').value);
+
+            document.getElementById('simCapitalVal').textContent = `₹${capital.toLocaleString('en-IN')}`;
+            document.getElementById('simLeverageVal').textContent = `${leverage}x (${Math.round((1/leverage)*100)}% Margin)`;
+            document.getElementById('simDaysVal').textContent = `${days} Day${days > 1 ? 's' : ''}`;
+
+            const marginPct = 1.0 / leverage;
+
+            try {
+                const res = await fetch('/api/mtf-calc', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        entry_price: stock.rec_entry,
+                        capital: capital,
+                        margin_pct: marginPct,
+                        stop_loss_price: stock.stop_loss,
+                        days: days
+                    })
+                });
+                const plan = await res.json();
+                renderSimulatorResults(plan, days);
+            } catch (err) {
+                console.error('Simulator error', err);
+            }
+        }
+
+        function renderSimulatorResults(plan, currentDays) {
+            document.getElementById('simPosSize').textContent = `₹${plan.position_value.toLocaleString('en-IN')}`;
+            document.getElementById('simQty').textContent = `${plan.quantity} shares`;
+
+            document.getElementById('simDailyInterest').textContent = `₹${plan.daily_interest_cost.toFixed(2)} / day`;
+            document.getElementById('simGrossProfit').textContent = `₹${plan.gross_profit.toLocaleString('en-IN')}`;
+            document.getElementById('simGrossRoi').textContent = `+${plan.gross_roi_pct}% on Margin`;
+
+            const interestForDays = plan.daily_interest_cost * currentDays;
+            const netProfit = plan.gross_profit - interestForDays - plan.statutory_charges;
+            const netRoi = ((netProfit / plan.invested_margin) * 100.0).toFixed(1);
+
+            document.getElementById('simNetProfit').textContent = `₹${Math.round(netProfit).toLocaleString('en-IN')}`;
+            document.getElementById('simNetRoi').textContent = `+${netRoi}% Net ROI (${currentDays}d)`;
+
+            document.getElementById('simEntryPrice').textContent = `₹${plan.entry_price.toFixed(2)}`;
+            document.getElementById('simStopLoss').textContent = `₹${plan.stop_loss_price.toFixed(2)}`;
+            document.getElementById('simSlPct').textContent = `-${plan.sl_drop_pct}% stop-loss`;
+
+            document.getElementById('simLiqPrice').textContent = `₹${plan.liquidation_price.toFixed(2)}`;
+            document.getElementById('simLiqPct').textContent = `-${plan.liquidation_drop_pct}% liquidation trigger`;
+
+            const isSafe = plan.is_sl_safe_from_liquidation;
+            const badge = document.getElementById('simSafetyBadge');
+            const note = document.getElementById('simSafetyNote');
+
+            if (isSafe) {
+                badge.className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30';
+                badge.innerHTML = `🛡️ Safe from Liquidation (${plan.safety_cushion_pct}% Cushion)`;
+                note.innerHTML = `<span>✅</span><span>Your Stop Loss (₹${plan.stop_loss_price}) is <strong>${plan.safety_cushion_pct}% higher</strong> than broker liquidation (₹${plan.liquidation_price}). You exit beforehand and never get force-sold.</span>`;
+            } else {
+                badge.className = 'text-xs px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30';
+                badge.innerHTML = `⚠️ High Liquidation Risk`;
+                note.innerHTML = `<span>⚠️</span><span>Warning: Raise your stop loss to ensure you exit before the broker's auto square-off level.</span>`;
+            }
+
+            const tbody = document.getElementById('simScheduleBody');
+            tbody.innerHTML = plan.schedule.map(row => {
+                const isSelected = row.days === currentDays;
+                return `
+                <tr class="${isSelected ? 'bg-brand-950/40 font-semibold' : 'hover:bg-gray-800/30'}">
+                    <td class="p-2.5 font-mono">${row.days} days</td>
+                    <td class="p-2.5 font-mono text-amber-400">₹${row.interest_cost.toLocaleString('en-IN')}</td>
+                    <td class="p-2.5 font-mono text-gray-400">₹${row.statutory_charges.toLocaleString('en-IN')}</td>
+                    <td class="p-2.5 font-mono text-emerald-400 font-bold">₹${row.net_profit.toLocaleString('en-IN')}</td>
+                    <td class="p-2.5 font-mono text-emerald-300 font-bold">+${row.net_roi_pct}%</td>
+                    <td class="p-2.5 font-mono text-gray-400">${row.interest_drag_pct}%</td>
+                    <td class="p-2.5">
+                        <span class="px-2 py-0.5 rounded text-[10px] ${row.days <= 21 ? 'bg-emerald-500/20 text-emerald-400' : (row.days <= 45 ? 'bg-amber-500/20 text-amber-400' : 'bg-rose-500/20 text-rose-400')}">
+                            ${row.recommendation}
+                        </span>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // --- Token Modal ---
+        function openTokenModal() {
+            document.getElementById('tokenModal').classList.remove('hidden');
+            document.getElementById('tokenUpdateMsg').classList.add('hidden');
+        }
+
+        function closeTokenModal() {
+            document.getElementById('tokenModal').classList.add('hidden');
+        }
+
+        async function submitTokenUpdate() {
+            const clientId = document.getElementById('modalClientId').value.trim();
+            const token = document.getElementById('modalAccessToken').value.trim();
+            const msgBox = document.getElementById('tokenUpdateMsg');
+            const btn = document.getElementById('saveTokenBtn');
+
+            if (!token) {
+                msgBox.className = 'text-xs p-2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 block';
+                msgBox.textContent = 'Please paste a valid JWT access token.';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                const res = await fetch('/api/update-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token, client_id: clientId })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    msgBox.className = 'text-xs p-2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 block';
+                    msgBox.textContent = 'Token updated successfully! Refreshing data...';
+                    document.getElementById('clientIdDisplay').textContent = clientId;
+                    setTimeout(() => {
+                        closeTokenModal();
+                        loadStocks(true);
+                    }, 1200);
+                } else {
+                    msgBox.className = 'text-xs p-2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 block';
+                    msgBox.textContent = result.message || 'Failed to update token.';
+                }
+            } catch (err) {
+                msgBox.className = 'text-xs p-2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 block';
+                msgBox.textContent = 'Error communicating with server.';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save & Apply';
+            }
+        }
+    </script>
+</body>
+</html>

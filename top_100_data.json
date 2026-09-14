@@ -1,0 +1,802 @@
+[
+  {
+    "symbol": "RELIANCE",
+    "name": "Reliance Industries Ltd",
+    "security_id": "2885",
+    "sector": "Energy & Oil",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1257.5
+  },
+  {
+    "symbol": "TCS",
+    "name": "Tata Consultancy Services Ltd",
+    "security_id": "11536",
+    "sector": "IT Services",
+    "mtf_margin_pct": 0.2,
+    "base_price": 4180.0
+  },
+  {
+    "symbol": "HDFCBANK",
+    "name": "HDFC Bank Ltd",
+    "security_id": "1333",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1640.0
+  },
+  {
+    "symbol": "ICICIBANK",
+    "name": "ICICI Bank Ltd",
+    "security_id": "4963",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1220.0
+  },
+  {
+    "symbol": "BHARTIARTL",
+    "name": "Bharti Airtel Ltd",
+    "security_id": "10604",
+    "sector": "Telecom",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1580.0
+  },
+  {
+    "symbol": "INFY",
+    "name": "Infosys Ltd",
+    "security_id": "1594",
+    "sector": "IT Services",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1890.0
+  },
+  {
+    "symbol": "ITC",
+    "name": "ITC Ltd",
+    "security_id": "1660",
+    "sector": "FMCG",
+    "mtf_margin_pct": 0.2,
+    "base_price": 505.0
+  },
+  {
+    "symbol": "SBIN",
+    "name": "State Bank of India",
+    "security_id": "3045",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.2,
+    "base_price": 795.0
+  },
+  {
+    "symbol": "LT",
+    "name": "Larsen & Toubro Ltd",
+    "security_id": "11483",
+    "sector": "Infrastructure",
+    "mtf_margin_pct": 0.2,
+    "base_price": 3650.0
+  },
+  {
+    "symbol": "HINDUNILVR",
+    "name": "Hindustan Unilever Ltd",
+    "security_id": "1394",
+    "sector": "FMCG",
+    "mtf_margin_pct": 0.2,
+    "base_price": 2680.0
+  },
+  {
+    "symbol": "AXISBANK",
+    "name": "Axis Bank Ltd",
+    "security_id": "5900",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1180.0
+  },
+  {
+    "symbol": "KOTAKBANK",
+    "name": "Kotak Mahindra Bank Ltd",
+    "security_id": "1922",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1780.0
+  },
+  {
+    "symbol": "BAJFINANCE",
+    "name": "Bajaj Finance Ltd",
+    "security_id": "317",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.22,
+    "base_price": 7150.0
+  },
+  {
+    "symbol": "MARUTI",
+    "name": "Maruti Suzuki India Ltd",
+    "security_id": "10999",
+    "sector": "Automobile",
+    "mtf_margin_pct": 0.2,
+    "base_price": 12350.0
+  },
+  {
+    "symbol": "M&M",
+    "name": "Mahindra & Mahindra Ltd",
+    "security_id": "2031",
+    "sector": "Automobile",
+    "mtf_margin_pct": 0.2,
+    "base_price": 2740.0
+  },
+  {
+    "symbol": "SUNPHARMA",
+    "name": "Sun Pharma Industries",
+    "security_id": "3351",
+    "sector": "Pharma",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1820.0
+  },
+  {
+    "symbol": "TATAMOTORS",
+    "name": "Tata Motors Ltd",
+    "security_id": "3456",
+    "sector": "Automobile",
+    "mtf_margin_pct": 0.25,
+    "base_price": 970.0
+  },
+  {
+    "symbol": "NTPC",
+    "name": "NTPC Ltd",
+    "security_id": "11630",
+    "sector": "Power",
+    "mtf_margin_pct": 0.2,
+    "base_price": 415.0
+  },
+  {
+    "symbol": "ULTRACEMCO",
+    "name": "UltraTech Cement Ltd",
+    "security_id": "11532",
+    "sector": "Cement",
+    "mtf_margin_pct": 0.2,
+    "base_price": 11200.0
+  },
+  {
+    "symbol": "TITAN",
+    "name": "Titan Company Ltd",
+    "security_id": "3506",
+    "sector": "Consumer Goods",
+    "mtf_margin_pct": 0.2,
+    "base_price": 3680.0
+  },
+  {
+    "symbol": "POWERGRID",
+    "name": "Power Grid Corp of India",
+    "security_id": "14977",
+    "sector": "Power",
+    "mtf_margin_pct": 0.2,
+    "base_price": 335.0
+  },
+  {
+    "symbol": "ONGC",
+    "name": "Oil & Natural Gas Corp",
+    "security_id": "2475",
+    "sector": "Energy & Oil",
+    "mtf_margin_pct": 0.2,
+    "base_price": 295.0
+  },
+  {
+    "symbol": "TATASTEEL",
+    "name": "Tata Steel Ltd",
+    "security_id": "3499",
+    "sector": "Metals & Mining",
+    "mtf_margin_pct": 0.22,
+    "base_price": 155.0
+  },
+  {
+    "symbol": "ADANIENT",
+    "name": "Adani Enterprises Ltd",
+    "security_id": "25",
+    "sector": "Diversified",
+    "mtf_margin_pct": 0.25,
+    "base_price": 3020.0
+  },
+  {
+    "symbol": "ADANIPORTS",
+    "name": "Adani Ports & SEZ Ltd",
+    "security_id": "15083",
+    "sector": "Infrastructure",
+    "mtf_margin_pct": 0.22,
+    "base_price": 1420.0
+  },
+  {
+    "symbol": "COALINDIA",
+    "name": "Coal India Ltd",
+    "security_id": "20374",
+    "sector": "Mining",
+    "mtf_margin_pct": 0.2,
+    "base_price": 490.0
+  },
+  {
+    "symbol": "BAJAJFINSV",
+    "name": "Bajaj Finserv Ltd",
+    "security_id": "16675",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.22,
+    "base_price": 1810.0
+  },
+  {
+    "symbol": "HCLTECH",
+    "name": "HCL Technologies Ltd",
+    "security_id": "7229",
+    "sector": "IT Services",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1760.0
+  },
+  {
+    "symbol": "JSWSTEEL",
+    "name": "JSW Steel Ltd",
+    "security_id": "11723",
+    "sector": "Metals & Mining",
+    "mtf_margin_pct": 0.22,
+    "base_price": 960.0
+  },
+  {
+    "symbol": "GRASIM",
+    "name": "Grasim Industries Ltd",
+    "security_id": "1232",
+    "sector": "Cement & Chemicals",
+    "mtf_margin_pct": 0.22,
+    "base_price": 2640.0
+  },
+  {
+    "symbol": "ASIANPAINT",
+    "name": "Asian Paints Ltd",
+    "security_id": "236",
+    "sector": "Consumer Goods",
+    "mtf_margin_pct": 0.2,
+    "base_price": 3220.0
+  },
+  {
+    "symbol": "WIPRO",
+    "name": "Wipro Ltd",
+    "security_id": "3787",
+    "sector": "IT Services",
+    "mtf_margin_pct": 0.2,
+    "base_price": 535.0
+  },
+  {
+    "symbol": "TECHM",
+    "name": "Tech Mahindra Ltd",
+    "security_id": "13538",
+    "sector": "IT Services",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1590.0
+  },
+  {
+    "symbol": "NESTLEIND",
+    "name": "Nestle India Ltd",
+    "security_id": "17963",
+    "sector": "FMCG",
+    "mtf_margin_pct": 0.2,
+    "base_price": 2520.0
+  },
+  {
+    "symbol": "BPCL",
+    "name": "Bharat Petroleum Corp",
+    "security_id": "526",
+    "sector": "Energy & Oil",
+    "mtf_margin_pct": 0.2,
+    "base_price": 345.0
+  },
+  {
+    "symbol": "CIPLA",
+    "name": "Cipla Ltd",
+    "security_id": "694",
+    "sector": "Pharma",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1580.0
+  },
+  {
+    "symbol": "SBILIFE",
+    "name": "SBI Life Insurance",
+    "security_id": "21808",
+    "sector": "Insurance",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1790.0
+  },
+  {
+    "symbol": "HEROMOTOCO",
+    "name": "Hero MotoCorp Ltd",
+    "security_id": "1348",
+    "sector": "Automobile",
+    "mtf_margin_pct": 0.2,
+    "base_price": 5450.0
+  },
+  {
+    "symbol": "TRENT",
+    "name": "Trent Ltd",
+    "security_id": "1964",
+    "sector": "Retail",
+    "mtf_margin_pct": 0.25,
+    "base_price": 7120.0
+  },
+  {
+    "symbol": "HDFCLIFE",
+    "name": "HDFC Life Insurance",
+    "security_id": "467",
+    "sector": "Insurance",
+    "mtf_margin_pct": 0.2,
+    "base_price": 710.0
+  },
+  {
+    "symbol": "EICHERMOT",
+    "name": "Eicher Motors Ltd",
+    "security_id": "910",
+    "sector": "Automobile",
+    "mtf_margin_pct": 0.2,
+    "base_price": 4890.0
+  },
+  {
+    "symbol": "BEL",
+    "name": "Bharat Electronics Ltd",
+    "security_id": "383",
+    "sector": "Defence",
+    "mtf_margin_pct": 0.22,
+    "base_price": 290.0
+  },
+  {
+    "symbol": "SHREECEM",
+    "name": "Shree Cement Ltd",
+    "security_id": "3103",
+    "sector": "Cement",
+    "mtf_margin_pct": 0.2,
+    "base_price": 24500.0
+  },
+  {
+    "symbol": "TATACONSUM",
+    "name": "Tata Consumer Products",
+    "security_id": "3432",
+    "sector": "FMCG",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1180.0
+  },
+  {
+    "symbol": "APOLLOHOSP",
+    "name": "Apollo Hospitals Enterprises",
+    "security_id": "157",
+    "sector": "Healthcare",
+    "mtf_margin_pct": 0.22,
+    "base_price": 6850.0
+  },
+  {
+    "symbol": "INDUSINDBK",
+    "name": "IndusInd Bank Ltd",
+    "security_id": "5258",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.25,
+    "base_price": 1420.0
+  },
+  {
+    "symbol": "DRREDDY",
+    "name": "Dr. Reddy Laboratories",
+    "security_id": "881",
+    "sector": "Pharma",
+    "mtf_margin_pct": 0.2,
+    "base_price": 6550.0
+  },
+  {
+    "symbol": "DIVISLAB",
+    "name": "Divi Laboratories Ltd",
+    "security_id": "10940",
+    "sector": "Pharma",
+    "mtf_margin_pct": 0.2,
+    "base_price": 5250.0
+  },
+  {
+    "symbol": "HINDALCO",
+    "name": "Hindalco Industries Ltd",
+    "security_id": "1363",
+    "sector": "Metals & Mining",
+    "mtf_margin_pct": 0.22,
+    "base_price": 680.0
+  },
+  {
+    "symbol": "BRITANNIA",
+    "name": "Britannia Industries Ltd",
+    "security_id": "547",
+    "sector": "FMCG",
+    "mtf_margin_pct": 0.2,
+    "base_price": 5850.0
+  },
+  {
+    "symbol": "HAL",
+    "name": "Hindustan Aeronautics Ltd",
+    "security_id": "2303",
+    "sector": "Defence & Aerospace",
+    "mtf_margin_pct": 0.22,
+    "base_price": 4650.0
+  },
+  {
+    "symbol": "VBL",
+    "name": "Varun Beverages Ltd",
+    "security_id": "18921",
+    "sector": "Beverages",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1520.0
+  },
+  {
+    "symbol": "DLF",
+    "name": "DLF Ltd",
+    "security_id": "14732",
+    "sector": "Real Estate",
+    "mtf_margin_pct": 0.22,
+    "base_price": 850.0
+  },
+  {
+    "symbol": "CHOLAFIN",
+    "name": "Cholamandalam Investment",
+    "security_id": "19257",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.22,
+    "base_price": 1480.0
+  },
+  {
+    "symbol": "SIEMENS",
+    "name": "Siemens Ltd",
+    "security_id": "3150",
+    "sector": "Capital Goods",
+    "mtf_margin_pct": 0.2,
+    "base_price": 7250.0
+  },
+  {
+    "symbol": "ABB",
+    "name": "ABB India Ltd",
+    "security_id": "13",
+    "sector": "Capital Goods",
+    "mtf_margin_pct": 0.2,
+    "base_price": 8150.0
+  },
+  {
+    "symbol": "TVSMOTOR",
+    "name": "TVS Motor Company",
+    "security_id": "8479",
+    "sector": "Automobile",
+    "mtf_margin_pct": 0.2,
+    "base_price": 2480.0
+  },
+  {
+    "symbol": "VEDL",
+    "name": "Vedanta Ltd",
+    "security_id": "3063",
+    "sector": "Metals & Mining",
+    "mtf_margin_pct": 0.25,
+    "base_price": 465.0
+  },
+  {
+    "symbol": "PFC",
+    "name": "Power Finance Corporation",
+    "security_id": "14299",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.22,
+    "base_price": 490.0
+  },
+  {
+    "symbol": "RECLTD",
+    "name": "REC Ltd",
+    "security_id": "15355",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.22,
+    "base_price": 530.0
+  },
+  {
+    "symbol": "GAIL",
+    "name": "GAIL India Ltd",
+    "security_id": "4717",
+    "sector": "Energy & Gas",
+    "mtf_margin_pct": 0.2,
+    "base_price": 225.0
+  },
+  {
+    "symbol": "AMBUJACEM",
+    "name": "Ambuja Cements Ltd",
+    "security_id": "1270",
+    "sector": "Cement",
+    "mtf_margin_pct": 0.22,
+    "base_price": 630.0
+  },
+  {
+    "symbol": "BANKBARODA",
+    "name": "Bank of Baroda",
+    "security_id": "4668",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.22,
+    "base_price": 245.0
+  },
+  {
+    "symbol": "PNB",
+    "name": "Punjab National Bank",
+    "security_id": "10666",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.25,
+    "base_price": 110.0
+  },
+  {
+    "symbol": "CANBK",
+    "name": "Canara Bank",
+    "security_id": "10794",
+    "sector": "Banking",
+    "mtf_margin_pct": 0.22,
+    "base_price": 105.0
+  },
+  {
+    "symbol": "TATAPOWER",
+    "name": "Tata Power Company Ltd",
+    "security_id": "3426",
+    "sector": "Power",
+    "mtf_margin_pct": 0.22,
+    "base_price": 425.0
+  },
+  {
+    "symbol": "MOTHERSON",
+    "name": "Samvardhana Motherson",
+    "security_id": "25510",
+    "sector": "Automobile Ancillary",
+    "mtf_margin_pct": 0.22,
+    "base_price": 175.0
+  },
+  {
+    "symbol": "CGPOWER",
+    "name": "CG Power & Industrial Solutions",
+    "security_id": "760",
+    "sector": "Capital Goods",
+    "mtf_margin_pct": 0.25,
+    "base_price": 720.0
+  },
+  {
+    "symbol": "BOSCHLTD",
+    "name": "Bosch Ltd",
+    "security_id": "2181",
+    "sector": "Automobile Ancillary",
+    "mtf_margin_pct": 0.2,
+    "base_price": 32500.0
+  },
+  {
+    "symbol": "PIDILITIND",
+    "name": "Pidilite Industries Ltd",
+    "security_id": "2664",
+    "sector": "Chemicals",
+    "mtf_margin_pct": 0.2,
+    "base_price": 3100.0
+  },
+  {
+    "symbol": "HAVELLS",
+    "name": "Havells India Ltd",
+    "security_id": "9819",
+    "sector": "Consumer Electricals",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1850.0
+  },
+  {
+    "symbol": "POLYCAB",
+    "name": "Polycab India Ltd",
+    "security_id": "9590",
+    "sector": "Consumer Electricals",
+    "mtf_margin_pct": 0.22,
+    "base_price": 6650.0
+  },
+  {
+    "symbol": "CUMMINSIND",
+    "name": "Cummins India Ltd",
+    "security_id": "1901",
+    "sector": "Engineering",
+    "mtf_margin_pct": 0.22,
+    "base_price": 3850.0
+  },
+  {
+    "symbol": "TORNTPHARM",
+    "name": "Torrent Pharmaceuticals",
+    "security_id": "3518",
+    "sector": "Pharma",
+    "mtf_margin_pct": 0.2,
+    "base_price": 3350.0
+  },
+  {
+    "symbol": "MAXHEALTH",
+    "name": "Max Healthcare Institute",
+    "security_id": "22377",
+    "sector": "Healthcare",
+    "mtf_margin_pct": 0.22,
+    "base_price": 980.0
+  },
+  {
+    "symbol": "PERSISTENT",
+    "name": "Persistent Systems Ltd",
+    "security_id": "18365",
+    "sector": "IT Services",
+    "mtf_margin_pct": 0.22,
+    "base_price": 5200.0
+  },
+  {
+    "symbol": "BDL",
+    "name": "Bharat Dynamics Ltd",
+    "security_id": "2144",
+    "sector": "Defence",
+    "mtf_margin_pct": 0.25,
+    "base_price": 1280.0
+  },
+  {
+    "symbol": "LODHA",
+    "name": "Macrotech Developers (Lodha)",
+    "security_id": "3220",
+    "sector": "Real Estate",
+    "mtf_margin_pct": 0.22,
+    "base_price": 1320.0
+  },
+  {
+    "symbol": "GODREJCP",
+    "name": "Godrej Consumer Products",
+    "security_id": "10099",
+    "sector": "FMCG",
+    "mtf_margin_pct": 0.2,
+    "base_price": 1420.0
+  },
+  {
+    "symbol": "DABUR",
+    "name": "Dabur India Ltd",
+    "security_id": "772",
+    "sector": "FMCG",
+    "mtf_margin_pct": 0.2,
+    "base_price": 560.0
+  },
+  {
+    "symbol": "MARICO",
+    "name": "Marico Ltd",
+    "security_id": "4067",
+    "sector": "FMCG",
+    "mtf_margin_pct": 0.2,
+    "base_price": 640.0
+  },
+  {
+    "symbol": "SRF",
+    "name": "SRF Ltd",
+    "security_id": "3273",
+    "sector": "Chemicals",
+    "mtf_margin_pct": 0.22,
+    "base_price": 2350.0
+  },
+  {
+    "symbol": "MUTHOOTFIN",
+    "name": "Muthoot Finance Ltd",
+    "security_id": "23650",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.22,
+    "base_price": 1950.0
+  },
+  {
+    "symbol": "JINDALSTEL",
+    "name": "Jindal Steel & Power",
+    "security_id": "6733",
+    "sector": "Metals & Mining",
+    "mtf_margin_pct": 0.22,
+    "base_price": 980.0
+  },
+  {
+    "symbol": "NHPC",
+    "name": "NHPC Ltd",
+    "security_id": "17400",
+    "sector": "Power",
+    "mtf_margin_pct": 0.22,
+    "base_price": 95.0
+  },
+  {
+    "symbol": "IRFC",
+    "name": "Indian Railway Finance Corp",
+    "security_id": "2029",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.25,
+    "base_price": 160.0
+  },
+  {
+    "symbol": "MAZDOCK",
+    "name": "Mazagon Dock Shipbuilders",
+    "security_id": "509",
+    "sector": "Defence & Marine",
+    "mtf_margin_pct": 0.25,
+    "base_price": 4350.0
+  },
+  {
+    "symbol": "BHEL",
+    "name": "Bharat Heavy Electricals",
+    "security_id": "438",
+    "sector": "Capital Goods",
+    "mtf_margin_pct": 0.25,
+    "base_price": 270.0
+  },
+  {
+    "symbol": "POLICYBZR",
+    "name": "PB Fintech (Policybazaar)",
+    "security_id": "6656",
+    "sector": "Fintech",
+    "mtf_margin_pct": 0.25,
+    "base_price": 1680.0
+  },
+  {
+    "symbol": "NAUKRI",
+    "name": "Info Edge (Naukri)",
+    "security_id": "13751",
+    "sector": "Internet & Software",
+    "mtf_margin_pct": 0.22,
+    "base_price": 7350.0
+  },
+  {
+    "symbol": "ICICIPRULI",
+    "name": "ICICI Prudential Life",
+    "security_id": "18652",
+    "sector": "Insurance",
+    "mtf_margin_pct": 0.2,
+    "base_price": 740.0
+  },
+  {
+    "symbol": "ICICIGI",
+    "name": "ICICI Lombard General Ins",
+    "security_id": "21770",
+    "sector": "Insurance",
+    "mtf_margin_pct": 0.2,
+    "base_price": 2150.0
+  },
+  {
+    "symbol": "SBICARD",
+    "name": "SBI Cards & Payment",
+    "security_id": "17971",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.2,
+    "base_price": 720.0
+  },
+  {
+    "symbol": "BERGEPAINT",
+    "name": "Berger Paints India Ltd",
+    "security_id": "404",
+    "sector": "Consumer Goods",
+    "mtf_margin_pct": 0.2,
+    "base_price": 540.0
+  },
+  {
+    "symbol": "BAJAJ-AUTO",
+    "name": "Bajaj Auto Ltd",
+    "security_id": "16669",
+    "sector": "Automobile",
+    "mtf_margin_pct": 0.2,
+    "base_price": 9800.0
+  },
+  {
+    "symbol": "PIIND",
+    "name": "PI Industries Ltd",
+    "security_id": "24184",
+    "sector": "Chemicals",
+    "mtf_margin_pct": 0.2,
+    "base_price": 4450.0
+  },
+  {
+    "symbol": "JSWENERGY",
+    "name": "JSW Energy Ltd",
+    "security_id": "17869",
+    "sector": "Power",
+    "mtf_margin_pct": 0.25,
+    "base_price": 680.0
+  },
+  {
+    "symbol": "JIOFIN",
+    "name": "Jio Financial Services",
+    "security_id": "18143",
+    "sector": "Financial Services",
+    "mtf_margin_pct": 0.22,
+    "base_price": 330.0
+  },
+  {
+    "symbol": "ZOMATO",
+    "name": "Eternal Ltd (Zomato)",
+    "security_id": "5097",
+    "sector": "Internet & Consumer",
+    "mtf_margin_pct": 0.25,
+    "base_price": 275.0
+  },
+  {
+    "symbol": "IRCTC",
+    "name": "IRCTC Ltd",
+    "security_id": "13611",
+    "sector": "Railways & Tourism",
+    "mtf_margin_pct": 0.22,
+    "base_price": 890.0
+  }
+]
