@@ -282,6 +282,17 @@
             background-color: #374151;
             color: #ffffff;
         }
+        #refreshIcon {
+            display: inline-block !important;
+            transform-origin: center center;
+        }
+        #refreshIcon.animate-spin {
+            animation: spinRefresh 0.75s linear infinite !important;
+        }
+        @keyframes spinRefresh {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
         /* Light Mode for View Toggle & Refresh */
         html:not(.dark) #viewModeToggleGroup, html.light #viewModeToggleGroup {
@@ -887,9 +898,13 @@
                             🖥️ Table
                         </button>
                     </div>
-                    <button onclick="loadStocks(true)" id="refreshBtn" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border shadow-sm transition" title="Refresh Live Prices">
-                        <span id="refreshIcon">🔄</span>
-                        <span class="text-[11px] hidden sm:inline">Refresh</span>
+                    <button onclick="loadStocks(true)" id="refreshBtn" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border shadow-sm transition cursor-pointer" title="Refresh Live Prices">
+                        <svg id="refreshIcon" class="w-3.5 h-3.5 inline-block text-current transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        <span id="refreshText" class="text-[11px] hidden sm:inline">Refresh</span>
                     </button>
                 </div>
             </div>
@@ -1476,8 +1491,15 @@
         });
 
         async function loadStocks(isRefresh = false) {
+            const refreshBtn = document.getElementById('refreshBtn');
             const refreshIcon = document.getElementById('refreshIcon');
+            const refreshText = document.getElementById('refreshText');
+
             if (refreshIcon) refreshIcon.classList.add('animate-spin');
+            if (refreshBtn) refreshBtn.classList.add('opacity-75', 'pointer-events-none');
+            if (refreshText && isRefresh) refreshText.textContent = 'Syncing...';
+
+            const startTime = Date.now();
 
             try {
                 const res = await fetch(`/api/stocks?watchlist=${encodeURIComponent(currentWatchlist)}${isRefresh ? '&refresh=true' : ''}`);
@@ -1488,10 +1510,28 @@
                 updateOverviewStats(data.summary || {});
                 updateWatchlistUI(data.summary || {}, data.available_watchlists || []);
                 renderTable();
+
+                if (isRefresh) {
+                    const elapsed = Date.now() - startTime;
+                    if (elapsed < 700) {
+                        await new Promise(r => setTimeout(r, 700 - elapsed));
+                    }
+                }
             } catch (err) {
                 console.error('Failed to load stocks', err);
             } finally {
                 if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+                if (refreshBtn) refreshBtn.classList.remove('opacity-75', 'pointer-events-none');
+                if (refreshText) {
+                    if (isRefresh) {
+                        refreshText.textContent = 'Updated ✓';
+                        setTimeout(() => {
+                            if (refreshText) refreshText.textContent = 'Refresh';
+                        }, 1800);
+                    } else {
+                        refreshText.textContent = 'Refresh';
+                    }
+                }
             }
         }
 
