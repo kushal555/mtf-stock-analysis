@@ -397,6 +397,18 @@ class TestSMCEngineAndAI(unittest.TestCase):
         self.assertIn("₹50,000", adv["user_summary"])
         self.assertIn("₹5,000", adv["user_summary"])
 
+    def test_backtest_engine_execution(self):
+        from backtest_engine import BacktestEngine
+        # Run backtest on a known stock
+        res = BacktestEngine.run_backtest("NETWEB", days=120, strategy="smc_confluence")
+        self.assertNotIn("error", res)
+        self.assertEqual(res["symbol"], "NETWEB")
+        self.assertIn("total_trades", res)
+        self.assertIn("win_rate_pct", res)
+        self.assertIn("total_net_pnl", res)
+        self.assertIn("total_mtf_interest", res)
+        self.assertGreaterEqual(res["total_trades"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
