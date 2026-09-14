@@ -73,6 +73,7 @@
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        .filter-tab { white-space: nowrap !important; flex-shrink: 0 !important; }
 
         /* Prevent iOS font zoom on input focus */
         input, select, textarea { font-size: 14px; }
@@ -637,201 +638,220 @@
             </div>
         </div>
 
-        <!-- 1-2 Month MTF Interest & Profit Advantage Card -->
-        <div class="bg-gradient-to-br from-navy-900 via-navy-900 to-indigo-950/40 border border-brand-500/30 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-gray-800/80 pb-4 mb-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-brand-500 to-emerald-500 flex items-center justify-center text-xl shadow-lg shadow-amber-500/20">
+        <!-- 1-2 Month MTF Interest & Profit Advantage Calculator (Collapsible) -->
+        <div class="bg-gradient-to-br from-navy-900 via-navy-900 to-indigo-950/40 border border-brand-500/30 rounded-2xl shadow-xl overflow-hidden transition-all duration-300">
+            <!-- Header (Clickable Accordion) -->
+            <div class="p-3.5 sm:p-4 flex items-center justify-between gap-3 cursor-pointer select-none hover:bg-white/[0.02] transition" onclick="toggleAdvantageCalculator()">
+                <div class="flex items-center space-x-3 min-w-0">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-brand-500 to-emerald-500 flex items-center justify-center text-lg shadow-lg shadow-amber-500/20 flex-shrink-0">
                         💰
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <div class="flex items-center space-x-2">
-                            <h3 class="text-sm sm:text-base font-bold text-white">1–2 Month MTF Profit & Interest Advantage Calculator</h3>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">10% p.a. Model</span>
+                            <h3 class="text-xs sm:text-sm font-bold text-white truncate">1–2 Month MTF Profit & Interest Advantage</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">10% p.a. Model</span>
                         </div>
-                        <p class="text-xs text-gray-400 mt-0.5">
-                            Target <strong class="text-emerald-400">10% profit</strong> on MTF capital. Exiting in 1 to 2 months minimizes interest decay and saves up to <strong>91.7% of annual charges</strong>.
+                        <p class="text-[11px] text-gray-400 mt-0.5 hidden sm:block truncate">
+                            Target 10% gain. Exiting in 1–2 months saves up to <strong class="text-emerald-400 font-semibold">91.7% of annual charges</strong>.
                         </p>
                     </div>
                 </div>
-
-                <!-- Interactive Parameters -->
-                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                    <div class="flex items-center space-x-1.5 bg-navy-950 px-3 py-1.5 rounded-lg border border-gray-800">
-                        <span class="text-xs text-gray-400">Capital:</span>
-                        <span class="text-xs text-gray-400">₹</span>
-                        <input type="number" id="calcCapitalInput" value="50000" step="5000" min="5000" oninput="recalcAdvantage()" 
-                               class="w-20 bg-transparent font-mono text-xs font-bold text-emerald-400 focus:outline-none">
-                    </div>
-                    <div class="flex items-center space-x-1.5 bg-navy-950 px-3 py-1.5 rounded-lg border border-gray-800">
-                        <span class="text-xs text-gray-400">Target:</span>
-                        <input type="number" id="calcTargetInput" value="10" step="1" min="1" max="50" oninput="recalcAdvantage()" 
-                               class="w-10 bg-transparent font-mono text-xs font-bold text-blue-400 focus:outline-none">
-                        <span class="text-xs text-gray-400">%</span>
-                    </div>
-                    <div class="flex items-center space-x-1.5 bg-navy-950 px-3 py-1.5 rounded-lg border border-gray-800">
-                        <span class="text-xs text-gray-400">MTF Rate:</span>
-                        <input type="number" id="calcRateInput" value="10" step="0.5" min="5" max="25" oninput="recalcAdvantage()" 
-                               class="w-10 bg-transparent font-mono text-xs font-bold text-amber-400 focus:outline-none">
-                        <span class="text-xs text-gray-400">% p.a.</span>
-                    </div>
+                <div class="flex items-center space-x-2 flex-shrink-0">
+                    <span id="calcToggleBtn" class="text-xs font-semibold text-brand-400 hover:text-brand-300 flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-brand-500/10 border border-brand-500/20 transition">
+                        <span id="calcToggleText">Expand Calculator</span>
+                        <span id="calcToggleIcon">▼</span>
+                    </span>
                 </div>
             </div>
 
-            <!-- Comparison Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- 1 Month Exit Card -->
-                <div class="bg-navy-950/80 rounded-xl p-4 border border-emerald-500/40 relative group hover:border-emerald-500 transition">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">⚡ 1 Month Exit (30 Days)</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">Optimal Exit</span>
+            <!-- Collapsible Body (Hidden by default to keep screener front-and-center) -->
+            <div id="advantageCalcBody" class="hidden px-4 pb-5 sm:px-5 border-t border-gray-800/80 pt-4 space-y-4">
+                <!-- Interactive Parameters Bar -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-navy-950/60 p-3 rounded-xl border border-gray-800">
+                    <div class="text-xs text-gray-300">
+                        Simulate holding duration profit vs broker interest decay:
                     </div>
-                    <div class="text-2xl font-black text-emerald-400 font-mono" id="advNet1m">₹4,583</div>
-                    <div class="text-[11px] text-emerald-300/90 font-medium mt-0.5" id="advRoi1m">Net Profit (+9.2% on capital)</div>
-                    
-                    <div class="mt-3 pt-3 border-t border-gray-800/80 space-y-1.5 text-xs">
-                        <div class="flex justify-between text-gray-400">
-                            <span>Interest Paid (30d):</span>
-                            <span class="font-mono text-amber-400" id="advInt1m">₹417</span>
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <div class="flex items-center space-x-1.5 bg-navy-950 px-2.5 py-1 rounded-lg border border-gray-700">
+                            <span class="text-xs text-gray-400">Capital: ₹</span>
+                            <input type="number" id="calcCapitalInput" value="50000" step="5000" min="5000" oninput="recalcAdvantage()" 
+                                   class="w-20 bg-transparent font-mono text-xs font-bold text-emerald-400 focus:outline-none">
                         </div>
-                        <div class="flex justify-between text-gray-400">
-                            <span>Interest Saved vs Year:</span>
-                            <span class="font-mono text-emerald-400 font-bold" id="advSaved1m">₹4,583 saved</span>
+                        <div class="flex items-center space-x-1.5 bg-navy-950 px-2.5 py-1 rounded-lg border border-gray-700">
+                            <span class="text-xs text-gray-400">Target:</span>
+                            <input type="number" id="calcTargetInput" value="10" step="1" min="1" max="50" oninput="recalcAdvantage()" 
+                                   class="w-10 bg-transparent font-mono text-xs font-bold text-blue-400 focus:outline-none">
+                            <span class="text-xs text-gray-400">%</span>
                         </div>
-                        <div class="flex justify-between text-gray-400">
-                            <span>Profit Retained:</span>
-                            <span class="font-mono text-white font-semibold" id="advEff1m">91.7% of target</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2 Months Exit Card -->
-                <div class="bg-navy-950/80 rounded-xl p-4 border border-amber-500/40 relative group hover:border-amber-500 transition">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400">⏳ 2 Months Exit (60 Days)</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">High Efficiency</span>
-                    </div>
-                    <div class="text-2xl font-black text-amber-300 font-mono" id="advNet2m">₹4,167</div>
-                    <div class="text-[11px] text-amber-300/90 font-medium mt-0.5" id="advRoi2m">Net Profit (+8.3% on capital)</div>
-                    
-                    <div class="mt-3 pt-3 border-t border-gray-800/80 space-y-1.5 text-xs">
-                        <div class="flex justify-between text-gray-400">
-                            <span>Interest Paid (60d):</span>
-                            <span class="font-mono text-amber-400" id="advInt2m">₹833</span>
-                        </div>
-                        <div class="flex justify-between text-gray-400">
-                            <span>Interest Saved vs Year:</span>
-                            <span class="font-mono text-emerald-400 font-bold" id="advSaved2m">₹4,167 saved</span>
-                        </div>
-                        <div class="flex justify-between text-gray-400">
-                            <span>Profit Retained:</span>
-                            <span class="font-mono text-white font-semibold" id="advEff2m">83.3% of target</span>
+                        <div class="flex items-center space-x-1.5 bg-navy-950 px-2.5 py-1 rounded-lg border border-gray-700">
+                            <span class="text-xs text-gray-400">MTF Rate:</span>
+                            <input type="number" id="calcRateInput" value="10" step="0.5" min="5" max="25" oninput="recalcAdvantage()" 
+                                   class="w-10 bg-transparent font-mono text-xs font-bold text-amber-400 focus:outline-none">
+                            <span class="text-xs text-gray-400">% p.a.</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Full Year Hold Card (Warning) -->
-                <div class="bg-navy-950/80 rounded-xl p-4 border border-rose-500/40 relative group hover:border-rose-500 transition">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-rose-400">⚠️ 1 Year Hold (365 Days)</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300">Total Decay</span>
+                <!-- Comparison Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                    <!-- 1 Month Exit Card -->
+                    <div class="bg-navy-950/80 rounded-xl p-3.5 border border-emerald-500/40 relative">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">⚡ 1 Month Exit (30 Days)</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">Optimal Exit</span>
+                        </div>
+                        <div class="text-xl font-black text-emerald-400 font-mono" id="advNet1m">₹4,583</div>
+                        <div class="text-[11px] text-emerald-300/90 font-medium mt-0.5" id="advRoi1m">Net Profit (+9.2% on capital)</div>
+                        
+                        <div class="mt-2.5 pt-2.5 border-t border-gray-800/80 space-y-1 text-xs">
+                            <div class="flex justify-between text-gray-400">
+                                <span>Interest Paid (30d):</span>
+                                <span class="font-mono text-amber-400" id="advInt1m">₹417</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>Interest Saved vs Year:</span>
+                                <span class="font-mono text-emerald-400 font-bold" id="advSaved1m">₹4,583 saved</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>Profit Retained:</span>
+                                <span class="font-mono text-white font-semibold" id="advEff1m">91.7% of target</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-2xl font-black text-rose-400 font-mono" id="advNet1y">₹0</div>
-                    <div class="text-[11px] text-rose-300/90 font-medium mt-0.5" id="advRoi1y">Net Profit (100% wiped out!)</div>
-                    
-                    <div class="mt-3 pt-3 border-t border-gray-800/80 space-y-1.5 text-xs">
-                        <div class="flex justify-between text-gray-400">
-                            <span>Annual Interest:</span>
-                            <span class="font-mono text-rose-400 font-bold" id="advInt1y">₹5,000 (10% p.a.)</span>
+
+                    <!-- 2 Months Exit Card -->
+                    <div class="bg-navy-950/80 rounded-xl p-3.5 border border-amber-500/40 relative">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">⏳ 2 Months Exit (60 Days)</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">High Efficiency</span>
                         </div>
-                        <div class="flex justify-between text-gray-400">
-                            <span>Interest Saved:</span>
-                            <span class="font-mono text-gray-500" id="advSaved1y">₹0 (None)</span>
+                        <div class="text-xl font-black text-amber-300 font-mono" id="advNet2m">₹4,167</div>
+                        <div class="text-[11px] text-amber-300/90 font-medium mt-0.5" id="advRoi2m">Net Profit (+8.3% on capital)</div>
+                        
+                        <div class="mt-2.5 pt-2.5 border-t border-gray-800/80 space-y-1 text-xs">
+                            <div class="flex justify-between text-gray-400">
+                                <span>Interest Paid (60d):</span>
+                                <span class="font-mono text-amber-400" id="advInt2m">₹833</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>Interest Saved vs Year:</span>
+                                <span class="font-mono text-emerald-400 font-bold" id="advSaved2m">₹4,167 saved</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>Profit Retained:</span>
+                                <span class="font-mono text-white font-semibold" id="advEff2m">83.3% of target</span>
+                            </div>
                         </div>
-                        <div class="flex justify-between text-gray-400">
-                            <span>Outcome:</span>
-                            <span class="font-mono text-rose-300 font-semibold">Entire profit eaten by interest</span>
+                    </div>
+
+                    <!-- Full Year Hold Card (Warning) -->
+                    <div class="bg-navy-950/80 rounded-xl p-3.5 border border-rose-500/40 relative">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-rose-400">⚠️ 1 Year Hold (365 Days)</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300">Total Decay</span>
+                        </div>
+                        <div class="text-xl font-black text-rose-400 font-mono" id="advNet1y">₹0</div>
+                        <div class="text-[11px] text-rose-300/90 font-medium mt-0.5" id="advRoi1y">Net Profit (100% wiped out!)</div>
+                        
+                        <div class="mt-2.5 pt-2.5 border-t border-gray-800/80 space-y-1 text-xs">
+                            <div class="flex justify-between text-gray-400">
+                                <span>Annual Interest:</span>
+                                <span class="font-mono text-rose-400 font-bold" id="advInt1y">₹5,000 (10% p.a.)</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>Interest Saved:</span>
+                                <span class="font-mono text-gray-500" id="advSaved1y">₹0 (None)</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>Outcome:</span>
+                                <span class="font-mono text-rose-300 font-semibold">Entire profit eaten by interest</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="mt-3 text-[11px] text-gray-400 flex items-center space-x-1.5">
-                <span class="text-emerald-400 font-bold">💡 MTF Swing Rule:</span>
-                <span>Aim to capture your 10% target within <strong>30 to 60 days</strong>. Exiting within 2 months saves over <strong>₹4,100+</strong> in financing fees, keeping 83% to 92% of your profits in your pocket!</span>
+                <div class="text-[11px] text-gray-400 flex items-center space-x-1.5 pt-1">
+                    <span class="text-emerald-400 font-bold">💡 MTF Swing Rule:</span>
+                    <span>Aim to capture your 10% target within <strong>30 to 60 days</strong>. Exiting within 2 months saves over <strong>₹4,100+</strong> in financing fees!</span>
+                </div>
             </div>
         </div>
 
-        <!-- Strategy & Comparison Guide Banner -->
-        <div class="bg-gradient-to-r from-blue-950/40 via-navy-900 to-indigo-950/40 border border-blue-800/40 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div class="flex items-start space-x-3">
-                <span class="text-2xl">💡</span>
-                <div>
-                    <h3 class="text-sm font-semibold text-white">How to Choose the Best Stock for Your MTF Balance</h3>
-                    <p class="text-xs text-gray-300 mt-0.5">
-                        With 100 stocks, select <strong class="text-emerald-400">2 to 4 candidates</strong> using the checkboxes below and click <strong class="text-brand-400">"Compare Side-by-Side"</strong>. 
-                        Evaluate which stock has the highest <span class="text-amber-400">Risk-to-Reward (R:R)</span>, the safest <span class="text-rose-400">Liquidation Buffer</span>, and the maximum <span class="text-emerald-400">15-Day Net ROI %</span> before allocating margin.
-                    </p>
-                </div>
+        <!-- Strategy & Quick Comparison Helper Strip -->
+        <div class="bg-gradient-to-r from-blue-950/30 via-navy-900 to-indigo-950/30 border border-blue-500/20 rounded-xl p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center space-x-2.5 min-w-0">
+                <span class="text-lg flex-shrink-0">💡</span>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Compare <strong class="text-emerald-400 font-bold">2 to 4 stocks</strong> using checkboxes to evaluate the best <span class="text-amber-400 font-semibold">Risk-to-Reward</span>, safest <span class="text-rose-400 font-semibold">Liquidation Buffer</span>, and highest <span class="text-emerald-400 font-semibold">15-Day Net ROI</span> before allocating capital.
+                </p>
             </div>
-            <button onclick="triggerQuickComparison()" class="whitespace-nowrap px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-semibold shadow transition">
+            <button onclick="triggerQuickComparison()" class="whitespace-nowrap px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-semibold shadow transition flex-shrink-0 self-end sm:self-auto">
                 ⚡ Compare Top Picks
             </button>
         </div>
 
-        <!-- Filter, Sector, Sorting & Search Bar -->
-        <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
-            <!-- Filter Tabs -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-1 lg:pb-0">
-                <button onclick="setFilter('ALL')" id="tabALL" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white transition">
-                    All Stocks (<span id="countTotal">100</span>)
-                </button>
-                <button onclick="setFilter('BUY_ZONE')" id="tabBUY_ZONE" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
-                    🟢 In Buy Zone (<span id="countBuyZone">0</span>)
-                </button>
-                <button onclick="setFilter('NEAR_ZONE')" id="tabNEAR_ZONE" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
-                    🟡 Near Buy Zone (<span id="countNearZone">0</span>)
-                </button>
-                <button onclick="setFilter('TARGET')" id="tabTARGET" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
-                    ★ 10% Reached
-                </button>
+        <!-- Two-Tier Clean Controls Bar -->
+        <div class="bg-navy-900 p-3 sm:p-4 rounded-xl border border-gray-800/80 shadow-lg space-y-3">
+            <!-- Row 1: Filter Tabs (Pills) on Left + View Mode & Refresh on Right -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-gray-800/60 pb-3">
+                <!-- Filter Tabs Pills with no-scrollbar and whitespace-nowrap -->
+                <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar flex-nowrap py-0.5">
+                    <button onclick="setFilter('ALL')" id="tabALL" class="filter-tab whitespace-nowrap flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-600 text-white shadow-sm transition">
+                        All Stocks (<span id="countTotal">22</span>)
+                    </button>
+                    <button onclick="setFilter('BUY_ZONE')" id="tabBUY_ZONE" class="filter-tab whitespace-nowrap flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+                        🟢 In Buy Zone (<span id="countBuyZone">0</span>)
+                    </button>
+                    <button onclick="setFilter('NEAR_ZONE')" id="tabNEAR_ZONE" class="filter-tab whitespace-nowrap flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+                        🟡 Near Zone (<span id="countNearZone">0</span>)
+                    </button>
+                    <button onclick="setFilter('TARGET')" id="tabTARGET" class="filter-tab whitespace-nowrap flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+                        ★ 10% Reached
+                    </button>
+                </div>
+
+                <!-- View Mode Toggle (Cards / Table) + Refresh Button -->
+                <div class="flex items-center space-x-2 self-end sm:self-auto flex-shrink-0">
+                    <div class="inline-flex bg-gray-950/80 border border-gray-700/80 rounded-lg p-0.5">
+                        <button id="btnViewCards" onclick="setViewMode('cards')" class="px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white" title="Card View (Mobile Optimized)">
+                            📱 Cards
+                        </button>
+                        <button id="btnViewTable" onclick="setViewMode('table')" class="px-2.5 py-1 text-xs rounded-md transition font-bold bg-brand-600 text-white shadow-sm" title="Table View (Full Columns)">
+                            🖥️ Table
+                        </button>
+                    </div>
+                    <button onclick="loadStocks(true)" id="refreshBtn" class="flex items-center space-x-1 px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-medium border border-gray-700 transition" title="Refresh Live Prices">
+                        <span id="refreshIcon">🔄</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- Sector, Sort & Search -->
-            <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
-                <!-- Sector Dropdown -->
-                <select id="sectorSelect" onchange="renderTable()" class="bg-gray-900 border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-brand-500">
-                    <option value="">All Sectors</option>
-                </select>
-
-                <!-- Sort Dropdown -->
-                <select id="sortSelect" onchange="renderTable()" class="bg-gray-900 border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-brand-500">
-                    <option value="dist">Sort: Closest to Buy Zone</option>
-                    <option value="rr">Sort: Best Risk/Reward Ratio</option>
-                    <option value="roi">Sort: Highest 15d Net ROI</option>
-                    <option value="buffer">Sort: Safest Liquidation Cushion</option>
-                </select>
-
-                <!-- Search Input -->
-                <div class="relative flex-1 sm:w-56">
-                    <input type="text" id="searchInput" oninput="renderTable()" placeholder="Search symbol or name..." 
-                           class="w-full bg-gray-900 border border-gray-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand-500">
+            <!-- Row 2: Search Input + Sector Filter + Sort Selector -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+                <!-- Search Input (Span 6 cols) -->
+                <div class="relative sm:col-span-6 lg:col-span-5">
+                    <input type="text" id="searchInput" oninput="handleSearchInput(this.value)" placeholder="Search symbol, company or sector..." 
+                           class="w-full bg-gray-950/60 border border-gray-700/80 rounded-lg pl-8 pr-7 py-1.5 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand-500 transition">
                     <span class="absolute left-2.5 top-2 text-gray-500 text-xs">🔍</span>
+                    <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-2.5 top-1.5 text-gray-400 hover:text-white text-xs p-0.5" title="Clear Search">✕</button>
                 </div>
 
-                <!-- View Mode Toggle (Cards for Mobile / Table for Desktop) -->
-                <div class="inline-flex bg-gray-900 border border-gray-700 rounded-lg p-0.5">
-                    <button id="btnViewCards" onclick="setViewMode('cards')" class="px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white" title="Card View (Mobile Optimized)">
-                        📱 Cards
-                    </button>
-                    <button id="btnViewTable" onclick="setViewMode('table')" class="px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white" title="Table View (Full Columns)">
-                        🖥️ Table
-                    </button>
+                <!-- Sector Dropdown (Span 3 cols) -->
+                <div class="sm:col-span-3 lg:col-span-3">
+                    <select id="sectorSelect" onchange="renderTable()" class="w-full bg-gray-950/60 border border-gray-700/80 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-brand-500 transition cursor-pointer">
+                        <option value="">All Sectors</option>
+                    </select>
                 </div>
 
-                <button onclick="loadStocks(true)" id="refreshBtn" class="flex items-center space-x-1 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-medium border border-gray-700 transition">
-                    <span id="refreshIcon">🔄</span>
-                </button>
+                <!-- Sort Dropdown (Span 3 cols) -->
+                <div class="sm:col-span-3 lg:col-span-4">
+                    <select id="sortSelect" onchange="renderTable()" class="w-full bg-gray-950/60 border border-gray-700/80 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-brand-500 transition cursor-pointer">
+                        <option value="dist">Sort: Closest to Buy Zone</option>
+                        <option value="rr">Sort: Best Risk/Reward Ratio</option>
+                        <option value="roi">Sort: Highest 15d Net ROI</option>
+                        <option value="buffer">Sort: Safest Liquidation Cushion</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -842,30 +862,26 @@
 
         <!-- Stocks Table Wrapper (visible in Table mode) -->
         <div id="stocksTableWrapper" class="bg-navy-900 rounded-xl border border-gray-800/80 overflow-hidden shadow-xl">
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto no-scrollbar">
                 <table class="w-full text-left text-xs border-collapse">
                     <thead>
-                        <tr class="border-b border-gray-800 bg-gray-900/70 text-gray-400 font-semibold uppercase tracking-wider">
-                            <th class="py-3.5 px-3 w-10 text-center">
-                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" class="accent-brand-600 rounded">
+                        <tr class="border-b border-gray-800 bg-gray-900/70 text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
+                            <th class="py-3 px-3 w-10 text-center">
+                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" class="accent-brand-600 rounded cursor-pointer">
                             </th>
-                            <th class="py-3.5 px-3">Symbol / Company</th>
-                            <th class="py-3.5 px-3">LTP (₹)</th>
-                            <th class="py-3.5 px-3">Suggested Buy Zone</th>
-                            <th class="py-3.5 px-3">10% Target (Sell Zone)</th>
-                            <th class="py-3.5 px-3">Safe Stop Loss</th>
-                            <th class="py-3.5 px-3">R:R Ratio</th>
-                            <th class="py-3.5 px-3">15d Net ROI</th>
-                            <th class="py-3.5 px-3 text-rose-400">Broker Liquidation</th>
-                            <th class="py-3.5 px-3">Status</th>
-                            <th class="py-3.5 px-4 text-right">Actions</th>
+                            <th class="py-3 px-3 min-w-[170px]">Symbol / Company</th>
+                            <th class="py-3 px-3 min-w-[100px]">LTP & Position</th>
+                            <th class="py-3 px-3 min-w-[160px]">Buy Zone & Target</th>
+                            <th class="py-3 px-3 min-w-[150px]">Stop Loss & Risk</th>
+                            <th class="py-3 px-3 min-w-[140px]">Status & 15D ROI</th>
+                            <th class="py-3 px-3 text-right min-w-[180px]">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="stocksTableBody" class="divide-y divide-gray-800/60">
                         <tr>
-                            <td colspan="11" class="text-center py-16 text-gray-400">
+                            <td colspan="7" class="text-center py-16 text-gray-400">
                                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mb-2"></div>
-                                <div>Analyzing Top 100 Stocks & Technical Zones...</div>
+                                <div>Analyzing Watchlist Stocks & Technical Zones...</div>
                             </td>
                         </tr>
                     </tbody>
@@ -1514,6 +1530,43 @@
             document.getElementById('barNearBuyZone').style.width = `${(nearBuy / total) * 100}%`;
         }
 
+        function toggleAdvantageCalculator() {
+            const body = document.getElementById('advantageCalcBody');
+            const text = document.getElementById('calcToggleText');
+            const icon = document.getElementById('calcToggleIcon');
+            if (!body) return;
+            const isHidden = body.classList.contains('hidden');
+            if (isHidden) {
+                body.classList.remove('hidden');
+                if (text) text.innerText = 'Collapse Calculator';
+                if (icon) icon.innerText = '▲';
+            } else {
+                body.classList.add('hidden');
+                if (text) text.innerText = 'Expand Calculator';
+                if (icon) icon.innerText = '▼';
+            }
+        }
+
+        function handleSearchInput(query) {
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (clearBtn) {
+                if (query && query.trim().length > 0) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+            }
+            renderTable();
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchInput) searchInput.value = '';
+            if (clearBtn) clearBtn.classList.add('hidden');
+            renderTable();
+        }
+
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-tab').forEach(b => {
@@ -1560,7 +1613,7 @@
             }
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="text-center py-10 text-gray-400">No stocks match your filter criteria.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-gray-400">No stocks match your filter criteria.</td></tr>`;
                 const cardsContainer = document.getElementById('stocksCardsContainer');
                 if (cardsContainer) cardsContainer.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400 bg-navy-900 rounded-xl border border-gray-800">No stocks match your filter criteria.</div>`;
                 return;
@@ -1597,9 +1650,11 @@
 
                 return `
                 <tr class="hover:bg-gray-800/40 transition ${isChecked ? 'bg-brand-950/30' : ''}">
+                    <!-- Col 1: Checkbox -->
                     <td class="py-3 px-3 text-center">
                         <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleStockSelect('${s.symbol}', this.checked)" class="accent-brand-600 rounded cursor-pointer">
                     </td>
+                    <!-- Col 2: Symbol / Company -->
                     <td class="py-3 px-3">
                         <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer" 
                            class="group block hover:text-brand-400 transition" title="Open ${s.symbol} live chart on TradingView in a new tab">
@@ -1609,55 +1664,53 @@
                             </div>
                             <div class="text-[11px] text-gray-400 group-hover:text-gray-200 truncate max-w-[160px] underline-offset-2 group-hover:underline">${s.name}</div>
                         </a>
-                        <span class="text-[9px] text-indigo-400 uppercase font-medium">${s.sector}</span>
+                        <span class="text-[9px] text-indigo-400 uppercase font-medium tracking-wider">${s.sector}</span>
                     </td>
-                    <td class="py-3 px-3 font-mono text-sm font-semibold text-gray-100">
-                        ₹${s.ltp.toFixed(2)}
+                    <!-- Col 3: LTP & Position -->
+                    <td class="py-3 px-3 font-mono">
+                        <div class="text-sm font-bold text-gray-100">₹${s.ltp.toFixed(2)}</div>
+                        <div class="flex items-center space-x-1 mt-0.5">
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${s.price_position === 'Discount' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${s.price_position || 'Discount'}</span>
+                        </div>
                     </td>
+                    <!-- Col 4: Buy Zone & Target -->
+                    <td class="py-3 px-3 font-mono">
+                        <div class="text-emerald-400 text-xs font-semibold">🎯 ₹${s.buy_zone_min} - ₹${s.buy_zone_max}</div>
+                        <div class="text-blue-400 text-xs font-bold mt-0.5">🚀 10%: ₹${s.target_10_pct}</div>
+                        <div class="text-[10px] text-gray-400 font-sans">Entry: ₹${s.rec_entry}</div>
+                    </td>
+                    <!-- Col 5: Stop Loss & Risk -->
+                    <td class="py-3 px-3 font-mono">
+                        <div class="text-amber-300 text-xs font-semibold">🛡️ SL: ₹${s.stop_loss} <span class="text-[10px] text-gray-400 font-sans">(1:${s.risk_reward_ratio})</span></div>
+                        <div class="text-rose-400 text-[11px] font-bold mt-0.5">⚡ RMS: ₹${s.mtf_liquidation_price || '--'}</div>
+                        <div class="text-[10px] text-gray-400 font-sans">Buffer: ${s.safety_buffer || '--'}%</div>
+                    </td>
+                    <!-- Col 6: Status & 15D ROI -->
                     <td class="py-3 px-3">
-                        <div class="font-mono text-emerald-400 text-xs font-semibold">₹${s.buy_zone_min} - ₹${s.buy_zone_max}</div>
-                        <div class="text-[10px] text-gray-400">Entry: ₹${s.rec_entry}</div>
-                    </td>
-                    <td class="py-3 px-3">
-                        <div class="font-mono text-blue-400 text-xs font-bold">₹${s.target_10_pct}</div>
-                        <div class="text-[10px] text-gray-400">+10% Sell Zone</div>
-                    </td>
-                    <td class="py-3 px-3">
-                        <div class="font-mono text-amber-300 text-xs">₹${s.stop_loss}</div>
-                        <div class="text-[10px] text-gray-400">-3.5% Max Risk</div>
-                    </td>
-                    <td class="py-3 px-3 font-mono font-bold text-xs text-gray-200">
-                        1 : ${s.risk_reward_ratio}
-                    </td>
-                    <td class="py-3 px-3 font-mono font-bold text-xs text-emerald-400">
-                        +${s.net_roi_15d || 0}%
-                    </td>
-                    <td class="py-3 px-3">
-                        <div class="font-mono text-rose-400 text-xs font-bold">₹${s.mtf_liquidation_price || '--'}</div>
-                        <div class="text-[10px] text-rose-300/80">RMS Trigger</div>
-                    </td>
-                    <td class="py-3 px-3">
-                        <span class="inline-flex items-center space-x-1 text-[11px] font-semibold px-2.5 py-1 rounded-full border ${badgeClass}">
+                        <span class="inline-flex items-center space-x-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeClass}">
                             <span>${badgeIcon}</span>
                             <span>${statusLabel}</span>
                         </span>
-                        <div class="flex items-center space-x-1 mt-1">
-                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${s.price_position === 'Discount' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${s.price_position || 'Discount'}</span>
-                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">4H OB</span>
+                        <div class="mt-1 flex items-center space-x-1">
+                            <span class="font-mono font-bold text-xs text-emerald-400">⚡ +${s.net_roi_15d || 0}%</span>
+                            <span class="text-[10px] text-gray-400 font-sans">15d ROI</span>
                         </div>
                     </td>
-                    <td class="py-3 px-4 text-right whitespace-nowrap">
-                        <button onclick="openSmcModal('${s.symbol}')" class="inline-flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-bold shadow transition mr-1.5" title="Smart Money Concepts Deep Dive">
-                            <span>🧠 SMC AI</span>
-                        </button>
-                        <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer"
-                           class="inline-flex items-center space-x-1 px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-medium border border-gray-700 transition mr-1.5"
-                           title="Open TradingView Chart in new tab">
-                            <span>📈 Chart ↗</span>
-                        </a>
-                        <button onclick="openMtfSimulator('${s.symbol}')" class="px-2.5 py-1.5 bg-brand-600/80 hover:bg-brand-600 text-white rounded-lg text-xs font-medium shadow transition">
-                            Simulate MTF
-                        </button>
+                    <!-- Col 7: Actions -->
+                    <td class="py-3 px-3 text-right whitespace-nowrap">
+                        <div class="inline-flex items-center space-x-1">
+                            <button onclick="openSmcModal('${s.symbol}')" class="px-2.5 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-bold shadow transition" title="Smart Money Concepts Deep Dive">
+                                🧠 SMC
+                            </button>
+                            <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer"
+                               class="px-2 py-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-medium border border-gray-700 transition"
+                               title="Open TradingView Chart">
+                                📈
+                            </a>
+                            <button onclick="openMtfSimulator('${s.symbol}')" class="px-2.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-medium shadow transition" title="Simulate MTF Trade">
+                                🧮 Sim
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 `;
