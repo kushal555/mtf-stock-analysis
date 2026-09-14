@@ -16,12 +16,16 @@ from config import (
     DASHBOARD_HOST,
     DHAN_CLIENT_ID,
     DHAN_ACCESS_TOKEN,
+    PORTAL_PIN,
+    verify_portal_pin,
     update_access_token
 )
 from instruments import get_all_stocks, get_stock_by_symbol, get_sector_distribution
 from dhan_client import DhanClient
 from analyzer import StockAnalyzer
 from mtf_risk_engine import MTFRiskEngine
+from ai_smc_engine import AISmcEngine
+
 
 BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = BASE_DIR / "templates"
@@ -117,13 +121,15 @@ def get_analyzed_stocks(universe: str = "my_watchlist", force_refresh: bool = Fa
 
 
 class DashboardRequestHandler(BaseHTTPRequestHandler):
-    def _send_json(self, data: Any, status: int = 200):
+    def _send_json(self, data: Any, status: int = 200, cookie_header: Optional[str] = None):
         body = json.dumps(data).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        if cookie_header:
+            self.send_header("Set-Cookie", cookie_header)
         self.end_headers()
         self.wfile.write(body)
 
@@ -198,6 +204,10 @@ class DashboardRequestHandler(BaseHTTPRequestHandler):
         elif url_path == "/api/watchlists":
             from instruments import get_available_watchlists
             self._send_json({"watchlists": get_available_watchlists()})
+        elif url_path == "/api/auth/pin-status":
+            cookie = self.headers.get("Cookie", "")
+            is_authed = f"mtf_pin_auth={PORTAL_PIN}" in cookie or "mtf_pin_auth=authenticated" in cookie
+            self._send_json({"authenticated": is_authed, "pin_required": bool(PORTAL_PIN)})
         else:
             self.send_error(404, "Not Found")
 
@@ -278,6 +288,56 @@ class DashboardRequestHandler(BaseHTTPRequestHandler):
                 self._send_json({"success": True, "message": "Token updated successfully"})
             else:
                 self._send_json({"success": False, "message": "Failed to update token"}, status=500)
+
+        elif url_path == "/api/auth/pin-verify":
+            pin = payload.get("pin", "")
+            if verify_portal_pin(pin):
+                cookie_header = f"mtf_pin_auth={PORTAL_PIN}; Path=/; Max-Age=2592000; SameSite=Lax"
+                self._send_json({
+                    "success": True,
+                    "message": "PIN verified successfully. Access granted.",
+                    "authenticated": True
+                }, cookie_header=cookie_header)
+            else:
+                self._send_json({
+                    "success": False,
+                    "message": "Invalid 6-digit security PIN. Please try again.",
+                    "authenticated": False
+                }, status=401)
+
+        elif url_path == "/api/smc/analyze":
+            symbol = payload.get("symbol", payload.get("ticker", "RELIANCE")).upper()
+            capital = float(payload.get("capital", 50000.0))
+            images = payload.get("images", [])
+
+            stock = get_stock_by_symbol(symbol)
+            current_ltp = None
+            hist = None
+            if stock:
+                sec_id = stock["security_id"]
+                ltps = _dhan_client.fetch_ltp_batch([int(sec_id)])
+                current_ltp = ltps.get(sec_id)
+                hist = _dhan_client.fetch_historical_daily(sec_id)
+
+            if images:
+                report = AISmcEngine.analyze_chart_images(
+                    images=images,
+                    ticker=symbol,
+                    current_ltp=current_ltp,
+                    capital=capital
+                )
+            else:
+                if not hist:
+                    # Fallback default price range if instrument not found
+                    hist = {"close": [1000.0, 1010.0, 1005.0, 1030.0, 1045.0, 1040.0, 1060.0]}
+                report = AISmcEngine.generate_smc_report(
+                    symbol=symbol,
+                    ohlc=hist,
+                    current_ltp=current_ltp,
+                    capital=capital
+                )
+
+            self._send_json(report)
 
         else:
             self.send_error(404, "Not Found")

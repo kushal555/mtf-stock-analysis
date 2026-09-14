@@ -52,6 +52,17 @@ ESTIMATED_STATUTORY_PCT = float(os.getenv("ESTIMATED_STATUTORY_PCT", "0.0025")) 
 DASHBOARD_PORT = int(os.getenv("PORT", os.getenv("DASHBOARD_PORT", "5050")))
 DASHBOARD_HOST = os.getenv("DASHBOARD_HOST", "0.0.0.0" if os.getenv("PORT") else "127.0.0.1")
 
+# Portal Access PIN Security (default: 654000)
+PORTAL_PIN = os.getenv("PORTAL_PIN", "654000")
+
+# Google Gemini API Key for AI Smart Money / Multimodal Chart Vision
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+
+
+def verify_portal_pin(pin: str) -> bool:
+    """Validates the entered 6-digit access PIN."""
+    return str(pin).strip() == str(PORTAL_PIN).strip()
+
 
 def update_access_token(new_token: str, client_id: str = None) -> bool:
     """Updates the .env file with a newly generated Dhan access token."""

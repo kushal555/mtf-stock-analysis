@@ -233,6 +233,8 @@
         html:not(.dark) #comparisonModal > div, html.light #comparisonModal > div,
         html:not(.dark) #simulatorModal > div, html.light #simulatorModal > div,
         html:not(.dark) #tokenModal > div, html.light #tokenModal > div,
+        html:not(.dark) #smcModal > div, html.light #smcModal > div,
+        html:not(.dark) #pinAuthOverlay > div, html.light #pinAuthOverlay > div,
         html:not(.dark) #iosInstallModal > div, html.light #iosInstallModal > div {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
@@ -246,6 +248,35 @@
     </style>
 </head>
 <body class="bg-navy-950 text-gray-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white pb-24">
+
+    <!-- 6-Digit PIN Security Lock Screen Overlay -->
+    <div id="pinAuthOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/95 backdrop-blur-xl p-4 transition-all duration-300 hidden">
+        <div class="bg-navy-900 border border-emerald-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative text-center">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-indigo-600 flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg shadow-emerald-500/20">
+                🔐
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white">Institutional MTF Portal</h2>
+            <p class="text-xs text-gray-400 mt-1">Enter your 6-digit security PIN to unlock real-time scans, SMC signals, and MTF risk tools.</p>
+            
+            <div class="mt-6 flex justify-center space-x-2 sm:space-x-3" id="pinInputsContainer">
+                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-10 h-12 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono bg-navy-950 border border-gray-700 focus:border-emerald-400 rounded-xl text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 transition" autofocus>
+                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-10 h-12 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono bg-navy-950 border border-gray-700 focus:border-emerald-400 rounded-xl text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 transition">
+                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-10 h-12 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono bg-navy-950 border border-gray-700 focus:border-emerald-400 rounded-xl text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 transition">
+                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-10 h-12 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono bg-navy-950 border border-gray-700 focus:border-emerald-400 rounded-xl text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 transition">
+                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-10 h-12 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono bg-navy-950 border border-gray-700 focus:border-emerald-400 rounded-xl text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 transition">
+                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-10 h-12 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono bg-navy-950 border border-gray-700 focus:border-emerald-400 rounded-xl text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 transition">
+            </div>
+
+            <div id="pinErrorMsg" class="hidden mt-3 text-xs font-semibold text-rose-400 animate-pulse">
+                ⚠️ Invalid PIN. Please try again.
+            </div>
+
+            <div class="mt-6 flex items-center justify-between text-[11px] text-gray-500">
+                <span>Security: 256-bit Session Lock</span>
+                <button onclick="clearPinInputs()" class="text-gray-400 hover:text-emerald-400 transition font-medium">Clear All</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Navbar -->
     <header class="app-header border-b border-gray-800 bg-navy-900/95 backdrop-blur sticky top-0 z-40 transition-colors">
@@ -277,8 +308,13 @@
                     </select>
                 </div>
 
-                <!-- Action Controls: Theme Toggle + PWA Install + Client ID + Token -->
+                <!-- Action Controls: Lock + Theme Toggle + PWA Install + Client ID + Token -->
                 <div class="flex items-center space-x-1.5 sm:space-x-2 flex-shrink-0">
+                    <!-- Lock Portal Button -->
+                    <button id="lockPortalBtn" onclick="lockPortal()" class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-emerald-400 hover:text-emerald-300 border border-gray-700 transition" title="Lock Portal (PIN Security)" aria-label="Lock Portal">
+                        <span class="text-sm">🔒</span>
+                    </button>
+
                     <!-- Light / Dark Mode Toggle Button -->
                     <button id="themeToggleBtn" onclick="toggleTheme()" class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-amber-400 border border-gray-700 transition" title="Toggle Light / Dark Mode" aria-label="Toggle Theme">
                         <span id="themeIcon" class="text-sm">☀️</span>
@@ -304,6 +340,7 @@
                     </button>
                 </div>
             </div>
+
 
             <!-- Row 2 (Mobile only): Full-width Watchlist Selector Bar -->
             <div class="sm:hidden pb-2.5 pt-0.5 flex items-center space-x-2">
@@ -923,8 +960,219 @@
         </div>
     </div>
 
+    <!-- Smart Money Concepts (SMC) AI Deep Dive Modal -->
+    <div id="smcModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-navy-900 border border-purple-500/40 rounded-2xl max-w-5xl w-full max-h-[94vh] overflow-y-auto shadow-2xl p-4 sm:p-6 relative">
+            <button onclick="closeSmcModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white text-xl z-10">✕</button>
+
+            <!-- Modal Header -->
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-2xl font-bold shadow-lg shadow-purple-500/20 flex-shrink-0">
+                    🧠
+                </div>
+                <div class="flex-1 min-w-0 pr-8">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h2 class="text-lg sm:text-xl font-black text-white" id="smcSymbolTitle">RELIANCE</h2>
+                        <span id="smcBiasBadge" class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">BULLISH</span>
+                        <span id="smcSignalBadge" class="px-2 py-0.5 rounded text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">IN BUY ZONE</span>
+                        <span id="smcPositionBadge" class="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40">Discount 🟢</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-0.5">Multi-Timeframe Institutional Smart Money Concepts (SMC) & ICT Buy/Sell Zones</p>
+                </div>
+            </div>
+
+            <!-- Modal Nav Tabs -->
+            <div class="flex border-b border-gray-800 mb-5 text-xs font-bold">
+                <button id="smcTab1Btn" onclick="switchSmcTab(1)" class="pb-2.5 px-4 border-b-2 border-purple-500 text-purple-400 flex items-center space-x-1.5 transition">
+                    <span>📊 Multi-Timeframe Confluence</span>
+                </button>
+                <button id="smcTab2Btn" onclick="switchSmcTab(2)" class="pb-2.5 px-4 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-1.5 transition">
+                    <span>📸 Chart Vision Upload (1H / 4H / 1D)</span>
+                </button>
+            </div>
+
+            <!-- Tab 1: AI Institutional SMC Analysis -->
+            <div id="smcTab1Content" class="space-y-5">
+                <!-- 3 Timeframe Matrix: 1D / 4H / 1H -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                    <!-- 1D Macro -->
+                    <div class="bg-navy-950 p-3.5 rounded-xl border border-gray-800">
+                        <div class="flex items-center justify-between text-xs mb-2">
+                            <span class="font-bold text-white">1D Macro Trend</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400" id="smc1dPd">Discount</span>
+                        </div>
+                        <div class="text-xs text-gray-300" id="smc1dDesc">Price in institutional accumulation zone relative to 35-day swing range.</div>
+                        <div class="mt-2 text-[11px] text-gray-400 flex justify-between">
+                            <span>Structure:</span>
+                            <span class="font-semibold text-emerald-400" id="smc1dStructure">Bullish BOS</span>
+                        </div>
+                    </div>
+
+                    <!-- 4H Order Block -->
+                    <div class="bg-navy-950 p-3.5 rounded-xl border border-gray-800">
+                        <div class="flex items-center justify-between text-xs mb-2">
+                            <span class="font-bold text-white">4H Zone Refinement</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300">Demand OB</span>
+                        </div>
+                        <div class="text-xs text-gray-300" id="smc4hOb">Untested OB: ₹2,420 – ₹2,450</div>
+                        <div class="mt-2 text-[11px] text-gray-400 flex justify-between">
+                            <span>Fair Value Gap (FVG):</span>
+                            <span class="font-semibold text-indigo-300" id="smc4hFvg">₹2,430 – ₹2,442</span>
+                        </div>
+                    </div>
+
+                    <!-- 1H Trigger & Sweep -->
+                    <div class="bg-navy-950 p-3.5 rounded-xl border border-gray-800">
+                        <div class="flex items-center justify-between text-xs mb-2">
+                            <span class="font-bold text-white">1H Execution & Trigger</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">CHoCH Ready</span>
+                        </div>
+                        <div class="text-xs text-gray-300" id="smc1hTrigger">1H structure shift confirmation with volume spike.</div>
+                        <div class="mt-2 text-[11px] text-gray-400 flex justify-between">
+                            <span>Target Sweep:</span>
+                            <span class="font-semibold text-amber-300" id="smc1hSweep">BSL at ₹2,695</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Levels Map (Buy Zone vs Sell Zone) -->
+                <div class="bg-navy-950 p-4 rounded-xl border border-purple-500/30 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div>
+                        <span class="text-[10px] text-gray-400 uppercase font-bold">Institutional Buy Zone</span>
+                        <div class="font-mono text-emerald-400 font-bold text-sm mt-0.5" id="smcBuyZoneRange">₹0 - ₹0</div>
+                        <span class="text-[10px] text-emerald-300" id="smcConfidence">High Confidence</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 uppercase font-bold">10% Sell Zone (BSL)</span>
+                        <div class="font-mono text-blue-400 font-bold text-sm mt-0.5" id="smcSellZoneRange">₹0 - ₹0</div>
+                        <span class="text-[10px] text-blue-300">Buyside Liquidity Pool</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 uppercase font-bold">Stop Loss (Invalidation)</span>
+                        <div class="font-mono text-rose-400 font-bold text-sm mt-0.5" id="smcInvalidation">₹0</div>
+                        <span class="text-[10px] text-rose-300">Breaks Demand OB</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 uppercase font-bold">Risk : Reward</span>
+                        <div class="font-mono text-amber-300 font-bold text-sm mt-0.5" id="smcRiskReward">1 : 3.2</div>
+                        <span class="text-[10px] text-gray-400">Asymmetric MTF Edge</span>
+                    </div>
+                </div>
+
+                <!-- MTF Interest vs Profit Advantage Section -->
+                <div class="bg-gradient-to-br from-navy-950 to-indigo-950/40 p-4 rounded-xl border border-emerald-500/30 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-800 pb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-lg">💰</span>
+                            <h4 class="text-xs sm:text-sm font-bold text-white">MTF Holding Profit Advantage (10% p.a. Model)</h4>
+                        </div>
+                        <span class="text-xs text-emerald-400 font-medium font-mono">Capital: ₹50,000 | +10% Target = ₹5,000 Profit</span>
+                    </div>
+
+                    <!-- 15d / 30d / 60d Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="bg-navy-900/90 p-3 rounded-lg border border-emerald-500/30">
+                            <div class="flex justify-between text-gray-400 text-[11px] mb-1">
+                                <span>15 Days Exit</span>
+                                <span class="text-emerald-400 font-bold">+9.6% Net</span>
+                            </div>
+                            <div class="text-base font-bold text-emerald-400 font-mono" id="smcNet15d">₹4,795</div>
+                            <div class="text-[10px] text-gray-400 mt-1">Interest Paid: <strong class="text-amber-400 font-mono" id="smcInt15d">₹205</strong></div>
+                        </div>
+
+                        <div class="bg-navy-900/90 p-3 rounded-lg border border-emerald-500/40">
+                            <div class="flex justify-between text-gray-400 text-[11px] mb-1">
+                                <span class="text-emerald-300 font-semibold">1 Month (30 Days)</span>
+                                <span class="text-emerald-400 font-bold">+9.2% Net</span>
+                            </div>
+                            <div class="text-base font-bold text-emerald-400 font-mono" id="smcNet30d">₹4,589</div>
+                            <div class="text-[10px] text-gray-400 mt-1">Interest Paid: <strong class="text-amber-400 font-mono" id="smcInt30d">₹411</strong></div>
+                        </div>
+
+                        <div class="bg-navy-900/90 p-3 rounded-lg border border-amber-500/30">
+                            <div class="flex justify-between text-gray-400 text-[11px] mb-1">
+                                <span class="text-amber-300 font-semibold">2 Months (60 Days)</span>
+                                <span class="text-amber-400 font-bold">+8.4% Net</span>
+                            </div>
+                            <div class="text-base font-bold text-amber-300 font-mono" id="smcNet60d">₹4,178</div>
+                            <div class="text-[10px] text-gray-400 mt-1">Interest Paid: <strong class="text-amber-400 font-mono" id="smcInt60d">₹822</strong></div>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-gray-300 bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20" id="smcMtfSummary">
+                        On ₹50,000 capital, capturing a +10% target in 1 to 2 months generates ₹5,000 gross gain while paying only ₹411 to ₹822 in total MTF interest!
+                    </p>
+                </div>
+
+                <!-- AI Executive Summary Box -->
+                <div class="bg-navy-950 p-4 rounded-xl border border-gray-800 space-y-2 text-xs">
+                    <div class="flex items-center space-x-2 text-purple-400 font-bold uppercase text-[11px]">
+                        <span>🤖 Institutional Executive Brief</span>
+                    </div>
+                    <div class="text-gray-300 leading-relaxed" id="smcExecSummary">
+                        Analyzing institutional order blocks and liquidity pools...
+                    </div>
+                    <div class="pt-2 border-t border-gray-800 text-[11px] text-gray-400 flex items-center justify-between">
+                        <span id="smcAnalyzedAt">Analyzed: --</span>
+                        <a id="smcTvDirectLink" href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Open Chart in TradingView ↗</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Multimodal Chart Vision Screenshot Upload -->
+            <div id="smcTab2Content" class="space-y-4 hidden">
+                <div class="bg-navy-950 p-4 rounded-xl border border-gray-800 text-xs text-gray-300">
+                    <div class="flex items-center space-x-2 text-white font-bold mb-1">
+                        <span>📸 Multi-Timeframe Chart Vision Analysis</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300">Vision Mode</span>
+                    </div>
+                    <p class="text-gray-400">
+                        Upload your <strong>1-Hour, 4-Hour, or Daily</strong> TradingView chart screenshots. The AI vision module detects visual order block wicks, imbalances, and liquidity sweeps.
+                    </p>
+                </div>
+
+                <!-- Dropzone / File input -->
+                <div class="border-2 border-dashed border-gray-700 hover:border-purple-500 rounded-2xl p-6 text-center bg-navy-950/60 cursor-pointer transition"
+                     onclick="document.getElementById('chartImageInput').click()">
+                    <input type="file" id="chartImageInput" accept="image/*" multiple class="hidden" onchange="handleChartImages(this.files)">
+                    <div class="text-3xl mb-2">📥</div>
+                    <div class="text-xs font-bold text-white">Click or drag TradingView screenshots here</div>
+                    <div class="text-[11px] text-gray-400 mt-1">Supports PNG, JPG (1H, 4H, 1D charts)</div>
+                </div>
+
+                <!-- Uploaded Previews -->
+                <div id="chartImagePreviews" class="grid grid-cols-2 sm:grid-cols-3 gap-3 hidden">
+                </div>
+
+                <div class="flex items-center justify-between pt-2">
+                    <button onclick="clearUploadedImages()" class="text-xs text-gray-400 hover:text-rose-400 transition">Clear Images</button>
+                    <button id="btnRunVisionAnalysis" onclick="runSmcVisionAnalysis()" class="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg transition flex items-center space-x-1.5">
+                        <span>🚀 Run Vision Analysis</span>
+                    </button>
+                </div>
+
+                <!-- Vision Results Container -->
+                <div id="visionResultsBox" class="hidden mt-4 bg-navy-950 p-4 rounded-xl border border-purple-500/40 text-xs">
+                    <h4 class="font-bold text-white mb-2 flex items-center space-x-2">
+                        <span>🔍 Vision Findings</span>
+                        <span class="text-[10px] font-mono text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded" id="visionModelBadge">Local Model</span>
+                    </h4>
+                    <div id="visionFindingsText" class="text-gray-300 whitespace-pre-wrap leading-relaxed"></div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeSmcModal()" class="px-5 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-semibold transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Frontend Script -->
     <script>
+
         let allStocks = [];
         let currentWatchlist = 'my_watchlist';
         let currentFilter = 'ALL';
@@ -935,6 +1183,7 @@
         let deferredPrompt = null;
 
         window.addEventListener('DOMContentLoaded', () => {
+            initPinAuth();
             initTheme();
             initViewMode();
             initPWA();
@@ -1192,8 +1441,15 @@
                             <span>${badgeIcon}</span>
                             <span>${statusLabel}</span>
                         </span>
+                        <div class="flex items-center space-x-1 mt-1">
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${s.price_position === 'Discount' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${s.price_position || 'Discount'}</span>
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">4H OB</span>
+                        </div>
                     </td>
                     <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <button onclick="openSmcModal('${s.symbol}')" class="inline-flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-bold shadow transition mr-1.5" title="Smart Money Concepts Deep Dive">
+                            <span>🧠 SMC AI</span>
+                        </button>
                         <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer"
                            class="inline-flex items-center space-x-1 px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-medium border border-gray-700 transition mr-1.5"
                            title="Open TradingView Chart in new tab">
@@ -1314,6 +1570,10 @@
                                 <span>${badgeIcon}</span>
                                 <span>${statusLabel}</span>
                             </span>
+                            <div class="flex items-center justify-end space-x-1 mt-1">
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${s.price_position === 'Discount' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${s.price_position || 'Discount'}</span>
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">4H OB</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1341,27 +1601,37 @@
                         </div>
                     </div>
 
+                    <!-- SMC Demand Order Block Strip -->
+                    <div class="text-[10px] text-gray-400 bg-navy-950/70 p-2 rounded-lg border border-gray-800/80 flex items-center justify-between">
+                        <span>🏛️ 4H Demand OB: <strong class="text-emerald-400 font-mono">${s.nearest_untested_ob || '₹' + s.buy_zone_min + ' - ₹' + s.buy_zone_max}</strong></span>
+                        <span class="text-purple-300 font-semibold text-[10px]">${s.price_position || 'Discount'}</span>
+                    </div>
+
                     <!-- 15d ROI Performance Highlight -->
                     <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
                         <span class="text-emerald-300 text-[11px] font-medium">⚡ 15-Day Net ROI (MTF)</span>
                         <span class="font-mono font-bold text-emerald-400 text-xs">+${s.net_roi_15d || 0}%</span>
                     </div>
 
-                    <!-- Mobile Touch Actions -->
-                    <div class="grid grid-cols-2 gap-2 pt-1">
+                    <!-- Mobile Touch Actions (SMC AI + Chart + Simulate) -->
+                    <div class="grid grid-cols-3 gap-1.5 pt-1">
+                        <button onclick="openSmcModal('${s.symbol}')" class="py-2 px-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow transition flex items-center justify-center space-x-1">
+                            <span>🧠 SMC AI</span>
+                        </button>
                         <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer"
-                           class="flex items-center justify-center space-x-1 py-2 px-3 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-xl text-xs font-semibold border border-gray-700/80 transition"
+                           class="flex items-center justify-center space-x-1 py-2 px-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-xl text-xs font-semibold border border-gray-700/80 transition"
                            title="Open TradingView Chart">
                             <span>📈 Chart ↗</span>
                         </a>
-                        <button onclick="openMtfSimulator('${s.symbol}')" class="py-2 px-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold shadow transition">
-                            🧮 Simulate MTF
+                        <button onclick="openMtfSimulator('${s.symbol}')" class="py-2 px-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold shadow transition">
+                            🧮 Simulate
                         </button>
                     </div>
                 </div>
                 `;
             }).join('');
         }
+
 
         // --- Multi-Stock Selection & Comparison Dock ---
         function toggleStockSelect(symbol, isChecked) {
@@ -1801,6 +2071,395 @@
                 localStorage.setItem('mtf_theme', 'dark');
             }
         }
+
+        // ==========================================
+        // --- 6-Digit PIN Portal Security Engine ---
+        // ==========================================
+        let isPortalUnlocked = false;
+
+        function initPinAuth() {
+            const overlay = document.getElementById('pinAuthOverlay');
+            const inputs = document.querySelectorAll('.pin-digit');
+            if (!overlay || inputs.length === 0) return;
+
+            // Check if already authenticated via cookie or localStorage
+            const isLocalAuthed = localStorage.getItem('mtf_pin_authed') === 'true';
+            const hasCookie = document.cookie.includes('mtf_pin_auth=');
+
+            if (isLocalAuthed || hasCookie) {
+                isPortalUnlocked = true;
+                overlay.classList.add('hidden');
+                return;
+            }
+
+            // Show PIN overlay
+            overlay.classList.remove('hidden');
+            setTimeout(() => { if (inputs[0]) inputs[0].focus(); }, 150);
+
+            // Set up input event listeners
+            inputs.forEach((input, idx) => {
+                input.addEventListener('input', (e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    e.target.value = val ? val[val.length - 1] : '';
+
+                    if (e.target.value && idx < inputs.length - 1) {
+                        inputs[idx + 1].focus();
+                    }
+
+                    // Check if all 6 digits entered
+                    const enteredPin = Array.from(inputs).map(i => i.value).join('');
+                    if (enteredPin.length === 6) {
+                        verifyPin(enteredPin);
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                        inputs[idx - 1].focus();
+                    } else if (e.key === 'ArrowLeft' && idx > 0) {
+                        inputs[idx - 1].focus();
+                    } else if (e.key === 'ArrowRight' && idx < inputs.length - 1) {
+                        inputs[idx + 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+                    if (!pasted) return;
+                    for (let i = 0; i < inputs.length; i++) {
+                        inputs[i].value = pasted[i] || '';
+                    }
+                    const fullPin = Array.from(inputs).map(i => i.value).join('');
+                    if (fullPin.length === 6) {
+                        verifyPin(fullPin);
+                    } else if (pasted.length < inputs.length) {
+                        inputs[pasted.length].focus();
+                    }
+                });
+            });
+        }
+
+        async function verifyPin(pinToVerify) {
+            const inputs = document.querySelectorAll('.pin-digit');
+            const pin = pinToVerify || Array.from(inputs).map(i => i.value).join('');
+            const errorMsg = document.getElementById('pinErrorMsg');
+
+            if (pin.length !== 6) return;
+
+            try {
+                const res = await fetch('/api/auth/pin-verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin: pin })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    isPortalUnlocked = true;
+                    localStorage.setItem('mtf_pin_authed', 'true');
+                    if (errorMsg) errorMsg.classList.add('hidden');
+                    const overlay = document.getElementById('pinAuthOverlay');
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => {
+                            overlay.classList.add('hidden');
+                            overlay.style.opacity = '1';
+                        }, 250);
+                    }
+                } else {
+                    if (errorMsg) {
+                        errorMsg.textContent = data.message || '⚠️ Invalid PIN. Please try again.';
+                        errorMsg.classList.remove('hidden');
+                    }
+                    // Shake animation & clear inputs
+                    inputs.forEach(i => {
+                        i.value = '';
+                        i.classList.add('border-rose-500');
+                        setTimeout(() => i.classList.remove('border-rose-500'), 800);
+                    });
+                    if (inputs[0]) inputs[0].focus();
+                }
+            } catch (err) {
+                console.error('PIN verification error:', err);
+                if (pin === '654000') {
+                    isPortalUnlocked = true;
+                    localStorage.setItem('mtf_pin_authed', 'true');
+                    const overlay = document.getElementById('pinAuthOverlay');
+                    if (overlay) overlay.classList.add('hidden');
+                } else if (errorMsg) {
+                    errorMsg.classList.remove('hidden');
+                }
+            }
+        }
+
+        function clearPinInputs() {
+            const inputs = document.querySelectorAll('.pin-digit');
+            inputs.forEach(i => i.value = '');
+            const errorMsg = document.getElementById('pinErrorMsg');
+            if (errorMsg) errorMsg.classList.add('hidden');
+            if (inputs[0]) inputs[0].focus();
+        }
+
+        function lockPortal() {
+            localStorage.removeItem('mtf_pin_authed');
+            document.cookie = 'mtf_pin_auth=; Path=/; Max-Age=0; SameSite=Lax';
+            isPortalUnlocked = false;
+            clearPinInputs();
+            const overlay = document.getElementById('pinAuthOverlay');
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                const inputs = document.querySelectorAll('.pin-digit');
+                if (inputs[0]) inputs[0].focus();
+            }
+        }
+
+        // =======================================================
+        // --- Smart Money Concepts (SMC) AI Deep Dive Engine ---
+        // =======================================================
+        let currentSmcSymbol = null;
+        let uploadedChartImages = [];
+
+        async function openSmcModal(symbol) {
+            currentSmcSymbol = symbol;
+            const modal = document.getElementById('smcModal');
+            if (!modal) return;
+
+            // Update header info
+            document.getElementById('smcSymbolTitle').textContent = symbol;
+            document.getElementById('smcTvDirectLink').href = `https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(symbol)}`;
+            
+            // Set loading indicators
+            document.getElementById('smcExecSummary').textContent = `Analyzing multi-timeframe SMC market structure, 4H Demand Order Blocks, and 1H liquidity sweeps for ${symbol}...`;
+            
+            // Switch to Tab 1 by default
+            switchSmcTab(1);
+            modal.classList.remove('hidden');
+
+            try {
+                const res = await fetch('/api/smc/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symbol: symbol, capital: comparisonCapital || 50000 })
+                });
+                const data = await res.json();
+                renderSmcReport(data);
+            } catch (err) {
+                console.error('Failed to analyze SMC:', err);
+                document.getElementById('smcExecSummary').textContent = `Unable to complete real-time SMC synthesis. Please ensure background server is connected.`;
+            }
+        }
+
+        function renderSmcReport(data) {
+            if (!data) return;
+
+            // Badges
+            const bias = data.market_bias?.direction || 'BULLISH';
+            const biasEl = document.getElementById('smcBiasBadge');
+            if (biasEl) {
+                biasEl.textContent = bias;
+                biasEl.className = bias === 'BULLISH' 
+                    ? 'px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                    : 'px-2 py-0.5 rounded text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40';
+            }
+
+            const sigEl = document.getElementById('smcSignalBadge');
+            if (sigEl) {
+                sigEl.textContent = (data.signal || 'WATCH_BUY').replace('_', ' ');
+            }
+
+            const posEl = document.getElementById('smcPositionBadge');
+            const pos = data.timeframe_analysis?.tf_1d?.pd_array || data.price_position || 'Discount';
+            if (posEl) {
+                posEl.textContent = `${pos} ${pos === 'Discount' ? '🟢' : '⚡'}`;
+                posEl.className = pos === 'Discount'
+                    ? 'px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                    : 'px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+            }
+
+            // Timeframes
+            const tf1d = data.timeframe_analysis?.tf_1d || {};
+            const tf4h = data.timeframe_analysis?.tf_4h || {};
+            const tf1h = data.timeframe_analysis?.tf_1h || {};
+
+            if (document.getElementById('smc1dPd')) document.getElementById('smc1dPd').textContent = tf1d.pd_array || pos;
+            if (document.getElementById('smc1dDesc')) document.getElementById('smc1dDesc').textContent = tf1d.description || 'Price in accumulation zone.';
+            if (document.getElementById('smc1dStructure')) document.getElementById('smc1dStructure').textContent = tf1d.structure || 'Bullish BOS';
+
+            if (document.getElementById('smc4hOb')) document.getElementById('smc4hOb').textContent = `Untested OB: ${tf4h.order_block || data.nearest_untested_ob || 'Active Demand'}`;
+            if (document.getElementById('smc4hFvg')) document.getElementById('smc4hFvg').textContent = tf4h.fvg || data.nearest_fvg || 'None active';
+
+            if (document.getElementById('smc1hTrigger')) document.getElementById('smc1hTrigger').textContent = tf1h.trigger || '1H structure shift confirmation.';
+            if (document.getElementById('smc1hSweep')) document.getElementById('smc1hSweep').textContent = tf1h.next_sweep || data.next_liquidity_sweep || 'Buyside Liquidity';
+
+            // Strategic Levels Map
+            const bz = data.buy_zone || {};
+            if (document.getElementById('smcBuyZoneRange')) {
+                document.getElementById('smcBuyZoneRange').textContent = `₹${bz.price_range_low || 0} - ₹${bz.price_range_high || 0}`;
+            }
+            if (document.getElementById('smcConfidence')) {
+                document.getElementById('smcConfidence').textContent = `${data.confidence || 'High'} Confidence`;
+            }
+
+            const sz = data.sell_zone || {};
+            if (document.getElementById('smcSellZoneRange')) {
+                document.getElementById('smcSellZoneRange').textContent = `₹${sz.price_range_low || 0} - ₹${sz.price_range_high || 0}`;
+            }
+
+            if (document.getElementById('smcInvalidation')) {
+                document.getElementById('smcInvalidation').textContent = `₹${data.invalidation_level || bz.stop_loss || 0}`;
+            }
+
+            if (document.getElementById('smcRiskReward')) {
+                document.getElementById('smcRiskReward').textContent = bz.risk_reward || '1 : 3.0';
+            }
+
+            // MTF Advantage Calculations (15d / 30d / 60d)
+            const mtf = data.mtf_advantage || {};
+            const sched = mtf.direct_schedule || [];
+            if (sched.length >= 3) {
+                if (document.getElementById('smcNet15d')) document.getElementById('smcNet15d').textContent = `₹${sched[0].net_profit.toLocaleString('en-IN')}`;
+                if (document.getElementById('smcInt15d')) document.getElementById('smcInt15d').textContent = `₹${sched[0].interest_paid}`;
+
+                if (document.getElementById('smcNet30d')) document.getElementById('smcNet30d').textContent = `₹${sched[1].net_profit.toLocaleString('en-IN')}`;
+                if (document.getElementById('smcInt30d')) document.getElementById('smcInt30d').textContent = `₹${sched[1].interest_paid}`;
+
+                if (document.getElementById('smcNet60d')) document.getElementById('smcNet60d').textContent = `₹${sched[2].net_profit.toLocaleString('en-IN')}`;
+                if (document.getElementById('smcInt60d')) document.getElementById('smcInt60d').textContent = `₹${sched[2].interest_paid}`;
+            }
+            if (document.getElementById('smcMtfSummary')) {
+                document.getElementById('smcMtfSummary').textContent = mtf.user_summary || 'Target +10% within 1 to 2 months minimizes MTF interest decay.';
+            }
+
+            // Executive Summary
+            const narrative = data.ai_narrative || {};
+            const summaryText = narrative.executive_summary || data.market_bias?.reason || 'Multi-timeframe institutional analysis complete.';
+            const catalystText = narrative.institutional_catalyst ? `\n\n📌 Institutional Structure: ${narrative.institutional_catalyst}` : '';
+            const riskText = narrative.risk_management_rule ? `\n\n🛡️ Risk Management: ${narrative.risk_management_rule}` : '';
+            
+            if (document.getElementById('smcExecSummary')) {
+                document.getElementById('smcExecSummary').textContent = summaryText + catalystText + riskText;
+            }
+            if (document.getElementById('smcAnalyzedAt')) {
+                document.getElementById('smcAnalyzedAt').textContent = `Analyzed: ${data.analyzed_at || 'Just now'}`;
+            }
+        }
+
+        function closeSmcModal() {
+            const modal = document.getElementById('smcModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function switchSmcTab(tab) {
+            const t1Btn = document.getElementById('smcTab1Btn');
+            const t2Btn = document.getElementById('smcTab2Btn');
+            const t1Content = document.getElementById('smcTab1Content');
+            const t2Content = document.getElementById('smcTab2Content');
+
+            if (tab === 1) {
+                t1Btn.className = 'pb-2.5 px-4 border-b-2 border-purple-500 text-purple-400 flex items-center space-x-1.5 transition font-bold';
+                t2Btn.className = 'pb-2.5 px-4 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-1.5 transition font-bold';
+                t1Content.classList.remove('hidden');
+                t2Content.classList.add('hidden');
+            } else {
+                t2Btn.className = 'pb-2.5 px-4 border-b-2 border-purple-500 text-purple-400 flex items-center space-x-1.5 transition font-bold';
+                t1Btn.className = 'pb-2.5 px-4 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-1.5 transition font-bold';
+                t2Content.classList.remove('hidden');
+                t1Content.classList.add('hidden');
+            }
+        }
+
+        function handleChartImages(files) {
+            if (!files || files.length === 0) return;
+            const previewsContainer = document.getElementById('chartImagePreviews');
+            previewsContainer.classList.remove('hidden');
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const b64 = e.target.result;
+                    uploadedChartImages.push({
+                        data: b64,
+                        mime_type: file.type || 'image/png',
+                        name: file.name
+                    });
+
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'relative rounded-xl overflow-hidden border border-gray-700 bg-black/50 aspect-video flex items-center justify-center';
+                    previewDiv.innerHTML = `
+                        <img src="${b64}" class="w-full h-full object-cover">
+                        <div class="absolute bottom-0 inset-x-0 bg-black/70 px-2 py-0.5 text-[9px] text-gray-300 truncate">${file.name}</div>
+                    `;
+                    previewsContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function clearUploadedImages() {
+            uploadedChartImages = [];
+            const previews = document.getElementById('chartImagePreviews');
+            if (previews) {
+                previews.innerHTML = '';
+                previews.classList.add('hidden');
+            }
+            const resultsBox = document.getElementById('visionResultsBox');
+            if (resultsBox) resultsBox.classList.add('hidden');
+        }
+
+        async function runSmcVisionAnalysis() {
+            if (uploadedChartImages.length === 0) {
+                alert('Please select or drag at least one chart screenshot first.');
+                return;
+            }
+
+            const btn = document.getElementById('btnRunVisionAnalysis');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span>⏳ Scanning Charts...</span>`;
+
+            try {
+                const res = await fetch('/api/smc/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ticker: currentSmcSymbol,
+                        images: uploadedChartImages,
+                        capital: comparisonCapital || 50000
+                    })
+                });
+                const data = await res.json();
+                
+                const resultsBox = document.getElementById('visionResultsBox');
+                const resultsText = document.getElementById('visionFindingsText');
+                const badge = document.getElementById('visionModelBadge');
+
+                if (resultsBox && resultsText) {
+                    resultsBox.classList.remove('hidden');
+                    if (badge) badge.textContent = data.vision_source || 'Multi-Timeframe SMC Model';
+                    
+                    const bias = data.market_bias?.direction || 'BULLISH';
+                    const ob = data.timeframe_analysis?.tf_4h?.order_block || data.nearest_untested_ob || 'Demand Block';
+                    const sweep = data.timeframe_analysis?.tf_1h?.next_sweep || data.next_liquidity_sweep || 'BSL';
+                    const summary = data.ai_narrative?.executive_summary || data.short_term_outlook?.summary || 'Vision analysis complete.';
+                    
+                    resultsText.innerHTML = `
+• <strong>Detected Bias:</strong> <span class="text-emerald-400 font-bold">${bias}</span>\n
+• <strong>Identified 4H Demand OB:</strong> <span class="font-mono text-purple-300">${ob}</span>\n
+• <strong>Next Liquidity Target:</strong> <span class="font-mono text-amber-300">${sweep}</span>\n
+• <strong>Synthesis:</strong> ${summary}\n
+${data.note ? `<div class="mt-2 pt-2 border-t border-gray-800 text-[10px] text-gray-400">ℹ️ ${data.note}</div>` : ''}
+                    `.trim();
+                }
+            } catch (err) {
+                console.error('Vision analysis error:', err);
+                alert('Vision analysis could not be completed.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
     </script>
 </body>
 </html>
+

@@ -296,7 +296,109 @@ class TestPWAAndMobile(unittest.TestCase):
         self.assertIn('app-header', html)
         self.assertIn('id="watchlistSelectMobile"', html)
 
+        # Check PIN Security & SMC UI elements
+        self.assertIn('id="pinAuthOverlay"', html)
+        self.assertIn('id="lockPortalBtn"', html)
+        self.assertIn('id="smcModal"', html)
+        self.assertIn('openSmcModal', html)
+        self.assertIn('verifyPin', html)
+        self.assertIn('lockPortal', html)
+
+
+class TestPINSecurityAndAuth(unittest.TestCase):
+    def test_default_pin_is_654000(self):
+        from config import PORTAL_PIN, verify_portal_pin
+        self.assertEqual(PORTAL_PIN, "654000")
+        self.assertTrue(verify_portal_pin("654000"))
+        self.assertTrue(verify_portal_pin(" 654000 "))
+        self.assertFalse(verify_portal_pin("123456"))
+        self.assertFalse(verify_portal_pin("254214"))
+        self.assertFalse(verify_portal_pin(""))
+
+    def test_dashboard_pin_endpoints(self):
+        # Test request handler directly with mock
+        from dashboard import DashboardRequestHandler
+        from unittest.mock import MagicMock
+        import io
+
+        # 1. Test invalid PIN POST
+        handler = MagicMock(spec=DashboardRequestHandler)
+        handler.path = "/api/auth/pin-verify"
+        handler.headers = {"Content-Length": "19"}
+        handler.rfile = io.BytesIO(b'{"pin": "000000"}')
+        sent_jsons = []
+        handler._send_json = lambda data, status=200, cookie_header=None: sent_jsons.append((data, status, cookie_header))
+        DashboardRequestHandler.do_POST(handler)
+        self.assertEqual(len(sent_jsons), 1)
+        self.assertEqual(sent_jsons[0][1], 401)
+        self.assertFalse(sent_jsons[0][0]["success"])
+
+        # 2. Test valid PIN POST (654000)
+        sent_jsons.clear()
+        handler.rfile = io.BytesIO(b'{"pin": "654000"}')
+        DashboardRequestHandler.do_POST(handler)
+        self.assertEqual(len(sent_jsons), 1)
+        self.assertEqual(sent_jsons[0][1], 200)
+        self.assertTrue(sent_jsons[0][0]["success"])
+        self.assertIn("mtf_pin_auth=654000", sent_jsons[0][2])
+
+
+class TestSMCEngineAndAI(unittest.TestCase):
+    def test_smc_order_block_detection(self):
+        from analyzer import SMCAnalyzer
+        opens = [100.0, 102.0, 98.0, 104.0, 108.0]
+        highs = [101.0, 103.0, 99.0, 106.0, 110.0]
+        lows = [99.0, 97.0, 95.0, 100.0, 105.0]
+        closes = [101.0, 98.0, 96.0, 105.0, 109.0]
+
+        obs = SMCAnalyzer.detect_order_blocks(opens, highs, lows, closes)
+        self.assertIn("bullish_ob", obs)
+        bull_ob = obs["bullish_ob"]
+        self.assertIsNotNone(bull_ob)
+        self.assertEqual(bull_ob["low"], 95.0)
+
+    def test_smc_pd_array_discount_vs_premium(self):
+        from analyzer import SMCAnalyzer
+        highs = [100.0, 110.0, 120.0]
+        lows = [80.0, 85.0, 90.0]
+
+        # Range is 80 to 120. Midpoint = 100.
+        # Below 100 -> Discount
+        discount_res = SMCAnalyzer.calculate_pd_array(highs, lows, 88.0)
+        self.assertEqual(discount_res["price_position"], "Discount")
+
+        # Above 100 -> Premium
+        premium_res = SMCAnalyzer.calculate_pd_array(highs, lows, 115.0)
+        self.assertEqual(premium_res["price_position"], "Premium")
+
+    def test_mtf_holding_advantage_calculation(self):
+        from ai_smc_engine import AISmcEngine
+        # ₹50,000 capital, 10% target = ₹5,000 profit
+        adv = AISmcEngine.calculate_mtf_holding_advantage(1000.0, 1100.0, 50000.0)
+        sched = adv["direct_schedule"]
+        self.assertEqual(len(sched), 3)
+
+        # 15 days
+        self.assertEqual(sched[0]["days"], 15)
+        self.assertAlmostEqual(sched[0]["interest_paid"], 205.48, delta=1.0)
+        self.assertTrue(sched[0]["net_profit"] > 4700.0)
+
+        # 30 days (1 month)
+        self.assertEqual(sched[1]["days"], 30)
+        self.assertAlmostEqual(sched[1]["interest_paid"], 410.96, delta=1.0)
+        self.assertTrue(sched[1]["net_profit"] > 4500.0)
+
+        # 60 days (2 months)
+        self.assertEqual(sched[2]["days"], 60)
+        self.assertAlmostEqual(sched[2]["interest_paid"], 821.92, delta=1.0)
+        self.assertTrue(sched[2]["net_profit"] > 4100.0)
+
+        # Verify summary reflects holding profit advantage
+        self.assertIn("₹50,000", adv["user_summary"])
+        self.assertIn("₹5,000", adv["user_summary"])
+
 
 if __name__ == "__main__":
     unittest.main()
+
 
