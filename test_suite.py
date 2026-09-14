@@ -196,8 +196,18 @@ class TestInstrumentsUniverse(unittest.TestCase):
         self.assertEqual(len(set(symbols)), 100, "Duplicate symbols found in universe")
 
         # Verify key stocks exist across Nifty 50 and Nifty Next 50
-        for expected in ["RELIANCE", "TCS", "HDFCBANK", "HAL", "ZOMATO", "TRENT", "BEL"]:
+        for expected in ["RELIANCE", "TCS", "HDFCBANK", "HAL", "ETERNAL", "TRENT", "BEL", "TMPV"]:
             self.assertIn(expected, symbols)
+
+        # Test symbol aliases (ZOMATO -> ETERNAL, TATAMOTORS -> TMPV)
+        from instruments import get_stock_by_symbol
+        zomato_stock = get_stock_by_symbol("ZOMATO")
+        self.assertIsNotNone(zomato_stock)
+        self.assertEqual(zomato_stock["symbol"], "ETERNAL")
+
+        tatamotors_stock = get_stock_by_symbol("TATAMOTORS")
+        self.assertIsNotNone(tatamotors_stock)
+        self.assertEqual(tatamotors_stock["symbol"], "TMPV")
 
         # Verify all security IDs are non-empty
         sec_ids = get_security_id_list("TOP_100")

@@ -89,6 +89,14 @@ for stock_list in [USER_WATCHLIST_STOCKS, TOP_100_STOCKS]:
 _BY_SYMBOL: Dict[str, Dict] = {s["symbol"].upper(): s for s in _ALL_UNIQUE_STOCKS}
 _BY_SECURITY_ID: Dict[str, Dict] = {str(s["security_id"]): s for s in _ALL_UNIQUE_STOCKS}
 
+_SYMBOL_ALIASES = {
+    "ZOMATO": "ETERNAL",
+    "TATAMOTORS": "TMPV",
+    "TATA MOTORS": "TMPV",
+    "TML": "TMPV",
+    "TMCV": "TMPV"
+}
+
 
 def get_available_watchlists() -> List[Dict[str, Any]]:
     """Returns metadata for all available selectable watchlists."""
@@ -121,8 +129,10 @@ def get_all_stocks(universe: str = "my_watchlist") -> List[Dict]:
 
 
 def get_stock_by_symbol(symbol: str) -> Optional[Dict]:
-    """Lookup stock by symbol across all known watchlists."""
-    return _BY_SYMBOL.get(symbol.strip().upper())
+    """Lookup stock by symbol across all known watchlists, resolving corporate aliases."""
+    s_upper = symbol.strip().upper()
+    resolved = _SYMBOL_ALIASES.get(s_upper, s_upper)
+    return _BY_SYMBOL.get(resolved) or _BY_SYMBOL.get(s_upper)
 
 
 def get_stock_by_security_id(security_id: str) -> Optional[Dict]:

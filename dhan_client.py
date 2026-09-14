@@ -148,6 +148,12 @@ class DhanClient:
             except Exception as e:
                 self._last_error = f"Connection error: {str(e)}"
 
+        # Try live NSE daily historical candles fallback via Yahoo Finance
+        live_hist = self._fetch_live_nse_historical(security_id, days=days)
+        if live_hist and len(live_hist.get("close", [])) > 0:
+            self._hist_cache[cache_key] = live_hist
+            return live_hist
+
         # Generate synthetic realistic OHLC for this security and cache it
         res = self._generate_fallback_historical(security_id, days=days)
         self._hist_cache[cache_key] = res
@@ -240,15 +246,13 @@ class DhanClient:
         return self._last_error
 
     # --- Realistic Calibrated Fallback Data ---
-    _BENCHMARK_PRICES = {s["symbol"]: s.get("base_price", 1000.0) for s in _ALL_UNIQUE_STOCKS}
-
     def _generate_fallback_ltp(self, security_ids: List[int]) -> Dict[str, float]:
         """Returns verified real market prices for all requested securities."""
         results = {}
         for sec_id in security_ids:
             stock = get_stock_by_security_id(str(sec_id))
             if stock:
-                base = stock.get("base_price", self._BENCHMARK_PRICES.get(stock["symbol"], 1000.0))
+                base = stock.get("base_price", 1000.0)
                 results[str(sec_id)] = round(float(base), 2)
         return results
 
@@ -256,7 +260,7 @@ class DhanClient:
         """Generates 120 days of realistic daily candle data calibrated directly to the real stock price."""
         stock = get_stock_by_security_id(str(security_id))
         symbol = stock["symbol"] if stock else "STOCK"
-        base_price = stock.get("base_price", self._BENCHMARK_PRICES.get(symbol, 1000.0)) if stock else 1000.0
+        base_price = stock.get("base_price", 1000.0) if stock else 1000.0
 
         rnd = random.Random(int(security_id) + 100)
 

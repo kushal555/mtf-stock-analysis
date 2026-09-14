@@ -13,7 +13,7 @@
     "security_id": "11536",
     "sector": "IT Services",
     "mtf_margin_pct": 0.2,
-    "base_price": 4180.0
+    "base_price": 2200.8
   },
   {
     "symbol": "HDFCBANK",
@@ -21,7 +21,7 @@
     "security_id": "1333",
     "sector": "Banking",
     "mtf_margin_pct": 0.2,
-    "base_price": 1640.0
+    "base_price": 708.25
   },
   {
     "symbol": "ICICIBANK",
@@ -29,7 +29,7 @@
     "security_id": "4963",
     "sector": "Banking",
     "mtf_margin_pct": 0.2,
-    "base_price": 1220.0
+    "base_price": 1379.3
   },
   {
     "symbol": "BHARTIARTL",
@@ -37,7 +37,7 @@
     "security_id": "10604",
     "sector": "Telecom",
     "mtf_margin_pct": 0.2,
-    "base_price": 1580.0
+    "base_price": 1831.1
   },
   {
     "symbol": "INFY",
@@ -45,7 +45,7 @@
     "security_id": "1594",
     "sector": "IT Services",
     "mtf_margin_pct": 0.2,
-    "base_price": 1890.0
+    "base_price": 1037.7
   },
   {
     "symbol": "ITC",
@@ -53,7 +53,7 @@
     "security_id": "1660",
     "sector": "FMCG",
     "mtf_margin_pct": 0.2,
-    "base_price": 505.0
+    "base_price": 259.85
   },
   {
     "symbol": "SBIN",
@@ -61,7 +61,7 @@
     "security_id": "3045",
     "sector": "Banking",
     "mtf_margin_pct": 0.2,
-    "base_price": 795.0
+    "base_price": 995.7
   },
   {
     "symbol": "LT",
@@ -69,7 +69,7 @@
     "security_id": "11483",
     "sector": "Infrastructure",
     "mtf_margin_pct": 0.2,
-    "base_price": 3650.0
+    "base_price": 3930.7
   },
   {
     "symbol": "HINDUNILVR",
@@ -77,7 +77,7 @@
     "security_id": "1394",
     "sector": "FMCG",
     "mtf_margin_pct": 0.2,
-    "base_price": 2680.0
+    "base_price": 1927.0
   },
   {
     "symbol": "AXISBANK",
@@ -85,7 +85,7 @@
     "security_id": "5900",
     "sector": "Banking",
     "mtf_margin_pct": 0.2,
-    "base_price": 1180.0
+    "base_price": 1246.0
   },
   {
     "symbol": "KOTAKBANK",
@@ -93,7 +93,7 @@
     "security_id": "1922",
     "sector": "Banking",
     "mtf_margin_pct": 0.2,
-    "base_price": 1780.0
+    "base_price": 419.0
   },
   {
     "symbol": "BAJFINANCE",
@@ -101,7 +101,7 @@
     "security_id": "317",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.22,
-    "base_price": 7150.0
+    "base_price": 1034.5
   },
   {
     "symbol": "MARUTI",
@@ -109,7 +109,7 @@
     "security_id": "10999",
     "sector": "Automobile",
     "mtf_margin_pct": 0.2,
-    "base_price": 12350.0
+    "base_price": 12400.0
   },
   {
     "symbol": "M&M",
@@ -117,7 +117,7 @@
     "security_id": "2031",
     "sector": "Automobile",
     "mtf_margin_pct": 0.2,
-    "base_price": 2740.0
+    "base_price": 3107.0
   },
   {
     "symbol": "SUNPHARMA",
@@ -125,15 +125,15 @@
     "security_id": "3351",
     "sector": "Pharma",
     "mtf_margin_pct": 0.2,
-    "base_price": 1820.0
+    "base_price": 1840.0
   },
   {
-    "symbol": "TATAMOTORS",
-    "name": "Tata Motors Ltd",
+    "symbol": "TMPV",
+    "name": "Tata Motors Passenger Vehicles Ltd",
     "security_id": "3456",
-    "sector": "Automobile",
+    "sector": "Automobile & EV",
     "mtf_margin_pct": 0.25,
-    "base_price": 970.0
+    "base_price": 301.1
   },
   {
     "symbol": "NTPC",
@@ -141,7 +141,7 @@
     "security_id": "11630",
     "sector": "Power",
     "mtf_margin_pct": 0.2,
-    "base_price": 415.0
+    "base_price": 333.4
   },
   {
     "symbol": "ULTRACEMCO",
@@ -149,7 +149,7 @@
     "security_id": "11532",
     "sector": "Cement",
     "mtf_margin_pct": 0.2,
-    "base_price": 11200.0
+    "base_price": 11000.0
   },
   {
     "symbol": "TITAN",
@@ -157,7 +157,7 @@
     "security_id": "3506",
     "sector": "Consumer Goods",
     "mtf_margin_pct": 0.2,
-    "base_price": 3680.0
+    "base_price": 5009.5
   },
   {
     "symbol": "POWERGRID",
@@ -165,7 +165,7 @@
     "security_id": "14977",
     "sector": "Power",
     "mtf_margin_pct": 0.2,
-    "base_price": 335.0
+    "base_price": 269.1
   },
   {
     "symbol": "ONGC",
@@ -173,7 +173,7 @@
     "security_id": "2475",
     "sector": "Energy & Oil",
     "mtf_margin_pct": 0.2,
-    "base_price": 295.0
+    "base_price": 232.5
   },
   {
     "symbol": "TATASTEEL",
@@ -181,7 +181,7 @@
     "security_id": "3499",
     "sector": "Metals & Mining",
     "mtf_margin_pct": 0.22,
-    "base_price": 155.0
+    "base_price": 183.0
   },
   {
     "symbol": "ADANIENT",
@@ -189,7 +189,7 @@
     "security_id": "25",
     "sector": "Diversified",
     "mtf_margin_pct": 0.25,
-    "base_price": 3020.0
+    "base_price": 3060.0
   },
   {
     "symbol": "ADANIPORTS",
@@ -197,7 +197,7 @@
     "security_id": "15083",
     "sector": "Infrastructure",
     "mtf_margin_pct": 0.22,
-    "base_price": 1420.0
+    "base_price": 1764.6
   },
   {
     "symbol": "COALINDIA",
@@ -205,7 +205,7 @@
     "security_id": "20374",
     "sector": "Mining",
     "mtf_margin_pct": 0.2,
-    "base_price": 490.0
+    "base_price": 426.4
   },
   {
     "symbol": "BAJAJFINSV",
@@ -213,7 +213,7 @@
     "security_id": "16675",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.22,
-    "base_price": 1810.0
+    "base_price": 1913.5
   },
   {
     "symbol": "HCLTECH",
@@ -221,7 +221,7 @@
     "security_id": "7229",
     "sector": "IT Services",
     "mtf_margin_pct": 0.2,
-    "base_price": 1760.0
+    "base_price": 1206.1
   },
   {
     "symbol": "JSWSTEEL",
@@ -229,7 +229,7 @@
     "security_id": "11723",
     "sector": "Metals & Mining",
     "mtf_margin_pct": 0.22,
-    "base_price": 960.0
+    "base_price": 1265.0
   },
   {
     "symbol": "GRASIM",
@@ -237,7 +237,7 @@
     "security_id": "1232",
     "sector": "Cement & Chemicals",
     "mtf_margin_pct": 0.22,
-    "base_price": 2640.0
+    "base_price": 3281.9
   },
   {
     "symbol": "ASIANPAINT",
@@ -245,7 +245,7 @@
     "security_id": "236",
     "sector": "Consumer Goods",
     "mtf_margin_pct": 0.2,
-    "base_price": 3220.0
+    "base_price": 2472.5
   },
   {
     "symbol": "WIPRO",
@@ -253,7 +253,7 @@
     "security_id": "3787",
     "sector": "IT Services",
     "mtf_margin_pct": 0.2,
-    "base_price": 535.0
+    "base_price": 167.4
   },
   {
     "symbol": "TECHM",
@@ -261,7 +261,7 @@
     "security_id": "13538",
     "sector": "IT Services",
     "mtf_margin_pct": 0.2,
-    "base_price": 1590.0
+    "base_price": 1541.0
   },
   {
     "symbol": "NESTLEIND",
@@ -269,7 +269,7 @@
     "security_id": "17963",
     "sector": "FMCG",
     "mtf_margin_pct": 0.2,
-    "base_price": 2520.0
+    "base_price": 1383.3
   },
   {
     "symbol": "BPCL",
@@ -277,7 +277,7 @@
     "security_id": "526",
     "sector": "Energy & Oil",
     "mtf_margin_pct": 0.2,
-    "base_price": 345.0
+    "base_price": 304.5
   },
   {
     "symbol": "CIPLA",
@@ -285,7 +285,7 @@
     "security_id": "694",
     "sector": "Pharma",
     "mtf_margin_pct": 0.2,
-    "base_price": 1580.0
+    "base_price": 1366.0
   },
   {
     "symbol": "SBILIFE",
@@ -293,7 +293,7 @@
     "security_id": "21808",
     "sector": "Insurance",
     "mtf_margin_pct": 0.2,
-    "base_price": 1790.0
+    "base_price": 1684.7
   },
   {
     "symbol": "HEROMOTOCO",
@@ -301,7 +301,7 @@
     "security_id": "1348",
     "sector": "Automobile",
     "mtf_margin_pct": 0.2,
-    "base_price": 5450.0
+    "base_price": 5221.5
   },
   {
     "symbol": "TRENT",
@@ -309,7 +309,7 @@
     "security_id": "1964",
     "sector": "Retail",
     "mtf_margin_pct": 0.25,
-    "base_price": 7120.0
+    "base_price": 2802.4
   },
   {
     "symbol": "HDFCLIFE",
@@ -317,7 +317,7 @@
     "security_id": "467",
     "sector": "Insurance",
     "mtf_margin_pct": 0.2,
-    "base_price": 710.0
+    "base_price": 530.0
   },
   {
     "symbol": "EICHERMOT",
@@ -325,7 +325,7 @@
     "security_id": "910",
     "sector": "Automobile",
     "mtf_margin_pct": 0.2,
-    "base_price": 4890.0
+    "base_price": 7530.0
   },
   {
     "symbol": "BEL",
@@ -333,7 +333,7 @@
     "security_id": "383",
     "sector": "Defence",
     "mtf_margin_pct": 0.22,
-    "base_price": 290.0
+    "base_price": 404.35
   },
   {
     "symbol": "SHREECEM",
@@ -341,7 +341,7 @@
     "security_id": "3103",
     "sector": "Cement",
     "mtf_margin_pct": 0.2,
-    "base_price": 24500.0
+    "base_price": 22570.0
   },
   {
     "symbol": "TATACONSUM",
@@ -349,7 +349,7 @@
     "security_id": "3432",
     "sector": "FMCG",
     "mtf_margin_pct": 0.2,
-    "base_price": 1180.0
+    "base_price": 991.0
   },
   {
     "symbol": "APOLLOHOSP",
@@ -357,7 +357,7 @@
     "security_id": "157",
     "sector": "Healthcare",
     "mtf_margin_pct": 0.22,
-    "base_price": 6850.0
+    "base_price": 8836.0
   },
   {
     "symbol": "INDUSINDBK",
@@ -365,7 +365,7 @@
     "security_id": "5258",
     "sector": "Banking",
     "mtf_margin_pct": 0.25,
-    "base_price": 1420.0
+    "base_price": 978.2
   },
   {
     "symbol": "DRREDDY",
@@ -373,7 +373,7 @@
     "security_id": "881",
     "sector": "Pharma",
     "mtf_margin_pct": 0.2,
-    "base_price": 6550.0
+    "base_price": 1165.5
   },
   {
     "symbol": "DIVISLAB",
@@ -381,7 +381,7 @@
     "security_id": "10940",
     "sector": "Pharma",
     "mtf_margin_pct": 0.2,
-    "base_price": 5250.0
+    "base_price": 9322.0
   },
   {
     "symbol": "HINDALCO",
@@ -389,7 +389,7 @@
     "security_id": "1363",
     "sector": "Metals & Mining",
     "mtf_margin_pct": 0.22,
-    "base_price": 680.0
+    "base_price": 981.5
   },
   {
     "symbol": "BRITANNIA",
@@ -397,7 +397,7 @@
     "security_id": "547",
     "sector": "FMCG",
     "mtf_margin_pct": 0.2,
-    "base_price": 5850.0
+    "base_price": 4962.0
   },
   {
     "symbol": "HAL",
@@ -405,7 +405,7 @@
     "security_id": "2303",
     "sector": "Defence & Aerospace",
     "mtf_margin_pct": 0.22,
-    "base_price": 4650.0
+    "base_price": 4905.0
   },
   {
     "symbol": "VBL",
@@ -413,7 +413,7 @@
     "security_id": "18921",
     "sector": "Beverages",
     "mtf_margin_pct": 0.2,
-    "base_price": 1520.0
+    "base_price": 416.5
   },
   {
     "symbol": "DLF",
@@ -421,7 +421,7 @@
     "security_id": "14732",
     "sector": "Real Estate",
     "mtf_margin_pct": 0.22,
-    "base_price": 850.0
+    "base_price": 644.5
   },
   {
     "symbol": "CHOLAFIN",
@@ -429,7 +429,7 @@
     "security_id": "19257",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.22,
-    "base_price": 1480.0
+    "base_price": 1845.9
   },
   {
     "symbol": "SIEMENS",
@@ -437,7 +437,7 @@
     "security_id": "3150",
     "sector": "Capital Goods",
     "mtf_margin_pct": 0.2,
-    "base_price": 7250.0
+    "base_price": 3957.0
   },
   {
     "symbol": "ABB",
@@ -445,7 +445,7 @@
     "security_id": "13",
     "sector": "Capital Goods",
     "mtf_margin_pct": 0.2,
-    "base_price": 8150.0
+    "base_price": 7274.0
   },
   {
     "symbol": "TVSMOTOR",
@@ -453,7 +453,7 @@
     "security_id": "8479",
     "sector": "Automobile",
     "mtf_margin_pct": 0.2,
-    "base_price": 2480.0
+    "base_price": 4125.0
   },
   {
     "symbol": "VEDL",
@@ -461,7 +461,7 @@
     "security_id": "3063",
     "sector": "Metals & Mining",
     "mtf_margin_pct": 0.25,
-    "base_price": 465.0
+    "base_price": 263.7
   },
   {
     "symbol": "PFC",
@@ -469,7 +469,7 @@
     "security_id": "14299",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.22,
-    "base_price": 490.0
+    "base_price": 353.45
   },
   {
     "symbol": "RECLTD",
@@ -477,7 +477,7 @@
     "security_id": "15355",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.22,
-    "base_price": 530.0
+    "base_price": 312.7
   },
   {
     "symbol": "GAIL",
@@ -485,7 +485,7 @@
     "security_id": "4717",
     "sector": "Energy & Gas",
     "mtf_margin_pct": 0.2,
-    "base_price": 225.0
+    "base_price": 173.62
   },
   {
     "symbol": "AMBUJACEM",
@@ -493,7 +493,7 @@
     "security_id": "1270",
     "sector": "Cement",
     "mtf_margin_pct": 0.22,
-    "base_price": 630.0
+    "base_price": 391.85
   },
   {
     "symbol": "BANKBARODA",
@@ -501,7 +501,7 @@
     "security_id": "4668",
     "sector": "Banking",
     "mtf_margin_pct": 0.22,
-    "base_price": 245.0
+    "base_price": 238.13
   },
   {
     "symbol": "PNB",
@@ -509,7 +509,7 @@
     "security_id": "10666",
     "sector": "Banking",
     "mtf_margin_pct": 0.25,
-    "base_price": 110.0
+    "base_price": 116.75
   },
   {
     "symbol": "CANBK",
@@ -517,7 +517,7 @@
     "security_id": "10794",
     "sector": "Banking",
     "mtf_margin_pct": 0.22,
-    "base_price": 105.0
+    "base_price": 124.0
   },
   {
     "symbol": "TATAPOWER",
@@ -525,7 +525,7 @@
     "security_id": "3426",
     "sector": "Power",
     "mtf_margin_pct": 0.22,
-    "base_price": 425.0
+    "base_price": 364.65
   },
   {
     "symbol": "MOTHERSON",
@@ -533,7 +533,7 @@
     "security_id": "25510",
     "sector": "Automobile Ancillary",
     "mtf_margin_pct": 0.22,
-    "base_price": 175.0
+    "base_price": 164.45
   },
   {
     "symbol": "CGPOWER",
@@ -541,7 +541,7 @@
     "security_id": "760",
     "sector": "Capital Goods",
     "mtf_margin_pct": 0.25,
-    "base_price": 720.0
+    "base_price": 909.0
   },
   {
     "symbol": "BOSCHLTD",
@@ -549,7 +549,7 @@
     "security_id": "2181",
     "sector": "Automobile Ancillary",
     "mtf_margin_pct": 0.2,
-    "base_price": 32500.0
+    "base_price": 48385.0
   },
   {
     "symbol": "PIDILITIND",
@@ -557,7 +557,7 @@
     "security_id": "2664",
     "sector": "Chemicals",
     "mtf_margin_pct": 0.2,
-    "base_price": 3100.0
+    "base_price": 1566.9
   },
   {
     "symbol": "HAVELLS",
@@ -565,7 +565,7 @@
     "security_id": "9819",
     "sector": "Consumer Electricals",
     "mtf_margin_pct": 0.2,
-    "base_price": 1850.0
+    "base_price": 1111.0
   },
   {
     "symbol": "POLYCAB",
@@ -573,7 +573,7 @@
     "security_id": "9590",
     "sector": "Consumer Electricals",
     "mtf_margin_pct": 0.22,
-    "base_price": 6650.0
+    "base_price": 8241.0
   },
   {
     "symbol": "CUMMINSIND",
@@ -581,7 +581,7 @@
     "security_id": "1901",
     "sector": "Engineering",
     "mtf_margin_pct": 0.22,
-    "base_price": 3850.0
+    "base_price": 5070.0
   },
   {
     "symbol": "TORNTPHARM",
@@ -589,7 +589,7 @@
     "security_id": "3518",
     "sector": "Pharma",
     "mtf_margin_pct": 0.2,
-    "base_price": 3350.0
+    "base_price": 4965.5
   },
   {
     "symbol": "MAXHEALTH",
@@ -597,7 +597,7 @@
     "security_id": "22377",
     "sector": "Healthcare",
     "mtf_margin_pct": 0.22,
-    "base_price": 980.0
+    "base_price": 1037.7
   },
   {
     "symbol": "PERSISTENT",
@@ -605,7 +605,7 @@
     "security_id": "18365",
     "sector": "IT Services",
     "mtf_margin_pct": 0.22,
-    "base_price": 5200.0
+    "base_price": 5516.0
   },
   {
     "symbol": "BDL",
@@ -613,7 +613,7 @@
     "security_id": "2144",
     "sector": "Defence",
     "mtf_margin_pct": 0.25,
-    "base_price": 1280.0
+    "base_price": 1190.0
   },
   {
     "symbol": "LODHA",
@@ -621,7 +621,7 @@
     "security_id": "3220",
     "sector": "Real Estate",
     "mtf_margin_pct": 0.22,
-    "base_price": 1320.0
+    "base_price": 1116.9
   },
   {
     "symbol": "GODREJCP",
@@ -629,7 +629,7 @@
     "security_id": "10099",
     "sector": "FMCG",
     "mtf_margin_pct": 0.2,
-    "base_price": 1420.0
+    "base_price": 865.0
   },
   {
     "symbol": "DABUR",
@@ -637,7 +637,7 @@
     "security_id": "772",
     "sector": "FMCG",
     "mtf_margin_pct": 0.2,
-    "base_price": 560.0
+    "base_price": 376.0
   },
   {
     "symbol": "MARICO",
@@ -645,7 +645,7 @@
     "security_id": "4067",
     "sector": "FMCG",
     "mtf_margin_pct": 0.2,
-    "base_price": 640.0
+    "base_price": 802.1
   },
   {
     "symbol": "SRF",
@@ -653,7 +653,7 @@
     "security_id": "3273",
     "sector": "Chemicals",
     "mtf_margin_pct": 0.22,
-    "base_price": 2350.0
+    "base_price": 2482.4
   },
   {
     "symbol": "MUTHOOTFIN",
@@ -661,7 +661,7 @@
     "security_id": "23650",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.22,
-    "base_price": 1950.0
+    "base_price": 2792.1
   },
   {
     "symbol": "JINDALSTEL",
@@ -669,7 +669,7 @@
     "security_id": "6733",
     "sector": "Metals & Mining",
     "mtf_margin_pct": 0.22,
-    "base_price": 980.0
+    "base_price": 1120.5
   },
   {
     "symbol": "NHPC",
@@ -677,7 +677,7 @@
     "security_id": "17400",
     "sector": "Power",
     "mtf_margin_pct": 0.22,
-    "base_price": 95.0
+    "base_price": 76.38
   },
   {
     "symbol": "IRFC",
@@ -685,7 +685,7 @@
     "security_id": "2029",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.25,
-    "base_price": 160.0
+    "base_price": 81.09
   },
   {
     "symbol": "MAZDOCK",
@@ -693,7 +693,7 @@
     "security_id": "509",
     "sector": "Defence & Marine",
     "mtf_margin_pct": 0.25,
-    "base_price": 4350.0
+    "base_price": 2339.0
   },
   {
     "symbol": "BHEL",
@@ -701,7 +701,7 @@
     "security_id": "438",
     "sector": "Capital Goods",
     "mtf_margin_pct": 0.25,
-    "base_price": 270.0
+    "base_price": 431.0
   },
   {
     "symbol": "POLICYBZR",
@@ -709,7 +709,7 @@
     "security_id": "6656",
     "sector": "Fintech",
     "mtf_margin_pct": 0.25,
-    "base_price": 1680.0
+    "base_price": 1797.3
   },
   {
     "symbol": "NAUKRI",
@@ -717,7 +717,7 @@
     "security_id": "13751",
     "sector": "Internet & Software",
     "mtf_margin_pct": 0.22,
-    "base_price": 7350.0
+    "base_price": 1250.8
   },
   {
     "symbol": "ICICIPRULI",
@@ -725,7 +725,7 @@
     "security_id": "18652",
     "sector": "Insurance",
     "mtf_margin_pct": 0.2,
-    "base_price": 740.0
+    "base_price": 471.5
   },
   {
     "symbol": "ICICIGI",
@@ -733,7 +733,7 @@
     "security_id": "21770",
     "sector": "Insurance",
     "mtf_margin_pct": 0.2,
-    "base_price": 2150.0
+    "base_price": 1459.8
   },
   {
     "symbol": "SBICARD",
@@ -741,7 +741,7 @@
     "security_id": "17971",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.2,
-    "base_price": 720.0
+    "base_price": 655.2
   },
   {
     "symbol": "BERGEPAINT",
@@ -749,7 +749,7 @@
     "security_id": "404",
     "sector": "Consumer Goods",
     "mtf_margin_pct": 0.2,
-    "base_price": 540.0
+    "base_price": 458.5
   },
   {
     "symbol": "BAJAJ-AUTO",
@@ -757,7 +757,7 @@
     "security_id": "16669",
     "sector": "Automobile",
     "mtf_margin_pct": 0.2,
-    "base_price": 9800.0
+    "base_price": 11678.0
   },
   {
     "symbol": "PIIND",
@@ -765,7 +765,7 @@
     "security_id": "24184",
     "sector": "Chemicals",
     "mtf_margin_pct": 0.2,
-    "base_price": 4450.0
+    "base_price": 2259.0
   },
   {
     "symbol": "JSWENERGY",
@@ -773,7 +773,7 @@
     "security_id": "17869",
     "sector": "Power",
     "mtf_margin_pct": 0.25,
-    "base_price": 680.0
+    "base_price": 526.45
   },
   {
     "symbol": "JIOFIN",
@@ -781,15 +781,15 @@
     "security_id": "18143",
     "sector": "Financial Services",
     "mtf_margin_pct": 0.22,
-    "base_price": 330.0
+    "base_price": 229.9
   },
   {
-    "symbol": "ZOMATO",
+    "symbol": "ETERNAL",
     "name": "Eternal Ltd (Zomato)",
     "security_id": "5097",
     "sector": "Internet & Consumer",
     "mtf_margin_pct": 0.25,
-    "base_price": 275.0
+    "base_price": 323.5
   },
   {
     "symbol": "IRCTC",
@@ -797,6 +797,6 @@
     "security_id": "13611",
     "sector": "Railways & Tourism",
     "mtf_margin_pct": 0.22,
-    "base_price": 890.0
+    "base_price": 463.7
   }
 ]
