@@ -4,14 +4,6 @@ Handles Dhan HQ API credentials, MTF interest rates, margin rules, and trade tar
 """
 
 import os
-import hmac
-import hashlib
-import time
-import struct
-import base64
-import json
-import urllib.request
-import urllib.error
 from pathlib import Path
 
 # Base directory
@@ -112,83 +104,3 @@ def update_access_token(new_token: str, client_id: str = None) -> bool:
         f.writelines(lines)
 
     return True
-
-
-# Optional credentials for automated token renewal
-DHAN_PIN = os.getenv("DHAN_PIN", "")
-DHAN_TOTP_SECRET = os.getenv("DHAN_TOTP_SECRET", "")
-
-
-def generate_totp(secret: str) -> str:
-    """Generates a 6-digit TOTP code using RFC 6238 HMAC-SHA1 without external dependencies."""
-    secret = secret.replace(" ", "").upper()
-    secret += "=" * (-len(secret) % 8)
-    key = base64.b32decode(secret, casefold=True)
-    counter = int(time.time() // 30)
-    msg = struct.pack(">Q", counter)
-    h = hmac.new(key, msg, hashlib.sha1).digest()
-    offset = h[-1] & 0x0F
-    code = (struct.unpack(">I", h[offset:offset + 4])[0] & 0x7FFFFFFF) % 1000000
-    return f"{code:06d}"
-
-
-def generate_dhan_access_token(client_id: str = None, pin: str = None, totp: str = None, totp_secret: str = None) -> dict:
-    """
-    Self-generates a DhanHQ access token via Dhan's official authentication API:
-    POST https://auth.dhan.co/app/generateAccessToken
-    """
-    client_id = str(client_id or DHAN_CLIENT_ID).strip()
-    pin = str(pin or DHAN_PIN).strip()
-
-    if not client_id:
-        return {"success": False, "message": "Dhan Client ID is required"}
-    if not pin:
-        return {"success": False, "message": "Dhan account trading PIN is required"}
-
-    if not totp:
-        secret = totp_secret or DHAN_TOTP_SECRET
-        if not secret:
-            return {"success": False, "message": "Either 6-digit TOTP code or TOTP Secret Key is required"}
-        try:
-            totp = generate_totp(secret)
-        except Exception as e:
-            return {"success": False, "message": f"Invalid TOTP Secret Key: {e}"}
-
-    url = "https://auth.dhan.co/app/generateAccessToken"
-    payload = {
-        "dhanClientId": client_id,
-        "pin": pin,
-        "totp": str(totp).strip()
-    }
-
-    try:
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST"
-        )
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-            access_token = data.get("accessToken")
-            if access_token:
-                update_access_token(access_token, client_id)
-                return {
-                    "success": True,
-                    "message": "Dhan token generated and updated successfully!",
-                    "access_token": access_token,
-                    "expiry_time": data.get("expiryTime")
-                }
-            else:
-                return {"success": False, "message": data.get("message", "Failed to retrieve access token")}
-    except urllib.error.HTTPError as e:
-        err_body = e.read().decode("utf-8")
-        try:
-            err_json = json.loads(err_body)
-            msg = err_json.get("message", err_json.get("error", err_body))
-        except Exception:
-            msg = err_body
-        return {"success": False, "message": f"Dhan API Error ({e.code}): {msg}"}
-    except Exception as e:
-        return {"success": False, "message": f"Connection error: {e}"}
-

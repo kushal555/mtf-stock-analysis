@@ -80,55 +80,78 @@
             input, select, textarea { font-size: 16px; }
         }
 
-        /* --- LIGHT THEME COMPREHENSIVE OVERRIDES --- */
+        /* --- LIGHT THEME COMPREHENSIVE CONTRAST & READABILITY SYSTEM --- */
         html:not(.dark), html.light {
             color-scheme: light;
         }
         html:not(.dark) body, html.light body {
-            background-color: #f1f5f9 !important;
-            color: #1e293b !important;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
         }
         html:not(.dark) header.app-header, html.light header.app-header {
-            background-color: rgba(255, 255, 255, 0.96) !important;
+            background-color: rgba(255, 255, 255, 0.98) !important;
             border-color: #e2e8f0 !important;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
         }
-        html:not(.dark) .bg-navy-950, html.light .bg-navy-950 {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-        html:not(.dark) .bg-navy-900, html.light .bg-navy-900 {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-        }
+
+        /* Primary surface containers (Cards, Modals, Tables, Overlays) */
+        html:not(.dark) .bg-navy-900, html.light .bg-navy-900,
         html:not(.dark) .bg-gray-900, html.light .bg-gray-900 {
             background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
         }
+
+        /* Secondary / Recessed Inset Surfaces (2x2 Grid, Inner Boxes, Sliders Box, SMC Matrix) */
+        html:not(.dark) .bg-navy-950, html.light .bg-navy-950,
+        html:not(.dark) .bg-navy-950\/60, html.light .bg-navy-950\/60,
+        html:not(.dark) .bg-navy-950\/70, html.light .bg-navy-950\/70,
+        html:not(.dark) .bg-navy-950\/80, html.light .bg-navy-950\/80,
+        html:not(.dark) .bg-navy-950\/90, html.light .bg-navy-950\/90,
+        html:not(.dark) .bg-navy-900\/90, html.light .bg-navy-900\/90,
+        html:not(.dark) .bg-navy-900\/95, html.light .bg-navy-900\/95,
         html:not(.dark) .bg-gray-950, html.light .bg-gray-950,
         html:not(.dark) .bg-gray-950\/60, html.light .bg-gray-950\/60,
         html:not(.dark) .bg-gray-950\/70, html.light .bg-gray-950\/70,
-        html:not(.dark) .bg-navy-950\/80, html.light .bg-navy-950\/80 {
-            background-color: #f1f5f9 !important;
-            border-color: #e2e8f0 !important;
-        }
-        html:not(.dark) .bg-gray-800, html.light .bg-gray-800 {
-            background-color: #e2e8f0 !important;
-            border-color: #cbd5e1 !important;
-            color: #334155 !important;
-        }
-        html:not(.dark) .hover\:bg-gray-700:hover, html.light .hover\:bg-gray-700:hover {
-            background-color: #cbd5e1 !important;
-        }
-        html:not(.dark) .hover\:bg-gray-800:hover, html.light .hover\:bg-gray-800:hover {
-            background-color: #e2e8f0 !important;
-        }
-        html:not(.dark) .hover\:bg-gray-800\/40:hover, html.light .hover\:bg-gray-800\/40:hover,
-        html:not(.dark) .hover\:bg-gray-800\/30:hover, html.light .hover\:bg-gray-800\/30:hover {
+        html:not(.dark) .bg-gray-900\/60, html.light .bg-gray-900\/60,
+        html:not(.dark) .bg-gray-900\/70, html.light .bg-gray-900\/70,
+        html:not(.dark) .bg-gray-900\/80, html.light .bg-gray-900\/80 {
             background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
         }
+
+        /* Gray-800 Buttons, Tabs & Pills */
+        html:not(.dark) .bg-gray-800, html.light .bg-gray-800,
+        html:not(.dark) .bg-gray-800\/40, html.light .bg-gray-800\/40,
+        html:not(.dark) .bg-gray-800\/30, html.light .bg-gray-800\/30,
+        html:not(.dark) .bg-gray-800\/20, html.light .bg-gray-800\/20 {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
+        }
+        html:not(.dark) .hover\:bg-gray-700:hover, html.light .hover\:bg-gray-700:hover,
+        html:not(.dark) .hover\:bg-gray-800:hover, html.light .hover\:bg-gray-800:hover,
+        html:not(.dark) .hover\:bg-gray-800\/40:hover, html.light .hover\:bg-gray-800\/40:hover,
+        html:not(.dark) .hover\:bg-gray-800\/30:hover, html.light .hover\:bg-gray-800\/30:hover,
+        html:not(.dark) .hover\:bg-gray-800\/20:hover, html.light .hover\:bg-gray-800\/20:hover {
+            background-color: #e2e8f0 !important;
+        }
+
+        /* Gradient card backgrounds in Light Mode */
+        html:not(.dark) .bg-gradient-to-br, html.light .bg-gradient-to-br {
+            background-image: linear-gradient(to bottom right, #ffffff, #f8fafc, #f1f5f9) !important;
+            border-color: #cbd5e1 !important;
+        }
+        html:not(.dark) div.bg-gradient-to-r, html.light div.bg-gradient-to-r {
+            background-image: linear-gradient(to right, #eff6ff, #f8fafc, #eef2ff) !important;
+            border-color: #bfdbfe !important;
+        }
+        html:not(.dark) #pwaMobileBanner, html.light #pwaMobileBanner {
+            background-image: linear-gradient(to right, #ecfdf5, #f0fdf4, #f0fdfa) !important;
+            border-color: #a7f3d0 !important;
+        }
+
+        /* Crisp Borders */
         html:not(.dark) .border-gray-800, html.light .border-gray-800,
         html:not(.dark) .border-gray-800\/80, html.light .border-gray-800\/80,
         html:not(.dark) .border-gray-800\/70, html.light .border-gray-800\/70,
@@ -136,39 +159,220 @@
         html:not(.dark) .border-gray-700, html.light .border-gray-700,
         html:not(.dark) .border-gray-700\/80, html.light .border-gray-700\/80,
         html:not(.dark) .border-gray-700\/60, html.light .border-gray-700\/60 {
-            border-color: #e2e8f0 !important;
+            border-color: #cbd5e1 !important;
         }
         html:not(.dark) .divide-gray-800\/60 > :not([hidden]) ~ :not([hidden]),
         html:not(.dark) .divide-gray-800 > :not([hidden]) ~ :not([hidden]) {
             border-color: #e2e8f0 !important;
         }
+
+        /* --- TEXT HIGH-CONTRAST READABILITY FIXES --- */
+        /* Neutral text hierarchy (Dark text on light background) */
         html:not(.dark) .text-white, html.light .text-white {
             color: #0f172a !important;
         }
         html:not(.dark) .text-gray-100, html.light .text-gray-100,
-        html:not(.dark) .text-gray-200, html.light .text-gray-200,
+        html:not(.dark) .text-gray-200, html.light .text-gray-200 {
+            color: #0f172a !important;
+        }
         html:not(.dark) .text-gray-300, html.light .text-gray-300 {
-            color: #334155 !important;
+            color: #1e293b !important;
         }
         html:not(.dark) .text-gray-400, html.light .text-gray-400 {
-            color: #64748b !important;
+            color: #334155 !important;
         }
         html:not(.dark) .text-gray-500, html.light .text-gray-500 {
-            color: #94a3b8 !important;
+            color: #475569 !important;
         }
-        html:not(.dark) ::-webkit-scrollbar-track, html.light ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+
+        /* Hover text safety in Light Mode */
+        html:not(.dark) .hover\:text-white:hover, html.light .hover\:text-white:hover,
+        html:not(.dark) .hover\:text-gray-200:hover, html.light .hover\:text-gray-200:hover,
+        html:not(.dark) .hover\:text-gray-300:hover, html.light .hover\:text-gray-300:hover,
+        html:not(.dark) .group:hover .group-hover\:text-gray-200, html.light .group:hover .group-hover\:text-gray-200 {
+            color: #0f172a !important;
         }
-        html:not(.dark) ::-webkit-scrollbar-thumb, html.light ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+        html:not(.dark) .hover\:text-brand-400:hover, html.light .hover\:text-brand-400:hover,
+        html:not(.dark) .group:hover .group-hover\:text-brand-400, html.light .group:hover .group-hover\:text-brand-400 {
+            color: #1d4ed8 !important;
         }
-        html:not(.dark) thead tr.bg-gray-900\/70, html.light thead tr.bg-gray-900\/70 {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
+        html:not(.dark) .hover\:text-blue-300:hover, html.light .hover\:text-blue-300:hover {
+            color: #1d4ed8 !important;
+        }
+        html:not(.dark) .hover\:text-emerald-300:hover, html.light .hover\:text-emerald-300:hover {
+            color: #047857 !important;
+        }
+
+        /* CRITICAL: Preserve crisp WHITE text on solid colored buttons & badges */
+        html:not(.dark) .bg-brand-600, html.light .bg-brand-600,
+        html:not(.dark) .bg-brand-600 *, html.light .bg-brand-600 *,
+        html:not(.dark) .bg-brand-600\/80, html.light .bg-brand-600\/80,
+        html:not(.dark) .bg-brand-600\/80 *, html.light .bg-brand-600\/80 *,
+        html:not(.dark) .bg-emerald-600, html.light .bg-emerald-600,
+        html:not(.dark) .bg-emerald-600 *, html.light .bg-emerald-600 *,
+        html:not(.dark) .bg-rose-600, html.light .bg-rose-600,
+        html:not(.dark) .bg-rose-600 *, html.light .bg-rose-600 *,
+        html:not(.dark) button[class*="bg-gradient-"], html.light button[class*="bg-gradient-"],
+        html:not(.dark) button[class*="bg-gradient-"] *, html.light button[class*="bg-gradient-"] *,
+        html:not(.dark) a[class*="bg-gradient-"], html.light a[class*="bg-gradient-"],
+        html:not(.dark) a[class*="bg-gradient-"] *, html.light a[class*="bg-gradient-"] * {
+            color: #ffffff !important;
+        }
+
+        /* TradingView Link Buttons */
+        html:not(.dark) a.bg-gray-800, html.light a.bg-gray-800 {
+            color: #1d4ed8 !important;
+            border-color: #cbd5e1 !important;
+            background-color: #f1f5f9 !important;
+        }
+        html:not(.dark) a.bg-gray-800:hover, html.light a.bg-gray-800:hover {
+            color: #1e40af !important;
+            background-color: #e2e8f0 !important;
+        }
+
+        /* Filter Tab High Contrast Styling */
+        html:not(.dark) .filter-tab:not(.bg-brand-600), html.light .filter-tab:not(.bg-brand-600) {
+            background-color: #f1f5f9 !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #1e293b !important;
+        }
+        html:not(.dark) .filter-tab:not(.bg-brand-600) *, html.light .filter-tab:not(.bg-brand-600) * {
+            color: #1e293b !important;
+        }
+        html:not(.dark) .filter-tab.bg-brand-600, html.light .filter-tab.bg-brand-600 {
+            background-color: #2563eb !important;
+            border: 1px solid #1d4ed8 !important;
+            color: #ffffff !important;
+        }
+        html:not(.dark) .filter-tab.bg-brand-600 *, html.light .filter-tab.bg-brand-600 * {
+            color: #ffffff !important;
+        }
+
+        /* High-Contrast Colors (No more pale unreadable pastel on white) */
+        /* Green / Emerald */
+        html:not(.dark) .text-emerald-400, html.light .text-emerald-400,
+        html:not(.dark) .text-emerald-400\/90, html.light .text-emerald-400\/90 {
+            color: #047857 !important;
+        }
+        html:not(.dark) .text-emerald-300, html.light .text-emerald-300,
+        html:not(.dark) .text-emerald-300\/90, html.light .text-emerald-300\/90 {
+            color: #065f46 !important;
+        }
+        html:not(.dark) .bg-emerald-500\/10, html.light .bg-emerald-500\/10 {
+            background-color: #ecfdf5 !important;
+            border-color: #a7f3d0 !important;
+        }
+        html:not(.dark) .bg-emerald-500\/20, html.light .bg-emerald-500\/20 {
+            background-color: #d1fae5 !important;
+            border-color: #6ee7b7 !important;
+        }
+        html:not(.dark) .bg-emerald-950\/20, html.light .bg-emerald-950\/20 {
+            background-color: #ecfdf5 !important;
+            border-color: #a7f3d0 !important;
+        }
+
+        /* Amber / Orange (No more pale yellow) */
+        html:not(.dark) .text-amber-400, html.light .text-amber-400 {
+            color: #b45309 !important;
+        }
+        html:not(.dark) .text-amber-300, html.light .text-amber-300,
+        html:not(.dark) .text-amber-300\/90, html.light .text-amber-300\/90 {
+            color: #92400e !important;
+        }
+        html:not(.dark) .bg-amber-500\/10, html.light .bg-amber-500\/10 {
+            background-color: #fffbeb !important;
+            border-color: #fde68a !important;
+        }
+        html:not(.dark) .bg-amber-500\/20, html.light .bg-amber-500\/20 {
+            background-color: #fef3c7 !important;
+            border-color: #fcd34d !important;
+        }
+
+        /* Rose / Red */
+        html:not(.dark) .text-rose-400, html.light .text-rose-400 {
+            color: #be123c !important;
+        }
+        html:not(.dark) .text-rose-300, html.light .text-rose-300,
+        html:not(.dark) .text-rose-300\/80, html.light .text-rose-300\/80,
+        html:not(.dark) .text-rose-300\/90, html.light .text-rose-300\/90 {
+            color: #9f1239 !important;
+        }
+        html:not(.dark) .bg-rose-500\/10, html.light .bg-rose-500\/10 {
+            background-color: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+        }
+        html:not(.dark) .bg-rose-500\/20, html.light .bg-rose-500\/20 {
+            background-color: #ffe4e6 !important;
+            border-color: #fda4af !important;
+        }
+
+        /* Blue & Brand */
+        html:not(.dark) .text-brand-400, html.light .text-brand-400 {
+            color: #1d4ed8 !important;
+        }
+        html:not(.dark) .text-blue-400, html.light .text-blue-400 {
+            color: #1d4ed8 !important;
+        }
+        html:not(.dark) .text-blue-300, html.light .text-blue-300 {
+            color: #1e40af !important;
+        }
+        html:not(.dark) .bg-blue-500\/10, html.light .bg-blue-500\/10 {
+            background-color: #eff6ff !important;
+            border-color: #bfdbfe !important;
+        }
+        html:not(.dark) .bg-blue-500\/20, html.light .bg-blue-500\/20 {
+            background-color: #dbeafe !important;
+            border-color: #93c5fd !important;
+        }
+        html:not(.dark) .bg-brand-950\/30, html.light .bg-brand-950\/30,
+        html:not(.dark) .bg-brand-950\/40, html.light .bg-brand-950\/40 {
+            background-color: #eff6ff !important;
+        }
+
+        /* Purple / Indigo (SMC tags & headings) */
+        html:not(.dark) .text-purple-400, html.light .text-purple-400 {
+            color: #7e22ce !important;
+        }
+        html:not(.dark) .text-purple-300, html.light .text-purple-300 {
+            color: #6b21a8 !important;
+        }
+        html:not(.dark) .bg-purple-500\/20, html.light .bg-purple-500\/20 {
+            background-color: #f3e8ff !important;
+            border-color: #d8b4fe !important;
+        }
+        html:not(.dark) .text-indigo-400, html.light .text-indigo-400 {
+            color: #4338ca !important;
+        }
+        html:not(.dark) .text-indigo-300, html.light .text-indigo-300 {
+            color: #3730a3 !important;
+        }
+        html:not(.dark) .bg-indigo-500\/20, html.light .bg-indigo-500\/20 {
+            background-color: #e0e7ff !important;
+            border-color: #c7d2fe !important;
+        }
+
+        /* Tables in Light Mode */
+        html:not(.dark) thead tr.bg-gray-900\/70, html.light thead tr.bg-gray-900\/70,
+        html:not(.dark) thead tr.bg-gray-900, html.light thead tr.bg-gray-900,
+        html:not(.dark) thead, html.light thead {
+            background-color: #f1f5f9 !important;
+            border-bottom: 2px solid #cbd5e1 !important;
         }
         html:not(.dark) thead th, html.light thead th {
-            color: #64748b !important;
+            color: #0f172a !important;
+            font-weight: 700 !important;
         }
+        html:not(.dark) tbody tr, html.light tbody tr {
+            border-color: #e2e8f0 !important;
+        }
+        html:not(.dark) tbody tr:hover, html.light tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+        html:not(.dark) tr.bg-brand-950\/30, html.light tr.bg-brand-950\/30 {
+            background-color: #eff6ff !important;
+        }
+
+        /* Inputs & Form Controls */
         html:not(.dark) input, html.light input,
         html:not(.dark) select, html.light select,
         html:not(.dark) textarea, html.light textarea {
@@ -176,60 +380,56 @@
             border-color: #cbd5e1 !important;
             color: #0f172a !important;
         }
+        html:not(.dark) input::placeholder, html.light input::placeholder,
+        html:not(.dark) textarea::placeholder, html.light textarea::placeholder {
+            color: #64748b !important;
+        }
         html:not(.dark) select option, html.light select option {
             background-color: #ffffff;
             color: #0f172a;
         }
-        html:not(.dark) .bg-emerald-500\/10, html.light .bg-emerald-500\/10 {
-            background-color: #ecfdf5 !important;
-        }
-        html:not(.dark) .bg-emerald-500\/20, html.light .bg-emerald-500\/20 {
-            background-color: #d1fae5 !important;
-        }
-        html:not(.dark) .text-emerald-400, html.light .text-emerald-400 {
+        html:not(.dark) select#watchlistSelect, html.light select#watchlistSelect,
+        html:not(.dark) select#watchlistSelectMobile, html.light select#watchlistSelectMobile {
             color: #047857 !important;
+            border-color: #10b981 !important;
+            background-color: #ffffff !important;
+            font-weight: 700 !important;
         }
-        html:not(.dark) .text-emerald-300, html.light .text-emerald-300 {
-            color: #065f46 !important;
+
+        /* PIN Digits in Light Mode */
+        html:not(.dark) .pin-digit, html.light .pin-digit {
+            background-color: #f8fafc !important;
+            border-color: #94a3b8 !important;
+            color: #047857 !important;
+            font-weight: 800 !important;
         }
-        html:not(.dark) .bg-amber-500\/10, html.light .bg-amber-500\/10 {
-            background-color: #fffbeb !important;
+        html:not(.dark) .pin-digit:focus, html.light .pin-digit:focus {
+            border-color: #10b981 !important;
+            background-color: #ffffff !important;
         }
-        html:not(.dark) .bg-amber-500\/20, html.light .bg-amber-500\/20 {
-            background-color: #fef3c7 !important;
+
+        /* Calculator Card Inputs */
+        html:not(.dark) #calcCapitalInput, html.light #calcCapitalInput {
+            color: #047857 !important;
+            font-weight: 800 !important;
         }
-        html:not(.dark) .text-amber-400, html.light .text-amber-400 {
-            color: #b45309 !important;
-        }
-        html:not(.dark) .text-amber-300, html.light .text-amber-300 {
-            color: #92400e !important;
-        }
-        html:not(.dark) .bg-rose-500\/10, html.light .bg-rose-500\/10 {
-            background-color: #fff1f2 !important;
-        }
-        html:not(.dark) .bg-rose-500\/20, html.light .bg-rose-500\/20 {
-            background-color: #ffe4e6 !important;
-        }
-        html:not(.dark) .text-rose-400, html.light .text-rose-400 {
-            color: #be123c !important;
-        }
-        html:not(.dark) .bg-blue-500\/10, html.light .bg-blue-500\/10 {
-            background-color: #eff6ff !important;
-        }
-        html:not(.dark) .bg-blue-500\/20, html.light .bg-blue-500\/20 {
-            background-color: #dbeafe !important;
-        }
-        html:not(.dark) .text-blue-400, html.light .text-blue-400 {
+        html:not(.dark) #calcTargetInput, html.light #calcTargetInput {
             color: #1d4ed8 !important;
+            font-weight: 800 !important;
         }
-        html:not(.dark) .text-indigo-400, html.light .text-indigo-400 {
-            color: #4338ca !important;
+        html:not(.dark) #calcRateInput, html.light #calcRateInput {
+            color: #b45309 !important;
+            font-weight: 800 !important;
         }
+
+        /* Floating Compare Dock */
         html:not(.dark) #compareDock, html.light #compareDock {
-            background-color: rgba(255, 255, 255, 0.96) !important;
+            background-color: rgba(255, 255, 255, 0.98) !important;
             border-color: #cbd5e1 !important;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
         }
+
+        /* Modals */
         html:not(.dark) #comparisonModal > div, html.light #comparisonModal > div,
         html:not(.dark) #simulatorModal > div, html.light #simulatorModal > div,
         html:not(.dark) #tokenModal > div, html.light #tokenModal > div,
@@ -237,14 +437,14 @@
         html:not(.dark) #pinAuthOverlay > div, html.light #pinAuthOverlay > div,
         html:not(.dark) #iosInstallModal > div, html.light #iosInstallModal > div {
             background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            color: #0f172a !important;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2) !important;
-        }
-        html:not(.dark) .bg-gradient-to-br, html.light .bg-gradient-to-br {
-            background-image: linear-gradient(to bottom right, #ffffff, #f8fafc, #f1f5f9) !important;
             border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
         }
+        html:not(.dark) #pinAuthOverlay, html.light #pinAuthOverlay {
+            background-color: rgba(248, 250, 252, 0.96) !important;
+        }
+
     </style>
 </head>
 <body class="bg-navy-950 text-gray-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white pb-24">
@@ -715,11 +915,11 @@
                     <span>Simulate Invested Margin:</span>
                     <span class="font-bold text-emerald-400 font-mono" id="compCapitalDisplay">₹50,000</span>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="setComparisonCapital(25000)" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹25k</button>
-                    <button onclick="setComparisonCapital(50000)" class="px-2.5 py-1 bg-brand-600 text-white rounded text-[11px] font-bold">₹50k</button>
-                    <button onclick="setComparisonCapital(100000)" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹1 Lakh</button>
-                    <button onclick="setComparisonCapital(200000)" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹2 Lakhs</button>
+                <div class="flex items-center space-x-2" id="compCapitalBtnGroup">
+                    <button onclick="setComparisonCapital(25000)" data-capital="25000" class="comp-cap-btn px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹25k</button>
+                    <button onclick="setComparisonCapital(50000)" data-capital="50000" class="comp-cap-btn px-2.5 py-1 bg-brand-600 text-white rounded text-[11px] font-bold">₹50k</button>
+                    <button onclick="setComparisonCapital(100000)" data-capital="100000" class="comp-cap-btn px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹1 Lakh</button>
+                    <button onclick="setComparisonCapital(200000)" data-capital="200000" class="comp-cap-btn px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300">₹2 Lakhs</button>
                 </div>
             </div>
 
@@ -897,60 +1097,19 @@
         </div>
     </div>
 
-    <!-- Token Update & Self-Generate Modal -->
+    <!-- Token Update Modal -->
     <div id="tokenModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
             <button onclick="closeTokenModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white text-xl">✕</button>
             <div class="flex items-center space-x-3 mb-4">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-emerald-500 flex items-center justify-center text-xl shadow">🔑</div>
+                <div class="text-2xl">🔑</div>
                 <div>
-                    <h3 class="font-bold text-base text-white">Dhan HQ API Token Manager</h3>
-                    <p class="text-xs text-gray-400">Tokens are valid for 24 hours. Self-generate automatically or paste manually.</p>
+                    <h3 class="font-bold text-base text-white">Update Dhan Access Token</h3>
+                    <p class="text-xs text-gray-400">Dhan API tokens expire every 24 hours. Paste your fresh token below.</p>
                 </div>
             </div>
 
-            <!-- Token Mode Tabs -->
-            <div class="flex border-b border-gray-800 mb-4 text-xs font-bold">
-                <button id="tokenTabAutoBtn" onclick="switchTokenTab('auto')" class="pb-2 px-3 border-b-2 border-emerald-500 text-emerald-400 flex items-center space-x-1 transition">
-                    <span>⚡ Self-Generate (Auto)</span>
-                </button>
-                <button id="tokenTabManualBtn" onclick="switchTokenTab('manual')" class="pb-2 px-3 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-1 transition">
-                    <span>📋 Paste Token (Manual)</span>
-                </button>
-            </div>
-
-            <!-- Tab 1: Self-Generate via Dhan PIN & TOTP -->
-            <div id="tokenAutoTab" class="space-y-3">
-                <div class="bg-emerald-500/10 border border-emerald-500/20 p-2.5 rounded-lg text-[11px] text-emerald-300">
-                    💡 Directly generate your 24-hr token using your Dhan account credentials. No need to visit web.dhan.co!
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Dhan Client ID</label>
-                    <input type="text" id="autoClientId" value="1103250505" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Dhan Trading PIN</label>
-                        <input type="password" id="autoDhanPin" placeholder="6-digit Dhan PIN" maxlength="6" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Current TOTP</label>
-                        <input type="text" id="autoDhanTotp" placeholder="6-digit code" maxlength="6" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 mb-1">Or TOTP Secret Key (Optional - Enables 100% Auto-Renew)</label>
-                    <input type="text" id="autoTotpSecret" placeholder="e.g. JBSWY3DPEHPK3PXP..." class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-xs font-mono text-gray-300 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div id="autoTokenMsg" class="text-xs hidden p-2 rounded"></div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button onclick="closeTokenModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-medium">Cancel</button>
-                    <button onclick="submitSelfGenerateToken()" id="autoTokenBtn" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg text-xs font-bold shadow">⚡ Generate & Set Token</button>
-                </div>
-            </div>
-
-            <!-- Tab 2: Manual Paste -->
-            <div id="tokenManualTab" class="space-y-4 hidden">
+            <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">Dhan Client ID</label>
                     <input type="text" id="modalClientId" value="1103250505" class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-brand-500">
@@ -967,7 +1126,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- iOS Add to Home Screen Instructions Modal -->
     <div id="iosInstallModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 hidden">
@@ -1734,7 +1892,15 @@
 
         async function setComparisonCapital(amt) {
             comparisonCapital = amt;
-            document.getElementById('compCapitalDisplay').textContent = `₹${amt.toLocaleString('en-IN')}`;
+            const disp = document.getElementById('compCapitalDisplay');
+            if (disp) disp.textContent = `₹${amt.toLocaleString('en-IN')}`;
+            document.querySelectorAll('.comp-cap-btn').forEach(b => {
+                if (parseInt(b.getAttribute('data-capital')) === amt) {
+                    b.className = 'comp-cap-btn px-2.5 py-1 bg-brand-600 text-white rounded text-[11px] font-bold shadow-sm';
+                } else {
+                    b.className = 'comp-cap-btn px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded text-[11px] font-medium text-gray-300';
+                }
+            });
             openComparisonModal();
         }
 
@@ -1954,94 +2120,14 @@
         // --- Token Modal ---
         function openTokenModal() {
             document.getElementById('tokenModal').classList.remove('hidden');
-            const autoMsg = document.getElementById('autoTokenMsg');
-            const manualMsg = document.getElementById('tokenUpdateMsg');
-            if (autoMsg) autoMsg.classList.add('hidden');
-            if (manualMsg) manualMsg.classList.add('hidden');
-            switchTokenTab('auto');
+            document.getElementById('tokenUpdateMsg').classList.add('hidden');
         }
 
         function closeTokenModal() {
             document.getElementById('tokenModal').classList.add('hidden');
         }
 
-        function switchTokenTab(mode) {
-            const tabAutoBtn = document.getElementById('tokenTabAutoBtn');
-            const tabManualBtn = document.getElementById('tokenTabManualBtn');
-            const autoTab = document.getElementById('tokenAutoTab');
-            const manualTab = document.getElementById('tokenManualTab');
-
-            if (mode === 'auto') {
-                if (tabAutoBtn) tabAutoBtn.className = 'pb-2 px-3 border-b-2 border-emerald-500 text-emerald-400 flex items-center space-x-1 transition font-bold';
-                if (tabManualBtn) tabManualBtn.className = 'pb-2 px-3 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-1 transition font-bold';
-                if (autoTab) autoTab.classList.remove('hidden');
-                if (manualTab) manualTab.classList.add('hidden');
-            } else {
-                if (tabManualBtn) tabManualBtn.className = 'pb-2 px-3 border-b-2 border-emerald-500 text-emerald-400 flex items-center space-x-1 transition font-bold';
-                if (tabAutoBtn) tabAutoBtn.className = 'pb-2 px-3 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-1 transition font-bold';
-                if (manualTab) manualTab.classList.remove('hidden');
-                if (autoTab) autoTab.classList.add('hidden');
-            }
-        }
-
-        async function submitSelfGenerateToken() {
-            const clientId = document.getElementById('autoClientId').value.trim();
-            const pin = document.getElementById('autoDhanPin').value.trim();
-            const totp = document.getElementById('autoDhanTotp').value.trim();
-            const totpSecret = document.getElementById('autoTotpSecret').value.trim();
-            const msgBox = document.getElementById('autoTokenMsg');
-            const btn = document.getElementById('autoTokenBtn');
-
-            if (!pin) {
-                msgBox.className = 'text-xs p-2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 block';
-                msgBox.textContent = 'Please enter your 6-digit Dhan trading PIN.';
-                return;
-            }
-
-            if (!totp && !totpSecret) {
-                msgBox.className = 'text-xs p-2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 block';
-                msgBox.textContent = 'Please enter your current 6-digit TOTP code or your TOTP Secret Key.';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = '<span>⏳ Contacting Dhan...</span>';
-
-            try {
-                const res = await fetch('/api/generate-token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        client_id: clientId,
-                        pin: pin,
-                        totp: totp,
-                        totp_secret: totpSecret
-                    })
-                });
-                const result = await res.json();
-                if (result.success) {
-                    msgBox.className = 'text-xs p-2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 block';
-                    msgBox.textContent = '🎉 ' + (result.message || 'Token generated successfully! Refreshing data...');
-                    document.getElementById('clientIdDisplay').textContent = clientId;
-                    setTimeout(() => {
-                        closeTokenModal();
-                        loadStocks(true);
-                    }, 1400);
-                } else {
-                    msgBox.className = 'text-xs p-2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 block';
-                    msgBox.textContent = result.message || 'Failed to generate token.';
-                }
-            } catch (err) {
-                msgBox.className = 'text-xs p-2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 block';
-                msgBox.textContent = 'Connection error communicating with server.';
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<span>⚡ Generate & Set Token</span>';
-            }
-        }
-
         async function submitTokenUpdate() {
-
             const clientId = document.getElementById('modalClientId').value.trim();
             const token = document.getElementById('modalAccessToken').value.trim();
             const msgBox = document.getElementById('tokenUpdateMsg');

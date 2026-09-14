@@ -342,33 +342,6 @@ class TestPINSecurityAndAuth(unittest.TestCase):
         self.assertTrue(sent_jsons[0][0]["success"])
         self.assertIn("mtf_pin_auth=654000", sent_jsons[0][2])
 
-    def test_totp_generation(self):
-        from config import generate_totp
-        # Standard RFC test secret JBSWY3DPEHPK3PXP
-        totp = generate_totp("JBSWY3DPEHPK3PXP")
-        self.assertEqual(len(totp), 6)
-        self.assertTrue(totp.isdigit())
-
-    def test_generate_token_endpoint_validation(self):
-        from dashboard import DashboardRequestHandler
-        from unittest.mock import MagicMock
-        import io
-
-        body = json.dumps({"client_id": "1103250505", "pin": ""}).encode("utf-8")
-        handler = MagicMock(spec=DashboardRequestHandler)
-        handler.path = "/api/generate-token"
-        handler.headers = {"Content-Length": str(len(body))}
-        # Missing PIN and TOTP should fail gracefully
-        handler.rfile = io.BytesIO(body)
-        sent_jsons = []
-        handler._send_json = lambda data, status=200, cookie_header=None: sent_jsons.append((data, status))
-        DashboardRequestHandler.do_POST(handler)
-        self.assertEqual(len(sent_jsons), 1)
-        self.assertEqual(sent_jsons[0][1], 400)
-        self.assertFalse(sent_jsons[0][0]["success"])
-
-
-
 
 class TestSMCEngineAndAI(unittest.TestCase):
     def test_smc_order_block_detection(self):
