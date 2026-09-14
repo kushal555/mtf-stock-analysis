@@ -10,11 +10,27 @@
     <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MTF Trader">
     <meta name="application-name" content="MTF Trader">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0b0f19">
+    <meta name="theme-color" content="#0b0f19" id="metaThemeColor">
+
+    <!-- Immediate Theme Initializer to prevent flicker -->
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('mtf_theme') || 'dark';
+                if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                }
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -35,40 +51,225 @@
         }
     </script>
     <style>
+        /* Safe Area Inset Support for iPhone Notch / Dynamic Island / Status Bar */
+        :root {
+            --sat: env(safe-area-inset-top, 0px);
+            --sab: env(safe-area-inset-bottom, 0px);
+        }
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+        }
+        header.app-header {
+            padding-top: max(0.5rem, env(safe-area-inset-top, 0.5rem));
+            padding-left: max(0.75rem, env(safe-area-inset-left, 0.75rem));
+            padding-right: max(0.75rem, env(safe-area-inset-right, 0.75rem));
+        }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #111827; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+
         /* Prevent iOS font zoom on input focus */
         input, select, textarea { font-size: 14px; }
         @media (max-width: 640px) {
             input, select, textarea { font-size: 16px; }
+        }
+
+        /* --- LIGHT THEME COMPREHENSIVE OVERRIDES --- */
+        html:not(.dark), html.light {
+            color-scheme: light;
+        }
+        html:not(.dark) body, html.light body {
+            background-color: #f1f5f9 !important;
+            color: #1e293b !important;
+        }
+        html:not(.dark) header.app-header, html.light header.app-header {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        html:not(.dark) .bg-navy-950, html.light .bg-navy-950 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+        html:not(.dark) .bg-navy-900, html.light .bg-navy-900 {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+        }
+        html:not(.dark) .bg-gray-900, html.light .bg-gray-900 {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html:not(.dark) .bg-gray-950, html.light .bg-gray-950,
+        html:not(.dark) .bg-gray-950\/60, html.light .bg-gray-950\/60,
+        html:not(.dark) .bg-gray-950\/70, html.light .bg-gray-950\/70,
+        html:not(.dark) .bg-navy-950\/80, html.light .bg-navy-950\/80 {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+        html:not(.dark) .bg-gray-800, html.light .bg-gray-800 {
+            background-color: #e2e8f0 !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+        html:not(.dark) .hover\:bg-gray-700:hover, html.light .hover\:bg-gray-700:hover {
+            background-color: #cbd5e1 !important;
+        }
+        html:not(.dark) .hover\:bg-gray-800:hover, html.light .hover\:bg-gray-800:hover {
+            background-color: #e2e8f0 !important;
+        }
+        html:not(.dark) .hover\:bg-gray-800\/40:hover, html.light .hover\:bg-gray-800\/40:hover,
+        html:not(.dark) .hover\:bg-gray-800\/30:hover, html.light .hover\:bg-gray-800\/30:hover {
+            background-color: #f8fafc !important;
+        }
+        html:not(.dark) .border-gray-800, html.light .border-gray-800,
+        html:not(.dark) .border-gray-800\/80, html.light .border-gray-800\/80,
+        html:not(.dark) .border-gray-800\/70, html.light .border-gray-800\/70,
+        html:not(.dark) .border-gray-800\/60, html.light .border-gray-800\/60,
+        html:not(.dark) .border-gray-700, html.light .border-gray-700,
+        html:not(.dark) .border-gray-700\/80, html.light .border-gray-700\/80,
+        html:not(.dark) .border-gray-700\/60, html.light .border-gray-700\/60 {
+            border-color: #e2e8f0 !important;
+        }
+        html:not(.dark) .divide-gray-800\/60 > :not([hidden]) ~ :not([hidden]),
+        html:not(.dark) .divide-gray-800 > :not([hidden]) ~ :not([hidden]) {
+            border-color: #e2e8f0 !important;
+        }
+        html:not(.dark) .text-white, html.light .text-white {
+            color: #0f172a !important;
+        }
+        html:not(.dark) .text-gray-100, html.light .text-gray-100,
+        html:not(.dark) .text-gray-200, html.light .text-gray-200,
+        html:not(.dark) .text-gray-300, html.light .text-gray-300 {
+            color: #334155 !important;
+        }
+        html:not(.dark) .text-gray-400, html.light .text-gray-400 {
+            color: #64748b !important;
+        }
+        html:not(.dark) .text-gray-500, html.light .text-gray-500 {
+            color: #94a3b8 !important;
+        }
+        html:not(.dark) ::-webkit-scrollbar-track, html.light ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        html:not(.dark) ::-webkit-scrollbar-thumb, html.light ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+        html:not(.dark) thead tr.bg-gray-900\/70, html.light thead tr.bg-gray-900\/70 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+        html:not(.dark) thead th, html.light thead th {
+            color: #64748b !important;
+        }
+        html:not(.dark) input, html.light input,
+        html:not(.dark) select, html.light select,
+        html:not(.dark) textarea, html.light textarea {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html:not(.dark) select option, html.light select option {
+            background-color: #ffffff;
+            color: #0f172a;
+        }
+        html:not(.dark) .bg-emerald-500\/10, html.light .bg-emerald-500\/10 {
+            background-color: #ecfdf5 !important;
+        }
+        html:not(.dark) .bg-emerald-500\/20, html.light .bg-emerald-500\/20 {
+            background-color: #d1fae5 !important;
+        }
+        html:not(.dark) .text-emerald-400, html.light .text-emerald-400 {
+            color: #047857 !important;
+        }
+        html:not(.dark) .text-emerald-300, html.light .text-emerald-300 {
+            color: #065f46 !important;
+        }
+        html:not(.dark) .bg-amber-500\/10, html.light .bg-amber-500\/10 {
+            background-color: #fffbeb !important;
+        }
+        html:not(.dark) .bg-amber-500\/20, html.light .bg-amber-500\/20 {
+            background-color: #fef3c7 !important;
+        }
+        html:not(.dark) .text-amber-400, html.light .text-amber-400 {
+            color: #b45309 !important;
+        }
+        html:not(.dark) .text-amber-300, html.light .text-amber-300 {
+            color: #92400e !important;
+        }
+        html:not(.dark) .bg-rose-500\/10, html.light .bg-rose-500\/10 {
+            background-color: #fff1f2 !important;
+        }
+        html:not(.dark) .bg-rose-500\/20, html.light .bg-rose-500\/20 {
+            background-color: #ffe4e6 !important;
+        }
+        html:not(.dark) .text-rose-400, html.light .text-rose-400 {
+            color: #be123c !important;
+        }
+        html:not(.dark) .bg-blue-500\/10, html.light .bg-blue-500\/10 {
+            background-color: #eff6ff !important;
+        }
+        html:not(.dark) .bg-blue-500\/20, html.light .bg-blue-500\/20 {
+            background-color: #dbeafe !important;
+        }
+        html:not(.dark) .text-blue-400, html.light .text-blue-400 {
+            color: #1d4ed8 !important;
+        }
+        html:not(.dark) .text-indigo-400, html.light .text-indigo-400 {
+            color: #4338ca !important;
+        }
+        html:not(.dark) #compareDock, html.light #compareDock {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
+        }
+        html:not(.dark) #comparisonModal > div, html.light #comparisonModal > div,
+        html:not(.dark) #simulatorModal > div, html.light #simulatorModal > div,
+        html:not(.dark) #tokenModal > div, html.light #tokenModal > div,
+        html:not(.dark) #iosInstallModal > div, html.light #iosInstallModal > div {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2) !important;
+        }
+        html:not(.dark) .bg-gradient-to-br, html.light .bg-gradient-to-br {
+            background-image: linear-gradient(to bottom right, #ffffff, #f8fafc, #f1f5f9) !important;
+            border-color: #cbd5e1 !important;
         }
     </style>
 </head>
 <body class="bg-navy-950 text-gray-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white pb-24">
 
     <!-- Navbar -->
-    <header class="border-b border-gray-800 bg-navy-900/90 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-2.5 sm:space-x-3">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-emerald-500 flex items-center justify-center font-black text-lg sm:text-xl shadow-lg shadow-brand-500/20 flex-shrink-0">
-                    📊
-                </div>
-                <div>
-                    <div class="flex items-center space-x-1.5 sm:space-x-2">
-                        <h1 class="font-bold text-sm sm:text-lg text-white truncate max-w-[170px] sm:max-w-none">MTF Swing Scanner</h1>
-                        <span id="universeBadge" class="px-2 py-0.5 text-[10px] sm:text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 whitespace-nowrap">MTF-Watchlist (22)</span>
+    <header class="app-header border-b border-gray-800 bg-navy-900/95 backdrop-blur sticky top-0 z-40 transition-colors">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <!-- Row 1: Brand, Watchlist (Desktop), Theme Toggle, Install, Token -->
+            <div class="h-14 sm:h-16 flex items-center justify-between gap-2">
+                <!-- Brand Logo & Title -->
+                <div class="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-shrink">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-emerald-500 flex items-center justify-center font-black text-base sm:text-xl shadow-lg shadow-brand-500/20 flex-shrink-0">
+                        📊
                     </div>
-                    <p class="text-[10px] sm:text-[11px] text-gray-400 hidden xs:block truncate">10% Profit Target • 1–2 Month Interest Advantage</p>
+                    <div class="min-w-0">
+                        <div class="flex items-center space-x-1.5 sm:space-x-2">
+                            <h1 class="font-bold text-sm sm:text-lg text-white truncate">MTF Scanner</h1>
+                            <span id="universeBadgeDesktop" class="hidden sm:inline-block px-2 py-0.5 text-[10px] sm:text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 whitespace-nowrap">MTF-Watchlist (22)</span>
+                        </div>
+                        <p class="text-[10px] sm:text-[11px] text-gray-400 hidden md:block truncate">10% Profit Target • 1–2 Month Interest Advantage</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="flex items-center space-x-2 sm:space-x-3">
-                <!-- Watchlist Selector -->
-                <div class="flex items-center space-x-1 sm:space-x-2">
-                    <label for="watchlistSelect" class="hidden md:inline text-xs text-gray-400 font-medium">Watchlist:</label>
-                    <select id="watchlistSelect" onchange="switchWatchlist(this.value)" class="bg-gray-900 border border-emerald-500/50 hover:border-emerald-400 rounded-lg px-2 sm:px-3 py-1.5 text-xs font-semibold text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-sm max-w-[130px] sm:max-w-none">
+                <!-- Desktop Watchlist Dropdown (Hidden on Mobile) -->
+                <div class="hidden sm:flex items-center space-x-2">
+                    <label for="watchlistSelect" class="text-xs text-gray-400 font-medium">Watchlist:</label>
+                    <select id="watchlistSelect" onchange="switchWatchlist(this.value)" class="bg-gray-900 border border-emerald-500/50 hover:border-emerald-400 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-sm">
                         <option value="my_watchlist" selected>MTF-Watchlist (22)</option>
                         <option value="top_100">Top 100 Companies (100)</option>
                         <option value="top_50">NIFTY 50 (50)</option>
@@ -76,22 +277,46 @@
                     </select>
                 </div>
 
-                <!-- PWA Install Button -->
-                <button id="pwaInstallBtn" onclick="installPWA()" class="flex items-center space-x-1 text-xs bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-2.5 py-1.5 rounded-lg shadow-md transition" title="Add app shortcut to phone home screen">
-                    <span>📲</span>
-                    <span class="hidden sm:inline">Install App</span>
-                </button>
+                <!-- Action Controls: Theme Toggle + PWA Install + Client ID + Token -->
+                <div class="flex items-center space-x-1.5 sm:space-x-2 flex-shrink-0">
+                    <!-- Light / Dark Mode Toggle Button -->
+                    <button id="themeToggleBtn" onclick="toggleTheme()" class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-amber-400 border border-gray-700 transition" title="Toggle Light / Dark Mode" aria-label="Toggle Theme">
+                        <span id="themeIcon" class="text-sm">☀️</span>
+                    </button>
 
-                <div class="hidden lg:flex items-center space-x-2 bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-700/60 text-xs">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-gray-400">Client:</span>
-                    <span class="font-mono text-emerald-400 font-semibold" id="clientIdDisplay">1103250505</span>
+                    <!-- PWA Install Button -->
+                    <button id="pwaInstallBtn" onclick="installPWA()" class="flex items-center space-x-1 text-xs bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-2 sm:px-2.5 py-1.5 rounded-lg shadow-md transition" title="Add app shortcut to phone home screen">
+                        <span>📲</span>
+                        <span class="hidden md:inline">Install App</span>
+                    </button>
+
+                    <!-- Client ID Display (Desktop) -->
+                    <div class="hidden lg:flex items-center space-x-1.5 bg-gray-900 px-2.5 py-1.5 rounded-lg border border-gray-700/60 text-xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-gray-400">Client:</span>
+                        <span class="font-mono text-emerald-400 font-semibold" id="clientIdDisplay">1103250505</span>
+                    </div>
+
+                    <!-- Token Modal Button -->
+                    <button onclick="openTokenModal()" class="flex items-center space-x-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-2 sm:px-2.5 py-1.5 rounded-lg border border-gray-700 transition" title="Update Dhan API Token">
+                        <span>🔑</span>
+                        <span class="hidden md:inline">Token</span>
+                    </button>
                 </div>
+            </div>
 
-                <button onclick="openTokenModal()" class="flex items-center space-x-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-2 sm:px-3 py-1.5 rounded-lg border border-gray-700 transition">
-                    <span>🔑</span>
-                    <span class="hidden sm:inline">Token</span>
-                </button>
+            <!-- Row 2 (Mobile only): Full-width Watchlist Selector Bar -->
+            <div class="sm:hidden pb-2.5 pt-0.5 flex items-center space-x-2">
+                <div class="relative flex-1 min-w-0">
+                    <select id="watchlistSelectMobile" onchange="switchWatchlist(this.value)" class="w-full bg-gray-900 border border-emerald-500/50 hover:border-emerald-400 rounded-lg pl-2.5 pr-7 py-1.5 text-xs font-semibold text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-sm">
+                        <option value="my_watchlist" selected>MTF-Watchlist (22)</option>
+                        <option value="top_100">Top 100 Companies (100)</option>
+                        <option value="top_50">NIFTY 50 (50)</option>
+                        <option value="next_50">NIFTY Next 50 (50)</option>
+                    </select>
+                    <span class="absolute right-2.5 top-2 pointer-events-none text-emerald-400 text-[10px]">▼</span>
+                </div>
+                <span id="universeBadgeMobile" class="px-2 py-1 text-[10px] font-bold rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 whitespace-nowrap">22 Stocks</span>
             </div>
         </div>
     </header>
@@ -120,9 +345,9 @@
             </div>
         </div>
 
-        <!-- Top Overview Stats -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden">
+        <!-- Top Overview Stats (Swipeable Carousel on Mobile, Grid on Desktop) -->
+        <div class="flex overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pb-1 sm:pb-0 snap-x snap-mandatory no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden flex-shrink-0 w-[80vw] sm:w-auto snap-center">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">In Buy Zone</span>
                     <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-xs font-semibold">🟢 Actionable</span>
@@ -136,7 +361,7 @@
                 </div>
             </div>
 
-            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden">
+            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden flex-shrink-0 w-[80vw] sm:w-auto snap-center">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Approaching Zone</span>
                     <span class="text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded text-xs font-semibold">🟡 Watchlist</span>
@@ -150,7 +375,7 @@
                 </div>
             </div>
 
-            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden">
+            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden flex-shrink-0 w-[80vw] sm:w-auto snap-center">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">MTF Leverage</span>
                     <span class="text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded text-xs font-semibold">⚡ 4x - 5x Leverage</span>
@@ -162,7 +387,7 @@
                 <p class="text-[11px] text-gray-400 mt-2">MTF interest: ~0.0274%/day (~10% p.a.)</p>
             </div>
 
-            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden">
+            <div class="bg-navy-900 p-4 rounded-xl border border-gray-800/80 shadow-sm relative overflow-hidden flex-shrink-0 w-[80vw] sm:w-auto snap-center">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Liquidation Protection</span>
                     <span class="text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded text-xs font-semibold">🛡️ Zero RMS Risk</span>
@@ -710,6 +935,7 @@
         let deferredPrompt = null;
 
         window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
             initViewMode();
             initPWA();
             loadStocks();
@@ -738,24 +964,37 @@
 
         function switchWatchlist(watchlistId) {
             currentWatchlist = watchlistId;
-            const sel = document.getElementById('watchlistSelect');
-            if (sel && sel.value !== watchlistId) sel.value = watchlistId;
+            const selDesktop = document.getElementById('watchlistSelect');
+            const selMobile = document.getElementById('watchlistSelectMobile');
+            if (selDesktop && selDesktop.value !== watchlistId) selDesktop.value = watchlistId;
+            if (selMobile && selMobile.value !== watchlistId) selMobile.value = watchlistId;
             selectedForCompare.clear();
             updateCompareDock();
             loadStocks();
         }
 
         function updateWatchlistUI(summary, available) {
-            const badge = document.getElementById('universeBadge');
-            if (badge) {
-                badge.textContent = summary.watchlist_title ? `${summary.watchlist_title} (${summary.total || 0})` : `Watchlist (${summary.total || 0})`;
-            }
+            const badgeDesktop = document.getElementById('universeBadgeDesktop');
+            const badgeMobile = document.getElementById('universeBadgeMobile');
+            const fullTitle = summary.watchlist_title ? `${summary.watchlist_title} (${summary.total || 0})` : `Watchlist (${summary.total || 0})`;
+            if (badgeDesktop) badgeDesktop.textContent = fullTitle;
+            if (badgeMobile) badgeMobile.textContent = `${summary.total || 0} Stocks`;
 
-            const sel = document.getElementById('watchlistSelect');
-            if (sel && available && available.length > 0) {
-                const curVal = sel.value || currentWatchlist;
-                sel.innerHTML = available.map(w => `<option value="${w.id}" ${w.id === curVal ? 'selected' : ''}>${w.title} (${w.count})</option>`).join('');
-                sel.value = curVal;
+            if (available && available.length > 0) {
+                const curVal = currentWatchlist;
+                const optionsHtml = available.map(w => `<option value="${w.id}" ${w.id === curVal ? 'selected' : ''}>${w.title} (${w.count})</option>`).join('');
+                
+                const selDesktop = document.getElementById('watchlistSelect');
+                if (selDesktop) {
+                    selDesktop.innerHTML = optionsHtml;
+                    selDesktop.value = curVal;
+                }
+
+                const selMobile = document.getElementById('watchlistSelectMobile');
+                if (selMobile) {
+                    selMobile.innerHTML = optionsHtml;
+                    selMobile.value = curVal;
+                }
             }
         }
 
@@ -1531,6 +1770,36 @@
         function closeIOSModal() {
             const modal = document.getElementById('iosInstallModal');
             if (modal) modal.classList.add('hidden');
+        }
+
+        // --- Theme (Light / Dark Mode) Management ---
+        function initTheme() {
+            const savedTheme = localStorage.getItem('mtf_theme') || 'dark';
+            setTheme(savedTheme);
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const newTheme = isDark ? 'light' : 'dark';
+            setTheme(newTheme);
+        }
+
+        function setTheme(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            const metaTheme = document.getElementById('metaThemeColor');
+            if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (metaTheme) metaTheme.setAttribute('content', '#f8fafc');
+                localStorage.setItem('mtf_theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (metaTheme) metaTheme.setAttribute('content', '#0b0f19');
+                localStorage.setItem('mtf_theme', 'dark');
+            }
         }
     </script>
 </body>

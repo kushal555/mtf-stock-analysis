@@ -290,6 +290,12 @@ class TestPWAAndMobile(unittest.TestCase):
         self.assertIn('renderCards', html)
         self.assertIn('installPWA', html)
 
+        # Check Light / Dark mode toggle and mobile header
+        self.assertIn('id="themeToggleBtn"', html)
+        self.assertIn('toggleTheme', html)
+        self.assertIn('app-header', html)
+        self.assertIn('id="watchlistSelectMobile"', html)
+
 
 if __name__ == "__main__":
     unittest.main()
