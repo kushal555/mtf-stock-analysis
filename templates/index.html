@@ -112,11 +112,16 @@
         html:not(.dark) .bg-navy-900\/90, html.light .bg-navy-900\/90,
         html:not(.dark) .bg-navy-900\/95, html.light .bg-navy-900\/95,
         html:not(.dark) .bg-gray-950, html.light .bg-gray-950,
+        html:not(.dark) .bg-gray-950\/50, html.light .bg-gray-950\/50,
         html:not(.dark) .bg-gray-950\/60, html.light .bg-gray-950\/60,
         html:not(.dark) .bg-gray-950\/70, html.light .bg-gray-950\/70,
+        html:not(.dark) .bg-gray-950\/80, html.light .bg-gray-950\/80,
+        html:not(.dark) .bg-gray-950\/90, html.light .bg-gray-950\/90,
+        html:not(.dark) .bg-gray-900\/50, html.light .bg-gray-900\/50,
         html:not(.dark) .bg-gray-900\/60, html.light .bg-gray-900\/60,
         html:not(.dark) .bg-gray-900\/70, html.light .bg-gray-900\/70,
-        html:not(.dark) .bg-gray-900\/80, html.light .bg-gray-900\/80 {
+        html:not(.dark) .bg-gray-900\/80, html.light .bg-gray-900\/80,
+        html:not(.dark) .bg-gray-900\/90, html.light .bg-gray-900\/90 {
             background-color: #f8fafc !important;
             border-color: #cbd5e1 !important;
         }
@@ -247,6 +252,68 @@
         }
         html:not(.dark) .filter-tab.bg-brand-600 *, html.light .filter-tab.bg-brand-600 * {
             color: #ffffff !important;
+        }
+
+        /* --- View Mode Toggle Segmented Control --- */
+        #viewModeToggleGroup {
+            background-color: #030712;
+            border-color: #374151;
+        }
+        #viewModeToggleGroup .view-toggle-active {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+        }
+        #viewModeToggleGroup .view-toggle-inactive {
+            background-color: transparent !important;
+            color: #9ca3af !important;
+            font-weight: 500 !important;
+        }
+        #viewModeToggleGroup .view-toggle-inactive:hover {
+            color: #ffffff !important;
+        }
+        #refreshBtn {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: #d1d5db;
+        }
+        #refreshBtn:hover {
+            background-color: #374151;
+            color: #ffffff;
+        }
+
+        /* Light Mode for View Toggle & Refresh */
+        html:not(.dark) #viewModeToggleGroup, html.light #viewModeToggleGroup {
+            background-color: #e2e8f0 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        html:not(.dark) #viewModeToggleGroup .view-toggle-active, html.light #viewModeToggleGroup .view-toggle-active {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.08);
+        }
+        html:not(.dark) #viewModeToggleGroup .view-toggle-active *, html.light #viewModeToggleGroup .view-toggle-active * {
+            color: #ffffff !important;
+        }
+        html:not(.dark) #viewModeToggleGroup .view-toggle-inactive, html.light #viewModeToggleGroup .view-toggle-inactive {
+            background-color: transparent !important;
+            color: #475569 !important;
+            font-weight: 600 !important;
+        }
+        html:not(.dark) #viewModeToggleGroup .view-toggle-inactive:hover, html.light #viewModeToggleGroup .view-toggle-inactive:hover {
+            color: #0f172a !important;
+            background-color: rgba(255, 255, 255, 0.6) !important;
+        }
+        html:not(.dark) #refreshBtn, html.light #refreshBtn {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
+        }
+        html:not(.dark) #refreshBtn:hover, html.light #refreshBtn:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
         }
 
         /* High-Contrast Colors (No more pale unreadable pastel on white) */
@@ -812,16 +879,17 @@
 
                 <!-- View Mode Toggle (Cards / Table) + Refresh Button -->
                 <div class="flex items-center space-x-2 self-end sm:self-auto flex-shrink-0">
-                    <div class="inline-flex bg-gray-950/80 border border-gray-700/80 rounded-lg p-0.5">
-                        <button id="btnViewCards" onclick="setViewMode('cards')" class="px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white" title="Card View (Mobile Optimized)">
+                    <div id="viewModeToggleGroup" class="inline-flex items-center rounded-lg border p-0.5 shadow-sm transition">
+                        <button id="btnViewCards" onclick="setViewMode('cards')" class="view-toggle-inactive px-2.5 py-1 text-xs rounded-md transition font-medium" title="Card View (Mobile Optimized)">
                             📱 Cards
                         </button>
-                        <button id="btnViewTable" onclick="setViewMode('table')" class="px-2.5 py-1 text-xs rounded-md transition font-bold bg-brand-600 text-white shadow-sm" title="Table View (Full Columns)">
+                        <button id="btnViewTable" onclick="setViewMode('table')" class="view-toggle-active px-2.5 py-1 text-xs rounded-md transition font-bold" title="Table View (Full Columns)">
                             🖥️ Table
                         </button>
                     </div>
-                    <button onclick="loadStocks(true)" id="refreshBtn" class="flex items-center space-x-1 px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-medium border border-gray-700 transition" title="Refresh Live Prices">
+                    <button onclick="loadStocks(true)" id="refreshBtn" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border shadow-sm transition" title="Refresh Live Prices">
                         <span id="refreshIcon">🔄</span>
+                        <span class="text-[11px] hidden sm:inline">Refresh</span>
                     </button>
                 </div>
             </div>
@@ -1744,19 +1812,19 @@
 
             if (currentViewMode === 'cards') {
                 if (btnCards) {
-                    btnCards.className = 'px-2.5 py-1 text-xs rounded-md transition font-bold bg-brand-600 text-white shadow-sm';
+                    btnCards.className = 'view-toggle-active px-2.5 py-1 text-xs rounded-md transition font-bold';
                 }
                 if (btnTable) {
-                    btnTable.className = 'px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white';
+                    btnTable.className = 'view-toggle-inactive px-2.5 py-1 text-xs rounded-md transition font-medium';
                 }
                 if (cardsContainer) cardsContainer.classList.remove('hidden');
                 if (tableWrapper) tableWrapper.classList.add('hidden');
             } else {
                 if (btnCards) {
-                    btnCards.className = 'px-2.5 py-1 text-xs rounded-md transition font-medium text-gray-400 hover:text-white';
+                    btnCards.className = 'view-toggle-inactive px-2.5 py-1 text-xs rounded-md transition font-medium';
                 }
                 if (btnTable) {
-                    btnTable.className = 'px-2.5 py-1 text-xs rounded-md transition font-bold bg-brand-600 text-white shadow-sm';
+                    btnTable.className = 'view-toggle-active px-2.5 py-1 text-xs rounded-md transition font-bold';
                 }
                 if (cardsContainer) cardsContainer.classList.add('hidden');
                 if (tableWrapper) tableWrapper.classList.remove('hidden');
