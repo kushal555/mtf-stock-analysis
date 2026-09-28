@@ -242,6 +242,30 @@ class DhanClient:
             pass
         return None
 
+    def fetch_today_trades(self) -> List[Dict[str, Any]]:
+        """Fetches today's executed trades directly from Dhan HQ API v2."""
+        url = f"{self.base_url}/trades"
+        try:
+            req = urllib.request.Request(url, headers=self.get_headers(), method="GET")
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                return data if isinstance(data, list) else data.get("data", [])
+        except Exception as e:
+            self._last_error = f"Dhan trades fetch error: {str(e)}"
+            return []
+
+    def fetch_positions(self) -> List[Dict[str, Any]]:
+        """Fetches open and closed positions from Dhan HQ API v2."""
+        url = f"{self.base_url}/positions"
+        try:
+            req = urllib.request.Request(url, headers=self.get_headers(), method="GET")
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                return data if isinstance(data, list) else data.get("data", [])
+        except Exception as e:
+            self._last_error = f"Dhan positions fetch error: {str(e)}"
+            return []
+
     def get_last_error(self) -> Optional[str]:
         return self._last_error
 

@@ -420,6 +420,130 @@ class TestSMCEngineAndAI(unittest.TestCase):
         self.assertGreaterEqual(res["total_trades"], 0)
 
 
+class TestTradeManager(unittest.TestCase):
+    def setUp(self):
+        from trade_manager import TradeManager
+        TradeManager._trades = []
+        TradeManager._initialized = True
+
+    def tearDown(self):
+        from trade_manager import TradeManager
+        TradeManager._trades = []
+
+    def test_create_and_complete_trade(self):
+        from trade_manager import TradeManager
+        # Create open trade for TMPV (Tata Motors)
+        trade = TradeManager.create_trade(
+            symbol="TMPV",
+            entry_price=300.0,
+            capital=50000.0,
+            leverage=4.0,
+            entry_date="2026-09-14",
+            notes="Demerger value buy"
+        )
+        self.assertIsNotNone(trade["id"])
+        self.assertEqual(trade["symbol"], "TMPV")
+        self.assertEqual(trade["status"], "OPEN")
+        self.assertEqual(trade["quantity"], 666)
+        self.assertAlmostEqual(trade["position_value"], 199800.0, delta=1.0)
+        self.assertAlmostEqual(trade["target_price"], 330.0, delta=1.0)
+
+        # Complete trade at +10% target on 2026-09-28 (14 days hold)
+        completed = TradeManager.complete_trade(
+            trade_id=trade["id"],
+            exit_price=330.0,
+            exit_date="2026-09-28",
+            exit_reason="TARGET_HIT"
+        )
+        self.assertIsNotNone(completed)
+        self.assertEqual(completed["status"], "COMPLETED")
+        self.assertEqual(completed["hold_days"], 14)
+        self.assertGreater(completed["gross_pnl"], 19000.0)
+        self.assertGreater(completed["mtf_interest"], 500.0)
+        self.assertGreater(completed["net_pnl"], 18000.0)
+        self.assertGreater(completed["roi_pct"], 35.0)
+
+    def test_summary_calculation(self):
+        from datetime import date
+        from trade_manager import TradeManager
+        completed_trade = {
+            "id": "TRD-1",
+            "symbol": "ETERNAL",
+            "capital": 25000.0,
+            "net_pnl": 9400.0,
+            "roi_pct": 37.6,
+            "mtf_interest": 280.0,
+            "exit_date": date.today().isoformat(),
+            "status": "COMPLETED"
+        }
+        open_trade = {
+            "id": "TRD-2",
+            "symbol": "TMPV",
+            "capital": 50000.0,
+            "net_pnl": 2500.0,
+            "mtf_interest": 150.0,
+            "status": "OPEN"
+        }
+        summary = TradeManager.calculate_summary([open_trade], [completed_trade])
+        self.assertEqual(summary["completed_trades_count"], 1)
+        self.assertEqual(summary["open_positions_count"], 1)
+        self.assertEqual(summary["wins_count"], 1)
+        self.assertEqual(summary["win_rate_pct"], 100.0)
+        self.assertEqual(summary["active_capital"], 50000.0)
+        self.assertEqual(summary["today_net_pnl"], 9400.0)
+        self.assertEqual(summary["total_realized_pnl"], 9400.0)
+
+    def test_sheet_formatting_roundtrip(self):
+        from trade_manager import TradeManager
+        original = {
+            "id": "TRD-TEST-123",
+            "symbol": "RELIANCE",
+            "entry_date": "2026-09-01",
+            "entry_price": 2400.0,
+            "exit_price": 2640.0,
+            "quantity": 83,
+            "capital": 50000.0,
+            "leverage": 4.0,
+            "target_price": 2640.0,
+            "stop_loss": 2316.0,
+            "gross_pnl": 19920.0,
+            "mtf_interest": 616.0,
+            "net_pnl": 18260.0,
+            "roi_pct": 36.5,
+            "hold_days": 15,
+            "status": "COMPLETED",
+            "notes": "Target Hit"
+        }
+        formatted = TradeManager._format_trade_for_sheet(original)
+        self.assertEqual(formatted["id"], "TRD-TEST-123")
+        self.assertEqual(formatted["symbol"], "RELIANCE")
+
+        normalized = TradeManager._normalize_sheet_trade(formatted)
+        self.assertEqual(normalized["id"], "TRD-TEST-123")
+        self.assertEqual(normalized["symbol"], "RELIANCE")
+        self.assertEqual(normalized["status"], "COMPLETED")
+        self.assertEqual(normalized["net_pnl"], 18260.0)
+
+    def test_csv_export_and_import(self):
+        from trade_manager import TradeManager
+        TradeManager.create_trade(
+            symbol="HAL",
+            entry_price=4500.0,
+            capital=50000.0,
+            leverage=4.0
+        )
+        csv_str = TradeManager.export_csv()
+        self.assertIn("HAL", csv_str)
+        self.assertIn("entry_price", csv_str)
+
+        # Clear and re-import
+        TradeManager._trades = []
+        ok, count, msg = TradeManager.import_csv(csv_str)
+        self.assertTrue(ok)
+        self.assertEqual(count, 1)
+        self.assertEqual(TradeManager._trades[0]["symbol"], "HAL")
+
+
 if __name__ == "__main__":
     unittest.main()
 

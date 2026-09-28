@@ -58,6 +58,38 @@ PORTAL_PIN = os.getenv("PORTAL_PIN", "654000")
 # Google Gemini API Key for AI Smart Money / Multimodal Chart Vision
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
+# Google Sheets Webhook URL for Persistent Trade Backup & Render Auto-Restore
+GOOGLE_SHEET_WEBHOOK_URL = os.getenv("GOOGLE_SHEET_WEBHOOK_URL", os.getenv("GOOGLE_SHEET_URL", ""))
+
+
+def update_google_sheet_url(url: str) -> bool:
+    """Updates the .env file and environment variable with the Google Sheet Webhook URL."""
+    url = url.strip()
+    global GOOGLE_SHEET_WEBHOOK_URL
+    GOOGLE_SHEET_WEBHOOK_URL = url
+    os.environ["GOOGLE_SHEET_WEBHOOK_URL"] = url
+
+    env_file = BASE_DIR / ".env"
+    lines = []
+    found = False
+
+    if env_file.exists():
+        with open(env_file, "r") as f:
+            for line in f:
+                if line.startswith("GOOGLE_SHEET_WEBHOOK_URL="):
+                    lines.append(f"GOOGLE_SHEET_WEBHOOK_URL={url}\n")
+                    found = True
+                else:
+                    lines.append(line)
+
+    if not found:
+        lines.append(f"GOOGLE_SHEET_WEBHOOK_URL={url}\n")
+
+    with open(env_file, "w") as f:
+        f.writelines(lines)
+
+    return True
+
 
 def verify_portal_pin(pin: str) -> bool:
     """Validates the entered 6-digit access PIN."""

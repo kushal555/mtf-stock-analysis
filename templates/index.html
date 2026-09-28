@@ -612,6 +612,14 @@
                         <span class="font-mono text-emerald-400 font-semibold" id="clientIdDisplay">1103250505</span>
                     </div>
 
+                    <!-- Trade Journal & Cloud Backup Button -->
+                    <button id="navTradeJournalBtn" onclick="openTradeJournalModal()" class="flex items-center space-x-1.5 text-xs bg-brand-600 hover:bg-brand-500 text-white font-bold px-2 sm:px-2.5 py-1.5 rounded-lg shadow-md transition" title="Open Trades Journal & Google Sheet Backup">
+                        <span>📒</span>
+                        <span class="hidden sm:inline">Trades</span>
+                        <span id="navOpenTradesCount" class="hidden px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-400 text-navy-950 font-extrabold">0</span>
+                        <span id="navSheetBackupDot" class="w-2 h-2 rounded-full bg-gray-400" title="Google Sheet Backup Status"></span>
+                    </button>
+
                     <!-- Token Modal Button -->
                     <button onclick="openTokenModal()" class="flex items-center space-x-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-2 sm:px-2.5 py-1.5 rounded-lg border border-gray-700 transition" title="Update Dhan API Token">
                         <span>🔑</span>
@@ -1188,8 +1196,12 @@
                 </table>
             </div>
 
-            <div class="mt-6 flex justify-end">
-                <button onclick="closeSimulatorModal()" class="px-5 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-semibold transition">
+            <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <button onclick="logTradeFromSimulator()" class="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-emerald-900/30 flex items-center justify-center space-x-2 transition">
+                    <span>🚀</span>
+                    <span>Log / Take This MTF Trade</span>
+                </button>
+                <button onclick="closeSimulatorModal()" class="w-full sm:w-auto px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl text-xs font-semibold transition">
                     Close
                 </button>
             </div>
@@ -1469,6 +1481,539 @@
         </div>
     </div>
 
+    <!-- Trade Journal & Google Sheet Backup Modal -->
+    <div id="tradeJournalModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto">
+        <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-5xl w-full p-4 sm:p-6 shadow-2xl relative max-h-[92vh] flex flex-col my-auto">
+            <!-- Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-gray-800 flex-shrink-0">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl">📒</span>
+                    <div>
+                        <h3 class="font-bold text-base sm:text-lg text-white flex items-center space-x-2">
+                            <span>MTF Trade Journal & Cloud Backup</span>
+                            <span id="journalSyncStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">Connecting...</span>
+                        </h3>
+                        <p class="text-xs text-gray-400">Automatic real-time sync with Google Sheet. Never lose trades on Render reboot.</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="syncGoogleSheet('pull')" class="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-semibold border border-gray-700 transition" title="Pull & restore all trades from Google Sheet">
+                        🔄 Sync Sheet
+                    </button>
+                    <button onclick="closeTradeJournalModal()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Content Area -->
+            <div class="overflow-y-auto py-4 space-y-4 flex-1 pr-1">
+                <!-- Local Browser Cache Alert (if server is empty but local has trades) -->
+                <div id="localRestoreBanner" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span>⚠️</span>
+                        <span>Render restarted and server is empty, but <strong id="localRestoreCount">0</strong> trades were found in your browser cache!</span>
+                    </div>
+                    <button onclick="restoreFromLocalCache()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-bold text-xs shadow transition">
+                        Restore to Server & Sheet
+                    </button>
+                </div>
+
+                <!-- Google Sheet Setup Prompt Banner if not configured -->
+                <div id="sheetNotConfiguredBanner" class="hidden p-3.5 rounded-xl bg-brand-950/60 border border-brand-500/40 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-start space-x-2.5">
+                        <span class="text-lg">📊</span>
+                        <div>
+                            <div class="font-bold text-white">Google Sheet Backup Not Yet Connected</div>
+                            <div class="text-gray-300">Connect your Google Sheet in 1 minute to auto-save completed trades and auto-restore on Render reboot.</div>
+                        </div>
+                    </div>
+                    <button onclick="openGoogleSheetSetupModal()" class="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg whitespace-nowrap shadow transition">
+                        ⚙️ Setup Google Sheet
+                    </button>
+                </div>
+
+                <!-- Performance KPI Cards (Today PnL, Total Realized, Win Rate, Margin) -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                    <div class="bg-navy-950 p-3.5 rounded-xl border border-gray-800">
+                        <span class="text-gray-400 text-[11px] block">Today's Net Realized PnL</span>
+                        <div id="kpiTodayPnl" class="text-lg sm:text-xl font-black text-emerald-400 mt-1">₹0.00</div>
+                        <span id="kpiTodayTrades" class="text-[10px] text-gray-400">0 trades closed today</span>
+                    </div>
+
+                    <div class="bg-navy-950 p-3.5 rounded-xl border border-gray-800">
+                        <span class="text-gray-400 text-[11px] block">Total Realized Net Profit</span>
+                        <div id="kpiTotalPnl" class="text-lg sm:text-xl font-black text-emerald-400 mt-1">₹0.00</div>
+                        <span id="kpiAvgRoi" class="text-[10px] text-emerald-300">+0.0% avg net ROI</span>
+                    </div>
+
+                    <div class="bg-navy-950 p-3.5 rounded-xl border border-gray-800">
+                        <span class="text-gray-400 text-[11px] block">Strategy Win Rate</span>
+                        <div id="kpiWinRate" class="text-lg sm:text-xl font-black text-purple-400 mt-1">0.0%</div>
+                        <span id="kpiWinLoss" class="text-[10px] text-gray-400">0 Wins - 0 Losses</span>
+                    </div>
+
+                    <div class="bg-navy-950 p-3.5 rounded-xl border border-gray-800">
+                        <span class="text-gray-400 text-[11px] block">Active Margin Deployed</span>
+                        <div id="kpiActiveMargin" class="text-lg sm:text-xl font-black text-blue-400 mt-1">₹0.00</div>
+                        <span id="kpiOpenPositions" class="text-[10px] text-gray-400">0 open positions</span>
+                    </div>
+                </div>
+
+                <!-- Action Controls Bar -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2">
+                    <!-- Tab Switcher (Open vs Completed) -->
+                    <div class="flex items-center space-x-1 bg-gray-950/80 p-1 rounded-xl border border-gray-800 self-start">
+                        <button id="tabOpenPositionsBtn" onclick="switchTradeTab('OPEN')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-brand-600 text-white shadow transition flex items-center space-x-1.5">
+                            <span>🟢 Open Positions</span>
+                            <span id="tabOpenBadge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20 text-white font-extrabold">0</span>
+                        </button>
+                        <button id="tabCompletedTradesBtn" onclick="switchTradeTab('COMPLETED')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-gray-200 transition flex items-center space-x-1.5">
+                            <span>★ Completed History</span>
+                            <span id="tabCompletedBadge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-gray-800 text-gray-400 font-extrabold">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Right Controls -->
+                    <div class="flex items-center flex-wrap gap-1.5">
+                        <button onclick="openLogTradeModal()" class="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-lg text-xs shadow transition flex items-center space-x-1">
+                            <span>➕</span>
+                            <span>Log Trade</span>
+                        </button>
+                        <button onclick="fetchDhanTodayTrades()" class="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-emerald-400 hover:text-emerald-300 rounded-lg text-xs font-semibold border border-gray-700 transition" title="Import today's executed trades from Dhan broker">
+                            ⚡ From Dhan
+                        </button>
+                        <button onclick="openGoogleSheetSetupModal()" class="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-xs font-semibold border border-gray-700 transition" title="Configure Google Sheet connection">
+                            ⚙️ Sheet Setup
+                        </button>
+                        <button onclick="exportTradesCsv()" class="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-xs font-semibold border border-gray-700 transition" title="Export trade backup as CSV">
+                            📥 CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Container 1: Open Positions -->
+                <div id="openPositionsContainer" class="overflow-x-auto border border-gray-800 rounded-xl">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-gray-950 text-gray-400 uppercase text-[10px] tracking-wider border-b border-gray-800">
+                            <tr>
+                                <th class="p-3">Symbol / Entry Date</th>
+                                <th class="p-3">Entry Price</th>
+                                <th class="p-3">Live LTP</th>
+                                <th class="p-3">Qty & Margin</th>
+                                <th class="p-3">Target (+10%) / SL</th>
+                                <th class="p-3">Hold Days</th>
+                                <th class="p-3">Accrued Interest</th>
+                                <th class="p-3 text-right">Live Net PnL</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="openPositionsTableBody" class="divide-y divide-gray-800/80 text-gray-300">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Table Container 2: Completed Trades -->
+                <div id="completedTradesContainer" class="overflow-x-auto border border-gray-800 rounded-xl hidden">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-gray-950 text-gray-400 uppercase text-[10px] tracking-wider border-b border-gray-800">
+                            <tr>
+                                <th class="p-3">Exit Date</th>
+                                <th class="p-3">Symbol</th>
+                                <th class="p-3">Entry → Exit</th>
+                                <th class="p-3">Margin & Qty</th>
+                                <th class="p-3">Hold Days</th>
+                                <th class="p-3">MTF Interest</th>
+                                <th class="p-3">Net Profit (₹)</th>
+                                <th class="p-3">Net ROI</th>
+                                <th class="p-3 text-center">Sheet Sync</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completedTradesTableBody" class="divide-y divide-gray-800/80 text-gray-300">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-3 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400 flex-shrink-0">
+                <div class="flex items-center space-x-2">
+                    <span id="journalLastSyncTime">Last Synced: Never</span>
+                </div>
+                <button onclick="closeTradeJournalModal()" class="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-semibold transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Sheet Setup Modal -->
+    <div id="googleSheetSetupModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto">
+        <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl relative max-h-[92vh] flex flex-col my-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">📊</span>
+                    <h3 class="font-bold text-base text-white">Google Sheet Backup & Two-Way Sync</h3>
+                </div>
+                <button onclick="closeGoogleSheetSetupModal()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition">
+                    ✕
+                </button>
+            </div>
+
+            <div class="overflow-y-auto py-3 space-y-4 text-xs pr-1">
+                <p class="text-gray-300 leading-relaxed">
+                    Render free instances sleep or restart periodically, which wipes local container storage. 
+                    Connecting your Google Sheet stores every trade into your personal Google Sheet in real-time, 
+                    and <strong>automatically re-imports your trades whenever Render boots up</strong>!
+                </p>
+
+                <!-- Step-by-step instructions -->
+                <div class="bg-navy-950 p-4 rounded-xl border border-gray-800 space-y-3">
+                    <h4 class="font-bold text-white text-xs uppercase tracking-wide">4-Step 1-Minute Setup Guide:</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-300 leading-relaxed">
+                        <li>
+                            Create a new blank sheet on <a href="https://sheets.new" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline font-semibold">Google Sheets (sheets.new) ↗</a>.
+                        </li>
+                        <li>
+                            In Google Sheets top menu, click <strong>Extensions</strong> → <strong>Apps Script</strong>.
+                        </li>
+                        <li>
+                            Delete any sample code in the editor, and paste the code below:
+                        </li>
+                    </ol>
+
+                    <!-- Apps Script Code Box with Copy Button -->
+                    <div class="relative">
+                        <div class="flex items-center justify-between bg-gray-900 px-3 py-1.5 rounded-t-lg border-b border-gray-800 text-[11px] text-gray-400">
+                            <span>Google Apps Script (Code.gs)</span>
+                            <button onclick="copyAppsScriptCode()" id="copyScriptBtn" class="text-emerald-400 hover:text-emerald-300 font-bold transition flex items-center space-x-1">
+                                <span>📋</span>
+                                <span>Copy Script</span>
+                            </button>
+                        </div>
+                        <pre id="appsScriptCodeBlock" class="p-3 bg-gray-950 text-emerald-400 rounded-b-lg font-mono text-[11px] overflow-x-auto max-h-40 border border-gray-800">/**
+ * MTF Swing Trader - Google Sheet Two-Way Backup & Sync Script
+ */
+function doGet(e) {
+  var sheet = getOrCreateTradesSheet();
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length &lt;= 1) {
+    return ContentService.createTextOutput(JSON.stringify({ trades: [] }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  var trades = [];
+  for (var i = 1; i &lt; rows.length; i++) {
+    var r = rows[i];
+    if (!r[0]) continue;
+    trades.push({
+      id: String(r[0]),
+      date: String(r[1]),
+      symbol: String(r[2]),
+      type: String(r[3]),
+      entry_price: Number(r[4]) || 0,
+      exit_price: (r[5] !== '' &amp;&amp; r[5] !== null) ? Number(r[5]) : null,
+      quantity: Number(r[6]) || 1,
+      capital: Number(r[7]) || 0,
+      leverage: Number(r[8]) || 4,
+      target_price: Number(r[9]) || 0,
+      stop_loss: Number(r[10]) || 0,
+      gross_pnl: Number(r[11]) || 0,
+      mtf_interest: Number(r[12]) || 0,
+      net_pnl: Number(r[13]) || 0,
+      roi_pct: Number(r[14]) || 0,
+      hold_days: Number(r[15]) || 0,
+      status: String(r[16] || 'OPEN'),
+      notes: String(r[17] || '')
+    });
+  }
+  return ContentService.createTextOutput(JSON.stringify({ trades: trades }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var sheet = getOrCreateTradesSheet();
+  var data = JSON.parse(e.postData.contents);
+  var action = data.action || 'add_trade';
+  if (action === 'get_trades') return doGet(e);
+  
+  if (action === 'add_trade' || action === 'update_trade') {
+    var t = data.trade;
+    var rows = sheet.getDataRange().getValues();
+    var rowIndex = -1;
+    for (var i = 1; i &lt; rows.length; i++) {
+      if (rows[i][0] == t.id) { rowIndex = i + 1; break; }
+    }
+    var rowValues = [
+      t.id, t.date || new Date().toISOString().slice(0, 10),
+      t.symbol, t.type || 'BUY', t.entry_price,
+      (t.exit_price !== undefined &amp;&amp; t.exit_price !== null) ? t.exit_price : '',
+      t.quantity, t.capital, t.leverage || 4,
+      t.target_price || '', t.stop_loss || '',
+      t.gross_pnl || 0, t.mtf_interest || 0, t.net_pnl || 0, t.roi_pct || 0,
+      t.hold_days || 0, t.status || 'OPEN', t.notes || '', new Date().toISOString()
+    ];
+    if (rowIndex &gt; 0) {
+      sheet.getRange(rowIndex, 1, 1, rowValues.length).setValues([rowValues]);
+    } else {
+      sheet.appendRow(rowValues);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Saved" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  if (action === 'bulk_sync') {
+    var trades = data.trades || [];
+    sheet.clearContents();
+    setupSheetHeaders(sheet);
+    for (var j = 0; j &lt; trades.length; j++) {
+      var tr = trades[j];
+      sheet.appendRow([
+        tr.id, tr.date || '', tr.symbol, tr.type || 'BUY', tr.entry_price,
+        (tr.exit_price !== undefined &amp;&amp; tr.exit_price !== null) ? tr.exit_price : '',
+        tr.quantity, tr.capital, tr.leverage || 4, tr.target_price || '', tr.stop_loss || '',
+        tr.gross_pnl || 0, tr.mtf_interest || 0, tr.net_pnl || 0, tr.roi_pct || 0,
+        tr.hold_days || 0, tr.status || 'OPEN', tr.notes || '', new Date().toISOString()
+      ]);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ success: true, count: trades.length }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  return ContentService.createTextOutput(JSON.stringify({ success: false }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getOrCreateTradesSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("MTF_Trades");
+  if (!sheet) sheet = ss.insertSheet("MTF_Trades");
+  if (sheet.getLastRow() === 0) setupSheetHeaders(sheet);
+  return sheet;
+}
+
+function setupSheetHeaders(sheet) {
+  var headers = ["Trade ID", "Entry Date", "Symbol", "Type", "Entry Price", "Exit Price", "Quantity", "Margin Capital", "Leverage", "Target (+10%)", "Stop Loss", "Gross PnL (₹)", "MTF Interest (₹)", "Net PnL (₹)", "Net ROI (%)", "Hold Days", "Status", "Notes", "Last Synced"];
+  sheet.appendRow(headers);
+  var headerRange = sheet.getRange(1, 1, 1, headers.length);
+  headerRange.setFontWeight("bold").setBackground("#0f172a").setFontColor("#38bdf8");
+  sheet.setFrozenRows(1);
+}</pre>
+                    </div>
+
+                    <ol start="4" class="list-decimal list-inside space-y-2 text-gray-300 leading-relaxed">
+                        <li>
+                            Click <strong>Deploy</strong> → <strong>New deployment</strong> → Select <strong>Web app</strong>:<br>
+                            &nbsp;&nbsp;• Execute as: <strong>Me</strong><br>
+                            &nbsp;&nbsp;• Who has access: <strong>Anyone</strong><br>
+                            &nbsp;&nbsp;• Click <strong>Deploy</strong> and copy the <strong>Web app URL</strong>.
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Input for Web App URL -->
+                <div class="space-y-1.5">
+                    <label class="font-bold text-white block">Paste Google Apps Script Web App URL:</label>
+                    <input type="url" id="inputGoogleSheetUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 font-mono">
+                    <div id="sheetConfigMsg" class="hidden text-xs p-2 rounded-lg"></div>
+                </div>
+
+                <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-[11px] text-blue-300">
+                    💡 <strong>Render Cloud Tip</strong>: To make this 100% permanent across all Render restarts, also paste this URL in your <strong>Render Dashboard → Environment Variables → GOOGLE_SHEET_WEBHOOK_URL</strong>.
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-3 border-t border-gray-800 flex items-center justify-end space-x-2">
+                <button onclick="closeGoogleSheetSetupModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-xl text-xs font-semibold transition">
+                    Cancel
+                </button>
+                <button onclick="saveGoogleSheetConfig()" id="btnSaveSheetConfig" class="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition">
+                    Test & Save Connection
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Log / Take Trade Modal -->
+    <div id="logTradeModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto">
+        <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-md w-full p-5 shadow-2xl relative my-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800 mb-4">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">🚀</span>
+                    <h3 class="font-bold text-base text-white" id="logTradeModalTitle">Log / Take MTF Trade</h3>
+                </div>
+                <button onclick="closeLogTradeModal()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition">
+                    ✕
+                </button>
+            </div>
+
+            <form onsubmit="submitLogTrade(event)" class="space-y-3 text-xs">
+                <!-- Stock Symbol -->
+                <div>
+                    <label class="block text-gray-400 font-medium mb-1">Stock Symbol</label>
+                    <input type="text" id="logTradeSymbol" required uppercase class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-white font-bold uppercase focus:outline-none focus:border-brand-500" placeholder="e.g. TMPV, RELIANCE, ETERNAL" oninput="onLogTradeSymbolChange(this.value)">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-gray-400 font-medium mb-1">Entry Price (₹)</label>
+                        <input type="number" step="0.05" id="logTradeEntry" required class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-brand-500" placeholder="301.10" oninput="recalcLogTradeTargets()">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 font-medium mb-1">Margin Capital (₹)</label>
+                        <input type="number" step="1000" id="logTradeCapital" value="50000" required class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-brand-500" oninput="recalcLogTradeTargets()">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-gray-400 font-medium mb-1">Target (+10% ₹)</label>
+                        <input type="number" step="0.05" id="logTradeTarget" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-emerald-400 font-mono focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 font-medium mb-1">Stop Loss (-3.5% ₹)</label>
+                        <input type="number" step="0.05" id="logTradeStopLoss" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-amber-400 font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-gray-400 font-medium mb-1">Entry Date</label>
+                        <input type="date" id="logTradeDate" required class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 font-medium mb-1">Status</label>
+                        <select id="logTradeStatus" onchange="toggleLogTradeStatus(this.value)" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-brand-500">
+                            <option value="OPEN" selected>🟢 OPEN Position</option>
+                            <option value="COMPLETED">★ COMPLETED Trade</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Fields if COMPLETED selected (e.g. logging today's closed trade) -->
+                <div id="logTradeCompletedFields" class="hidden p-3 bg-gray-950/80 rounded-xl border border-gray-800 space-y-2.5">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-emerald-300 font-semibold mb-1">Exit Price (₹)</label>
+                            <input type="number" step="0.05" id="logTradeExitPrice" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-1.5 text-emerald-400 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 font-medium mb-1">Exit Date</label>
+                            <input type="date" id="logTradeExitDate" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-1.5 text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 font-medium mb-1">Exit Reason</label>
+                        <select id="logTradeExitReason" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-1.5 text-white">
+                            <option value="TARGET_HIT">🎯 Target Hit (+10%)</option>
+                            <option value="MANUAL_EXIT">⚡ Manual Market Exit</option>
+                            <option value="STOP_LOSS_HIT">🛡️ Stop Loss Triggered</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 font-medium mb-1">Notes / Remarks (Optional)</label>
+                    <input type="text" id="logTradeNotes" placeholder="e.g. 4H Demand OB entry, 15d swing" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div class="pt-3 flex items-center justify-end space-x-2">
+                    <button type="button" onclick="closeLogTradeModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-semibold transition">
+                        Cancel
+                    </button>
+                    <button type="submit" id="btnSubmitLogTrade" class="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg transition">
+                        Save & Backup Trade
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Complete Trade Prompt Modal -->
+    <div id="completeTradeModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-navy-900 border border-gray-700 rounded-2xl max-w-md w-full p-5 shadow-2xl relative my-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800 mb-4">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">✓</span>
+                    <h3 class="font-bold text-base text-white">Complete & Close Trade</h3>
+                </div>
+                <button onclick="closeCompleteTradeModal()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition">
+                    ✕
+                </button>
+            </div>
+
+            <form onsubmit="submitCompleteTrade(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="completeTradeId">
+
+                <!-- Stock Summary Strip -->
+                <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-white text-sm" id="completeTradeSymbol">--</div>
+                        <div class="text-[11px] text-gray-400">Entry: <span class="font-mono text-gray-200" id="completeTradeEntryDisplay">₹0.00</span></div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[11px] text-gray-400">Live LTP</div>
+                        <div class="font-bold font-mono text-emerald-400 text-sm" id="completeTradeLtpDisplay">₹0.00</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-emerald-300 font-semibold mb-1">Exit Price (₹)</label>
+                        <input type="number" step="0.05" id="completeTradeExitPrice" required class="w-full bg-gray-950 border border-emerald-500/50 rounded-xl px-3 py-2 text-emerald-400 font-bold font-mono focus:outline-none focus:border-emerald-400" oninput="updateCompleteTradePreview()">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 font-medium mb-1">Exit Date</label>
+                        <input type="date" id="completeTradeExitDate" required class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-brand-500" onchange="updateCompleteTradePreview()">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 font-medium mb-1">Exit Reason</label>
+                    <select id="completeTradeReason" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-white font-semibold">
+                        <option value="TARGET_HIT">🎯 Target Hit (+10%)</option>
+                        <option value="MANUAL_EXIT">⚡ Manual Market Exit</option>
+                        <option value="STOP_LOSS_HIT">🛡️ Stop Loss Triggered</option>
+                        <option value="TRAILING_STOP">📈 Trailing Stop Hit</option>
+                    </select>
+                </div>
+
+                <!-- Real-Time Net Profit Calculation Card -->
+                <div class="bg-navy-950 p-3.5 rounded-xl border border-emerald-600/40 space-y-1.5">
+                    <div class="flex justify-between text-gray-400 text-[11px]">
+                        <span>Gross PnL:</span>
+                        <span class="font-mono text-white" id="completeGrossPreview">₹0.00</span>
+                    </div>
+                    <div class="flex justify-between text-gray-400 text-[11px]">
+                        <span>MTF Interest (<span id="completeHoldDaysPreview">0</span> days):</span>
+                        <span class="font-mono text-amber-400" id="completeInterestPreview">-₹0.00</span>
+                    </div>
+                    <div class="flex justify-between text-gray-400 text-[11px]">
+                        <span>Est. Brokerage & Taxes:</span>
+                        <span class="font-mono text-gray-400" id="completeChargesPreview">-₹0.00</span>
+                    </div>
+                    <div class="pt-1.5 border-t border-gray-800 flex justify-between items-center">
+                        <span class="font-bold text-white text-xs">Net In-Pocket Profit:</span>
+                        <div class="text-right">
+                            <div class="font-bold font-mono text-sm text-emerald-400" id="completeNetPreview">+₹0.00</div>
+                            <div class="text-[10px] text-emerald-300 font-semibold" id="completeRoiPreview">+0.0% Net ROI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end space-x-2">
+                    <button type="button" onclick="closeCompleteTradeModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-semibold transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg transition">
+                        ✓ Confirm & Save to Sheet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Frontend Script -->
     <script>
 
@@ -1488,6 +2033,7 @@
             initPWA();
             loadStocks();
             recalcAdvantage();
+            loadTrades();
         });
 
         async function loadStocks(isRefresh = false) {
@@ -1818,6 +2364,9 @@
                             <button onclick="openMtfSimulator('${s.symbol}')" class="px-2.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-medium shadow transition" title="Simulate MTF Trade">
                                 🧮 Sim
                             </button>
+                            <button onclick="openLogTradeModal('${s.symbol}')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow transition" title="Log / Take MTF Trade">
+                                ⚡ Trade
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -1974,18 +2523,21 @@
                         <span class="font-mono font-bold text-emerald-400 text-xs">+${s.net_roi_15d || 0}%</span>
                     </div>
 
-                    <!-- Mobile Touch Actions (SMC AI + Chart + Simulate) -->
-                    <div class="grid grid-cols-3 gap-1.5 pt-1">
-                        <button onclick="openSmcModal('${s.symbol}')" class="py-2 px-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow transition flex items-center justify-center space-x-1">
-                            <span>🧠 SMC AI</span>
+                    <!-- Mobile Touch Actions (SMC AI + Chart + Simulate + Trade) -->
+                    <div class="grid grid-cols-4 gap-1 pt-1 text-center">
+                        <button onclick="openSmcModal('${s.symbol}')" class="py-2 px-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-[11px] font-bold shadow transition flex items-center justify-center">
+                            <span>🧠 SMC</span>
                         </button>
                         <a href="https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(s.symbol)}" target="_blank" rel="noopener noreferrer"
-                           class="flex items-center justify-center space-x-1 py-2 px-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-xl text-xs font-semibold border border-gray-700/80 transition"
+                           class="flex items-center justify-center py-2 px-1 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 rounded-xl text-[11px] font-semibold border border-gray-700/80 transition"
                            title="Open TradingView Chart">
-                            <span>📈 Chart ↗</span>
+                            <span>📈 Chart</span>
                         </a>
-                        <button onclick="openMtfSimulator('${s.symbol}')" class="py-2 px-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold shadow transition">
-                            🧮 Simulate
+                        <button onclick="openMtfSimulator('${s.symbol}')" class="py-2 px-1 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-[11px] font-semibold shadow transition">
+                            <span>🧮 Sim</span>
+                        </button>
+                        <button onclick="openLogTradeModal('${s.symbol}')" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-semibold shadow transition">
+                            <span>⚡ Trade</span>
                         </button>
                     </div>
                 </div>
@@ -2827,6 +3379,690 @@ ${data.note ? `<div class="mt-2 pt-2 border-t border-gray-800 text-[10px] text-g
                 btn.disabled = false;
                 btn.innerHTML = originalText;
             }
+        }
+
+        // ==========================================
+        // --- TRADE JOURNAL & GOOGLE SHEET BACKUP ---
+        // ==========================================
+
+        let activeTradesData = { open_trades: [], completed_trades: [], summary: {}, google_sheet: {} };
+        let currentTradeTab = 'OPEN';
+        let completingTrade = null;
+
+        async function loadTrades() {
+            try {
+                const res = await fetch('/api/trades');
+                if (!res.ok) return;
+                const data = await res.json();
+                activeTradesData = data;
+
+                // Sync status badge in navbar and modal
+                const openCount = data.open_trades ? data.open_trades.length : 0;
+                const countBadge = document.getElementById('navOpenTradesCount');
+                if (countBadge) {
+                    countBadge.textContent = openCount;
+                    if (openCount > 0) countBadge.classList.remove('hidden');
+                    else countBadge.classList.add('hidden');
+                }
+
+                const sheetDot = document.getElementById('navSheetBackupDot');
+                const isConfigured = data.google_sheet && data.google_sheet.configured;
+                if (sheetDot) {
+                    sheetDot.className = isConfigured
+                        ? 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse'
+                        : 'w-2 h-2 rounded-full bg-gray-400';
+                }
+
+                // Browser Cache Safety: If server has 0 trades, check if localStorage has saved trades
+                const localBackup = localStorage.getItem('mtf_trades_backup');
+                const restoreBanner = document.getElementById('localRestoreBanner');
+                if (data.total_trades === 0 && localBackup) {
+                    try {
+                        const parsed = JSON.parse(localBackup);
+                        if (parsed && parsed.length > 0 && restoreBanner) {
+                            document.getElementById('localRestoreCount').textContent = parsed.length;
+                            restoreBanner.classList.remove('hidden');
+                        }
+                    } catch (e) {}
+                } else if (restoreBanner) {
+                    restoreBanner.classList.add('hidden');
+                }
+
+                // If server has trades, update browser localStorage backup
+                if (data.total_trades > 0) {
+                    const allList = [...(data.open_trades || []), ...(data.completed_trades || [])];
+                    localStorage.setItem('mtf_trades_backup', JSON.stringify(allList));
+                }
+
+                // If Google Sheet not configured, show reminder banner in journal
+                const sheetBanner = document.getElementById('sheetNotConfiguredBanner');
+                if (sheetBanner) {
+                    if (!isConfigured) sheetBanner.classList.remove('hidden');
+                    else sheetBanner.classList.add('hidden');
+                }
+
+                const statusBadge = document.getElementById('journalSyncStatusBadge');
+                if (statusBadge) {
+                    statusBadge.textContent = data.google_sheet?.status || (isConfigured ? '🟢 Connected' : '⚠️ Offline');
+                    statusBadge.className = isConfigured
+                        ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        : 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40';
+                }
+
+                const lastSyncEl = document.getElementById('journalLastSyncTime');
+                if (lastSyncEl) {
+                    lastSyncEl.textContent = `Last Synced: ${data.google_sheet?.last_synced || 'Never'}`;
+                }
+
+                renderTradeSummary(data.summary || {});
+                renderTradeTables(data);
+
+            } catch (err) {
+                console.error('Failed to load trades:', err);
+            }
+        }
+
+        function renderTradeSummary(summary) {
+            const todayPnl = summary.today_net_pnl || 0;
+            const totalPnl = summary.total_realized_pnl || 0;
+            const winRate = summary.win_rate_pct || 0;
+            const activeMargin = summary.active_capital || 0;
+
+            const elToday = document.getElementById('kpiTodayPnl');
+            if (elToday) {
+                elToday.textContent = `${todayPnl >= 0 ? '+' : '-'}₹${Math.abs(todayPnl).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                elToday.className = todayPnl >= 0 ? 'text-lg sm:text-xl font-black text-emerald-400 mt-1' : 'text-lg sm:text-xl font-black text-rose-400 mt-1';
+            }
+            if (document.getElementById('kpiTodayTrades')) {
+                document.getElementById('kpiTodayTrades').textContent = `${summary.today_trades_count || 0} trades closed today`;
+            }
+
+            const elTotal = document.getElementById('kpiTotalPnl');
+            if (elTotal) {
+                elTotal.textContent = `${totalPnl >= 0 ? '+' : '-'}₹${Math.abs(totalPnl).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                elTotal.className = totalPnl >= 0 ? 'text-lg sm:text-xl font-black text-emerald-400 mt-1' : 'text-lg sm:text-xl font-black text-rose-400 mt-1';
+            }
+            if (document.getElementById('kpiAvgRoi')) {
+                document.getElementById('kpiAvgRoi').textContent = `${summary.avg_roi_pct >= 0 ? '+' : ''}${summary.avg_roi_pct || 0}% avg net ROI`;
+            }
+
+            if (document.getElementById('kpiWinRate')) {
+                document.getElementById('kpiWinRate').textContent = `${winRate}%`;
+            }
+            if (document.getElementById('kpiWinLoss')) {
+                document.getElementById('kpiWinLoss').textContent = `${summary.wins_count || 0}W - ${summary.losses_count || 0}L (${summary.completed_trades_count || 0} total)`;
+            }
+
+            if (document.getElementById('kpiActiveMargin')) {
+                document.getElementById('kpiActiveMargin').textContent = `₹${activeMargin.toLocaleString('en-IN')}`;
+            }
+            if (document.getElementById('kpiOpenPositions')) {
+                document.getElementById('kpiOpenPositions').textContent = `${summary.open_positions_count || 0} open positions`;
+            }
+        }
+
+        function renderTradeTables(data) {
+            const openTrades = data.open_trades || [];
+            const completedTrades = data.completed_trades || [];
+
+            if (document.getElementById('tabOpenBadge')) document.getElementById('tabOpenBadge').textContent = openTrades.length;
+            if (document.getElementById('tabCompletedBadge')) document.getElementById('tabCompletedBadge').textContent = completedTrades.length;
+
+            // Render Open Positions Table
+            const openTbody = document.getElementById('openPositionsTableBody');
+            if (openTbody) {
+                if (openTrades.length === 0) {
+                    openTbody.innerHTML = `
+                        <tr>
+                            <td colspan="9" class="p-8 text-center text-gray-500">
+                                <div class="text-2xl mb-1">🌱</div>
+                                <div>No open positions currently active.</div>
+                                <button onclick="openLogTradeModal()" class="mt-2 text-xs text-brand-400 hover:text-brand-300 font-bold underline">
+                                    Click here to log a new MTF trade
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    openTbody.innerHTML = openTrades.map(t => {
+                        const netPnl = t.net_pnl || 0;
+                        const roi = t.roi_pct || 0;
+                        const isProfit = netPnl >= 0;
+                        const isTargetHit = t.target_status === 'TARGET_HIT_READY_TO_CLOSE';
+                        const isSlHit = t.target_status === 'STOP_LOSS_TRIGGERED';
+
+                        let statusPill = '';
+                        if (isTargetHit) {
+                            statusPill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 animate-pulse">🎯 Target Hit!</span>';
+                        } else if (isSlHit) {
+                            statusPill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">⚠️ SL Hit</span>';
+                        }
+
+                        return `
+                            <tr class="hover:bg-gray-800/40 transition">
+                                <td class="p-3">
+                                    <div class="font-bold text-white flex items-center space-x-1.5">
+                                        <span>${t.symbol}</span>
+                                        ${statusPill}
+                                    </div>
+                                    <div class="text-[10px] text-gray-500">${t.entry_date} • ${t.source || 'MANUAL'}</div>
+                                </td>
+                                <td class="p-3 font-mono font-bold text-white">₹${t.entry_price.toFixed(2)}</td>
+                                <td class="p-3 font-mono font-bold text-emerald-400">₹${(t.current_ltp || t.entry_price).toFixed(2)}</td>
+                                <td class="p-3">
+                                    <div class="font-mono text-gray-200">${t.quantity} shares</div>
+                                    <div class="text-[10px] text-gray-400 font-mono">₹${t.capital.toLocaleString('en-IN')} (${t.leverage}x)</div>
+                                </td>
+                                <td class="p-3 font-mono text-[11px]">
+                                    <div class="text-emerald-400">🎯 ₹${t.target_price.toFixed(2)}</div>
+                                    <div class="text-amber-400">🛡️ ₹${t.stop_loss.toFixed(2)}</div>
+                                </td>
+                                <td class="p-3 font-mono text-gray-300">${t.hold_days || 0}d</td>
+                                <td class="p-3 font-mono text-amber-400">₹${(t.mtf_interest || 0).toFixed(2)}</td>
+                                <td class="p-3 text-right">
+                                    <div class="font-mono font-bold ${isProfit ? 'text-emerald-400' : 'text-rose-400'}">
+                                        ${isProfit ? '+' : '-'}₹${Math.abs(netPnl).toFixed(2)}
+                                    </div>
+                                    <div class="text-[10px] font-mono ${isProfit ? 'text-emerald-300' : 'text-rose-300'}">
+                                        ${roi >= 0 ? '+' : ''}${roi.toFixed(1)}%
+                                    </div>
+                                </td>
+                                <td class="p-3 text-center whitespace-nowrap">
+                                    <div class="inline-flex items-center space-x-1">
+                                        <button onclick="openCompleteTradeModal('${t.id}')" class="px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-lg text-xs shadow transition">
+                                            ✓ Complete
+                                        </button>
+                                        <button onclick="deleteTrade('${t.id}')" class="p-1 text-gray-500 hover:text-rose-400 rounded transition" title="Delete Trade">
+                                            ✕
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // Render Completed Trades Table
+            const compTbody = document.getElementById('completedTradesTableBody');
+            if (compTbody) {
+                if (completedTrades.length === 0) {
+                    compTbody.innerHTML = `
+                        <tr>
+                            <td colspan="10" class="p-8 text-center text-gray-500">
+                                <div class="text-2xl mb-1">🏁</div>
+                                <div>No completed trades recorded yet.</div>
+                                <button onclick="openLogTradeModal()" class="mt-2 text-xs text-brand-400 hover:text-brand-300 font-bold underline">
+                                    Log a past or closed trade here
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    compTbody.innerHTML = completedTrades.map(t => {
+                        const netPnl = t.net_pnl || 0;
+                        const roi = t.roi_pct || 0;
+                        const isProfit = netPnl >= 0;
+
+                        return `
+                            <tr class="hover:bg-gray-800/40 transition">
+                                <td class="p-3 font-mono text-gray-400">${t.exit_date || t.entry_date}</td>
+                                <td class="p-3">
+                                    <div class="font-bold text-white">${t.symbol}</div>
+                                    <div class="text-[10px] text-gray-500">${t.notes || t.exit_reason || 'Target Hit'}</div>
+                                </td>
+                                <td class="p-3 font-mono">
+                                    <div class="text-gray-300">₹${t.entry_price.toFixed(2)} → <strong class="${isProfit ? 'text-emerald-400' : 'text-rose-400'}">₹${(t.exit_price || t.entry_price).toFixed(2)}</strong></div>
+                                </td>
+                                <td class="p-3 font-mono">
+                                    <div>₹${t.capital.toLocaleString('en-IN')}</div>
+                                    <div class="text-[10px] text-gray-500">${t.quantity} shares (${t.leverage}x)</div>
+                                </td>
+                                <td class="p-3 font-mono text-gray-300">${t.hold_days || 1}d</td>
+                                <td class="p-3 font-mono text-amber-400">₹${(t.mtf_interest || 0).toFixed(2)}</td>
+                                <td class="p-3 font-mono font-bold ${isProfit ? 'text-emerald-400' : 'text-rose-400'}">
+                                    ${isProfit ? '+' : '-'}₹${Math.abs(netPnl).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                </td>
+                                <td class="p-3 font-mono font-bold ${isProfit ? 'text-emerald-300' : 'text-rose-300'}">
+                                    ${roi >= 0 ? '+' : ''}${roi.toFixed(1)}%
+                                </td>
+                                <td class="p-3 text-center">
+                                    <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] ${t.backed_up_to_sheet ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400 border border-gray-700'}">
+                                        <span>${t.backed_up_to_sheet ? '🟢 Synced' : '⚪ Local'}</span>
+                                    </span>
+                                </td>
+                                <td class="p-3 text-center">
+                                    <button onclick="deleteTrade('${t.id}')" class="p-1 text-gray-500 hover:text-rose-400 rounded transition" title="Delete Record">
+                                        ✕
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+
+        function switchTradeTab(tab) {
+            currentTradeTab = tab;
+            const openBtn = document.getElementById('tabOpenPositionsBtn');
+            const compBtn = document.getElementById('tabCompletedTradesBtn');
+            const openCont = document.getElementById('openPositionsContainer');
+            const compCont = document.getElementById('completedTradesContainer');
+
+            if (tab === 'OPEN') {
+                openBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-brand-600 text-white shadow transition flex items-center space-x-1.5';
+                compBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-gray-200 transition flex items-center space-x-1.5';
+                openCont.classList.remove('hidden');
+                compCont.classList.add('hidden');
+            } else {
+                compBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-brand-600 text-white shadow transition flex items-center space-x-1.5';
+                openBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-gray-200 transition flex items-center space-x-1.5';
+                compCont.classList.remove('hidden');
+                openCont.classList.add('hidden');
+            }
+        }
+
+        function openTradeJournalModal() {
+            document.getElementById('tradeJournalModal').classList.remove('hidden');
+            loadTrades();
+        }
+
+        function closeTradeJournalModal() {
+            document.getElementById('tradeJournalModal').classList.add('hidden');
+        }
+
+        function openGoogleSheetSetupModal() {
+            document.getElementById('googleSheetSetupModal').classList.remove('hidden');
+            const currentUrl = activeTradesData.google_sheet?.url || '';
+            const input = document.getElementById('inputGoogleSheetUrl');
+            if (input && currentUrl) input.value = currentUrl;
+        }
+
+        function closeGoogleSheetSetupModal() {
+            document.getElementById('googleSheetSetupModal').classList.add('hidden');
+        }
+
+        function copyAppsScriptCode() {
+            const code = document.getElementById('appsScriptCodeBlock').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copyScriptBtn');
+                btn.innerHTML = '<span>✅ Copied!</span>';
+                setTimeout(() => btn.innerHTML = '<span>📋 Copy Script</span>', 2000);
+            }).catch(err => {
+                alert('Could not copy automatically. Please select and copy the code manually.');
+            });
+        }
+
+        async function saveGoogleSheetConfig() {
+            const url = document.getElementById('inputGoogleSheetUrl').value.trim();
+            const msgBox = document.getElementById('sheetConfigMsg');
+            const btn = document.getElementById('btnSaveSheetConfig');
+
+            if (!url) {
+                msgBox.className = 'text-xs p-2 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 block';
+                msgBox.textContent = 'Please enter a valid Google Apps Script Web App URL.';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Testing Connection...';
+            msgBox.className = 'text-xs p-2 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/40 block';
+            msgBox.textContent = 'Connecting to Google Sheet & checking trades...';
+
+            try {
+                const res = await fetch('/api/trades/config-sheet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    msgBox.className = 'text-xs p-2 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 block';
+                    msgBox.textContent = `✅ ${result.message} (${result.synced_trades} trades synced)`;
+                    setTimeout(() => {
+                        closeGoogleSheetSetupModal();
+                        loadTrades();
+                    }, 1200);
+                } else {
+                    msgBox.className = 'text-xs p-2 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 block';
+                    msgBox.textContent = `❌ ${result.message || 'Connection failed'}`;
+                }
+            } catch (err) {
+                msgBox.className = 'text-xs p-2 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 block';
+                msgBox.textContent = 'Network error connecting to backend.';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Test & Save Connection';
+            }
+        }
+
+        async function syncGoogleSheet(direction = 'push') {
+            const statusBadge = document.getElementById('journalSyncStatusBadge');
+            if (statusBadge) statusBadge.textContent = '🔄 Syncing...';
+
+            try {
+                const res = await fetch('/api/trades/sync-sheet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ direction: direction })
+                });
+                const result = await res.json();
+                alert(result.message || 'Synchronization complete.');
+                loadTrades();
+            } catch (err) {
+                alert('Sync failed: ' + err.message);
+            }
+        }
+
+        async function restoreFromLocalCache() {
+            const localBackup = localStorage.getItem('mtf_trades_backup');
+            if (!localBackup) return;
+            try {
+                const trades = JSON.parse(localBackup);
+                if (!trades || trades.length === 0) return;
+                
+                // Re-create each trade on server
+                let restored = 0;
+                for (const t of trades) {
+                    await fetch('/api/trades/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(t)
+                    });
+                    restored++;
+                }
+                alert(`Successfully restored ${restored} trades to server and Google Sheet!`);
+                document.getElementById('localRestoreBanner').classList.add('hidden');
+                loadTrades();
+            } catch (err) {
+                alert('Restore failed: ' + err.message);
+            }
+        }
+
+        // --- Log Trade Modal Handlers ---
+        function openLogTradeModal(prefillSymbol = null) {
+            const modal = document.getElementById('logTradeModal');
+            modal.classList.remove('hidden');
+
+            const today = new Date().toISOString().slice(0, 10);
+            document.getElementById('logTradeDate').value = today;
+            document.getElementById('logTradeExitDate').value = today;
+
+            if (prefillSymbol) {
+                document.getElementById('logTradeSymbol').value = prefillSymbol.toUpperCase();
+                onLogTradeSymbolChange(prefillSymbol);
+            } else {
+                document.getElementById('logTradeSymbol').value = '';
+                document.getElementById('logTradeEntry').value = '';
+                document.getElementById('logTradeTarget').value = '';
+                document.getElementById('logTradeStopLoss').value = '';
+            }
+        }
+
+        function closeLogTradeModal() {
+            document.getElementById('logTradeModal').classList.add('hidden');
+        }
+
+        function onLogTradeSymbolChange(val) {
+            const sym = val.trim().toUpperCase();
+            const stock = allStocks.find(s => s.symbol === sym);
+            if (stock) {
+                document.getElementById('logTradeEntry').value = stock.ltp || stock.rec_entry;
+                recalcLogTradeTargets();
+            }
+        }
+
+        function recalcLogTradeTargets() {
+            const entry = parseFloat(document.getElementById('logTradeEntry').value) || 0;
+            if (entry > 0) {
+                document.getElementById('logTradeTarget').value = (entry * 1.10).toFixed(2);
+                document.getElementById('logTradeStopLoss').value = (entry * 0.965).toFixed(2);
+            }
+        }
+
+        function toggleLogTradeStatus(val) {
+            const fields = document.getElementById('logTradeCompletedFields');
+            const exitPriceInput = document.getElementById('logTradeExitPrice');
+            if (val === 'COMPLETED') {
+                fields.classList.remove('hidden');
+                if (!exitPriceInput.value) {
+                    const entry = parseFloat(document.getElementById('logTradeEntry').value) || 0;
+                    exitPriceInput.value = (entry * 1.10).toFixed(2);
+                }
+            } else {
+                fields.classList.add('hidden');
+            }
+        }
+
+        async function submitLogTrade(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitLogTrade');
+            btn.disabled = true;
+            btn.textContent = 'Saving & Syncing...';
+
+            const symbol = document.getElementById('logTradeSymbol').value.trim().toUpperCase();
+            const entry = parseFloat(document.getElementById('logTradeEntry').value);
+            const capital = parseFloat(document.getElementById('logTradeCapital').value);
+            const target = parseFloat(document.getElementById('logTradeTarget').value);
+            const sl = parseFloat(document.getElementById('logTradeStopLoss').value);
+            const dateVal = document.getElementById('logTradeDate').value;
+            const status = document.getElementById('logTradeStatus').value;
+            const notes = document.getElementById('logTradeNotes').value.trim();
+
+            const payload = {
+                symbol: symbol,
+                entry_price: entry,
+                capital: capital,
+                leverage: 4.0,
+                target_price: target,
+                stop_loss: sl,
+                entry_date: dateVal,
+                status: status,
+                notes: notes,
+                source: 'MANUAL'
+            };
+
+            if (status === 'COMPLETED') {
+                payload.exit_price = parseFloat(document.getElementById('logTradeExitPrice').value) || entry;
+                payload.exit_date = document.getElementById('logTradeExitDate').value || dateVal;
+                payload.exit_reason = document.getElementById('logTradeExitReason').value;
+            }
+
+            try {
+                const res = await fetch('/api/trades/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    closeLogTradeModal();
+                    openTradeJournalModal();
+                    loadTrades();
+                } else {
+                    alert('Failed to log trade: ' + (result.message || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Error saving trade: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save & Backup Trade';
+            }
+        }
+
+        // --- Complete Trade Modal Handlers ---
+        function openCompleteTradeModal(tradeId) {
+            const trade = (activeTradesData.open_trades || []).find(t => t.id === tradeId);
+            if (!trade) return;
+            completingTrade = trade;
+
+            document.getElementById('completeTradeId').value = trade.id;
+            document.getElementById('completeTradeSymbol').textContent = `${trade.symbol} (${trade.quantity} shares)`;
+            document.getElementById('completeTradeEntryDisplay').textContent = `₹${trade.entry_price.toFixed(2)}`;
+
+            const ltp = trade.current_ltp || trade.target_price || trade.entry_price;
+            document.getElementById('completeTradeLtpDisplay').textContent = `₹${ltp.toFixed(2)}`;
+            document.getElementById('completeTradeExitPrice').value = ltp.toFixed(2);
+
+            const today = new Date().toISOString().slice(0, 10);
+            document.getElementById('completeTradeExitDate').value = today;
+
+            updateCompleteTradePreview();
+            document.getElementById('completeTradeModal').classList.remove('hidden');
+        }
+
+        function closeCompleteTradeModal() {
+            document.getElementById('completeTradeModal').classList.add('hidden');
+            completingTrade = null;
+        }
+
+        function updateCompleteTradePreview() {
+            if (!completingTrade) return;
+            const exitP = parseFloat(document.getElementById('completeTradeExitPrice').value) || completingTrade.entry_price;
+            const entryP = completingTrade.entry_price;
+            const qty = completingTrade.quantity;
+            const capital = completingTrade.capital;
+            const borrowed = completingTrade.borrowed_amount || 0;
+
+            const exitDateStr = document.getElementById('completeTradeExitDate').value;
+            let holdDays = 1;
+            try {
+                const d1 = new Date(completingTrade.entry_date);
+                const d2 = new Date(exitDateStr);
+                const diff = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+                holdDays = Math.max(1, diff);
+            } catch (e) { holdDays = 1; }
+
+            const grossPnl = qty * (exitP - entryP);
+            const dailyRate = 0.10 / 365.0;
+            const interest = borrowed * dailyRate * holdDays;
+            const turnover = (qty * entryP) + (qty * exitP);
+            const charges = turnover * 0.0025;
+            const netPnl = grossPnl - interest - charges;
+            const roi = (netPnl / capital) * 100.0;
+
+            document.getElementById('completeHoldDaysPreview').textContent = holdDays;
+            document.getElementById('completeGrossPreview').textContent = `₹${grossPnl.toFixed(2)}`;
+            document.getElementById('completeInterestPreview').textContent = `-₹${interest.toFixed(2)}`;
+            document.getElementById('completeChargesPreview').textContent = `-₹${charges.toFixed(2)}`;
+
+            const elNet = document.getElementById('completeNetPreview');
+            elNet.textContent = `${netPnl >= 0 ? '+' : '-'}₹${Math.abs(netPnl).toFixed(2)}`;
+            elNet.className = netPnl >= 0 ? 'font-bold font-mono text-sm text-emerald-400' : 'font-bold font-mono text-sm text-rose-400';
+
+            const elRoi = document.getElementById('completeRoiPreview');
+            elRoi.textContent = `${roi >= 0 ? '+' : ''}${roi.toFixed(1)}% Net ROI`;
+            elRoi.className = roi >= 0 ? 'text-[10px] text-emerald-300 font-semibold' : 'text-[10px] text-rose-300 font-semibold';
+        }
+
+        async function submitCompleteTrade(e) {
+            e.preventDefault();
+            const tradeId = document.getElementById('completeTradeId').value;
+            const exitP = parseFloat(document.getElementById('completeTradeExitPrice').value);
+            const exitDate = document.getElementById('completeTradeExitDate').value;
+            const reason = document.getElementById('completeTradeReason').value;
+
+            try {
+                const res = await fetch('/api/trades/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trade_id: tradeId,
+                        exit_price: exitP,
+                        exit_date: exitDate,
+                        exit_reason: reason
+                    })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    closeCompleteTradeModal();
+                    loadTrades();
+                } else {
+                    alert('Error completing trade: ' + (result.message || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function deleteTrade(tradeId) {
+            if (!confirm('Are you sure you want to delete this trade record?')) return;
+            try {
+                const res = await fetch('/api/trades/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trade_id: tradeId })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    loadTrades();
+                } else {
+                    alert('Failed to delete trade.');
+                }
+            } catch (err) {
+                alert('Error deleting trade: ' + err.message);
+            }
+        }
+
+        // --- Log Trade directly from MTF Simulator ---
+        async function logTradeFromSimulator() {
+            const stock = allStocks.find(s => s.symbol === selectedStock) || allStocks[0];
+            if (!stock) return;
+
+            const capital = parseFloat(document.getElementById('simCapitalSlider').value);
+            const leverage = parseFloat(document.getElementById('simLeverageSlider').value);
+            const entry = stock.rec_entry || stock.ltp;
+            const target = stock.target_10 || (entry * 1.10);
+            const sl = stock.stop_loss || (entry * 0.965);
+            const today = new Date().toISOString().slice(0, 10);
+
+            try {
+                const res = await fetch('/api/trades/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        symbol: stock.symbol,
+                        entry_price: entry,
+                        capital: capital,
+                        leverage: leverage,
+                        target_price: target,
+                        stop_loss: sl,
+                        entry_date: today,
+                        status: 'OPEN',
+                        notes: `Simulated trade plan from ${leverage}x MTF calculator`,
+                        source: 'SIMULATOR'
+                    })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    closeSimulatorModal();
+                    openTradeJournalModal();
+                    loadTrades();
+                } else {
+                    alert('Failed to log trade: ' + (result.message || 'Unknown'));
+                }
+            } catch (err) {
+                alert('Error saving simulated trade: ' + err.message);
+            }
+        }
+
+        // --- Import Today's Trades from Dhan Broker ---
+        async function fetchDhanTodayTrades() {
+            if (!confirm("Attempt to import today's executed trades directly from Dhan HQ API?")) return;
+            try {
+                const res = await fetch('/api/trades/fetch-dhan', { method: 'POST' });
+                const result = await res.json();
+                alert(result.message || `Found ${result.trades_found} trades, imported ${result.imported}.`);
+                loadTrades();
+            } catch (err) {
+                alert('Error fetching from Dhan: ' + err.message);
+            }
+        }
+
+        // --- Export CSV ---
+        function exportTradesCsv() {
+            window.location.href = '/api/trades/export-csv';
         }
     </script>
 </body>

@@ -208,6 +208,20 @@ class DashboardRequestHandler(BaseHTTPRequestHandler):
             cookie = self.headers.get("Cookie", "")
             is_authed = f"mtf_pin_auth={PORTAL_PIN}" in cookie or "mtf_pin_auth=authenticated" in cookie
             self._send_json({"authenticated": is_authed, "pin_required": bool(PORTAL_PIN)})
+        elif url_path == "/api/trades":
+            from trade_manager import TradeManager
+            trades_data = TradeManager.get_trades(refresh_live_ltp=True)
+            self._send_json(trades_data)
+        elif url_path == "/api/trades/export-csv":
+            from trade_manager import TradeManager
+            csv_str = TradeManager.export_csv()
+            body = csv_str.encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/csv")
+            self.send_header("Content-Disposition", 'attachment; filename="mtf_trades_backup.csv"')
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
         else:
             self.send_error(404, "Not Found")
 
@@ -339,6 +353,122 @@ class DashboardRequestHandler(BaseHTTPRequestHandler):
 
             self._send_json(report)
 
+        elif url_path == "/api/trades/create":
+            from trade_manager import TradeManager
+            trade = TradeManager.create_trade(
+                symbol=payload.get("symbol", "TMPV"),
+                entry_price=float(payload.get("entry_price", 0.0)),
+                capital=float(payload.get("capital", 50000.0)),
+                leverage=float(payload.get("leverage", 4.0)),
+                target_price=float(payload.get("target_price")) if payload.get("target_price") else None,
+                stop_loss=float(payload.get("stop_loss")) if payload.get("stop_loss") else None,
+                entry_date=payload.get("entry_date"),
+                notes=payload.get("notes", ""),
+                status=payload.get("status", "OPEN"),
+                exit_price=float(payload.get("exit_price")) if payload.get("exit_price") is not None else None,
+                exit_date=payload.get("exit_date"),
+                exit_reason=payload.get("exit_reason"),
+                source=payload.get("source", "MANUAL")
+            )
+            self._send_json({"success": True, "trade": trade})
+
+        elif url_path == "/api/trades/complete":
+            from trade_manager import TradeManager
+            trade_id = payload.get("trade_id")
+            exit_price = float(payload.get("exit_price", 0.0))
+            exit_date = payload.get("exit_date")
+            exit_reason = payload.get("exit_reason", "MANUAL_EXIT")
+            notes = payload.get("notes")
+
+            if not trade_id or exit_price <= 0:
+                self._send_json({"success": False, "message": "trade_id and positive exit_price are required"}, status=400)
+                return
+
+            completed = TradeManager.complete_trade(
+                trade_id=trade_id,
+                exit_price=exit_price,
+                exit_date=exit_date,
+                exit_reason=exit_reason,
+                notes=notes
+            )
+            if completed:
+                self._send_json({"success": True, "trade": completed})
+            else:
+                self._send_json({"success": False, "message": f"Trade {trade_id} not found"}, status=404)
+
+        elif url_path == "/api/trades/delete":
+            from trade_manager import TradeManager
+            trade_id = payload.get("trade_id")
+            if not trade_id:
+                self._send_json({"success": False, "message": "trade_id required"}, status=400)
+                return
+            ok = TradeManager.delete_trade(trade_id)
+            self._send_json({"success": ok})
+
+        elif url_path == "/api/trades/sync-sheet":
+            from trade_manager import TradeManager
+            direction = payload.get("direction", "push")
+            if direction == "pull":
+                ok, count, msg = TradeManager.import_from_google_sheet()
+            else:
+                ok, msg = TradeManager.sync_all_to_google_sheet()
+            self._send_json({"success": ok, "message": msg})
+
+        elif url_path == "/api/trades/config-sheet":
+            from trade_manager import TradeManager
+            from config import update_google_sheet_url
+            url = payload.get("url", "").strip()
+            if not url:
+                self._send_json({"success": False, "message": "Webhook URL cannot be empty"}, status=400)
+                return
+            TradeManager.set_google_sheet_url(url)
+            update_google_sheet_url(url)
+
+            # Test connection & sync
+            ok, count, msg = TradeManager.import_from_google_sheet()
+            if not ok and len(TradeManager._trades) > 0:
+                ok_push, push_msg = TradeManager.sync_all_to_google_sheet()
+                msg = f"Connected! Pushed {len(TradeManager._trades)} existing trades to sheet." if ok_push else msg
+
+            self._send_json({
+                "success": True,
+                "message": msg or "Google Sheet connected successfully!",
+                "synced_trades": len(TradeManager._trades)
+            })
+
+        elif url_path == "/api/trades/import-csv":
+            from trade_manager import TradeManager
+            csv_text = payload.get("csv", "")
+            ok, count, msg = TradeManager.import_csv(csv_text)
+            self._send_json({"success": ok, "message": msg, "count": count})
+
+        elif url_path == "/api/trades/fetch-dhan":
+            from trade_manager import TradeManager
+            dhan_trades = _dhan_client.fetch_today_trades()
+            added = 0
+            if isinstance(dhan_trades, list):
+                for dt in dhan_trades:
+                    sym = dt.get("tradingSymbol", "").split("-")[0]
+                    price = float(dt.get("tradedPrice", dt.get("price", 0.0)))
+                    qty = int(dt.get("tradedQuantity", dt.get("quantity", 0)))
+                    side = dt.get("transactionType", "BUY").upper()
+                    if sym and price > 0 and qty > 0 and side == "BUY":
+                        TradeManager.create_trade(
+                            symbol=sym,
+                            entry_price=price,
+                            capital=round(price * qty * 0.25, 2),
+                            leverage=4.0,
+                            source="DHAN_BROKER",
+                            notes=f"Auto-imported from Dhan trade #{dt.get('tradeId', '')}"
+                        )
+                        added += 1
+            self._send_json({
+                "success": True,
+                "trades_found": len(dhan_trades) if isinstance(dhan_trades, list) else 0,
+                "imported": added,
+                "message": f"Found {len(dhan_trades) if isinstance(dhan_trades, list) else 0} Dhan trades, imported {added}."
+            })
+
         else:
             self.send_error(404, "Not Found")
 
@@ -354,6 +484,13 @@ class DashboardRequestHandler(BaseHTTPRequestHandler):
 
 
 def run_server(port: int = DASHBOARD_PORT, host: str = DASHBOARD_HOST):
+    # Initialize TradeManager & auto-restore trades from Google Sheet if configured
+    try:
+        from trade_manager import TradeManager
+        TradeManager.initialize()
+    except Exception as e:
+        print(f"[Warning] Failed to initialize TradeManager: {e}")
+
     server_address = (host, port)
     httpd = ThreadingHTTPServer(server_address, DashboardRequestHandler)
     print(f"\n🚀 Top 100 Stocks MTF Trading & Comparison Dashboard running at:")
